@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
+  
+    
+    <entry>
+      <title>高级C嵌入式深入知识点记录</title>
+      <link href="/2020/08/15/NOTE/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%AB%98%E7%BA%A7C%E7%AC%94%E8%AE%B0/"/>
+      <url>/2020/08/15/NOTE/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%AB%98%E7%BA%A7C%E7%AC%94%E8%AE%B0/</url>
+      
+        <content type="html"><![CDATA[<blockquote><p>​        如果你爱编程，那么你就应该爱C，如果你爱C，那么你就应该爱指针，如果你爱指针，那么你就应该爱函数指针。        —— 东南大学 凌明 </p></blockquote><ul><li>ARMCC编译器，函数怎么传参的？（寄存器用哪些？传参顺序？）</li></ul><ul><li>变量类型的大小？（char 几位? Short? Int? long？）</li></ul><ul><li>ARMCC编译器后，链接的地址分配？有哪些段？程序各部分存储位置？（绝对地址？相对地址？TEXT段？DATA段？）</li></ul><ul><li>ARMCC下，for循环i++,i—哪个效率相对更高一些？</li></ul><ul><li>如果要写一个内存拷贝的函数，你会怎么写？（*des++ = *src++? 汇编效率或许更高）</li></ul><ul><li>堆和栈的理解</li></ul><ul><li><p>很有意思的一个表达式：*<em>(\</em>(void (*)(void))0)();**</p><p>​        这条语句的意思是从0地址开始执行，在多数嵌入式系统中相当于系统的软复位</p><p>​        *<em>(<em>0)();</em></em> -&gt;函数调用</p><p>​        *<em>(void (</em>)(void))** -&gt;强制类型转换</p></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> C </tag>
+            
+            <tag> Embedded </tag>
+            
+            <tag> ARM </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>C/C++ Technique</title>
+      <link href="/2020/08/15/NOTE/C-technique/"/>
+      <url>/2020/08/15/NOTE/C-technique/</url>
+      
+        <content type="html"><![CDATA[<blockquote><p>我不敢正视你的眼睛，我怕我看你的每一眼都是在表白。 </p></blockquote><h2 id="define宏定义"><a href="#define宏定义" class="headerlink" title="#define宏定义"></a>#define宏定义</h2><h3 id="1-’-’-和-‘-’-的用法"><a href="#1-’-’-和-‘-’-的用法" class="headerlink" title="1.’#’ 和 ‘##’ 的用法"></a>1.’#’ 和 ‘##’ 的用法</h3><p><strong>#运算符</strong><br><strong>#运算符</strong>将一个宏的参数转换为字符串字面量。它仅允许出现在带参数的宏的替换列表中。如：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PRINT_INT(x) printf(#x <span class="meta-string">&quot; = %d\n&quot;</span>, x)</span></span><br></pre></td></tr></table></figure><p><strong>x</strong>之前的#运算符通知预处理器根据PRINT_INT的参数创建一个字符串字面量。<br>因此，调用“PRINT_INT(i/j);”等同于：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;i/j&quot;</span> <span class="string">&quot; = %d\n&quot;</span>, i/j);</span><br></pre></td></tr></table></figure><p>而在C语言中相邻的字符串字面量会被合并<br>因此上边的语句等价于：<strong>printf(“i/j = %d\n”, i/j);</strong></p><hr><p><strong>##运算符</strong><br> <strong>##运算符</strong>可以将两个记号（例如标识符）“粘”在一起，成为一个记号。（##运算符被称为“记号粘合”。）如果其中一个操作数是宏参数，“粘合”会在当形式参数被相应的实际参数替换后发生。</p><p>例如我们需要定义一个加法函数  </p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">int_add</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>但是这种情况下，如果我们要计算float类型的数据怎么办？重新在定义一个是可以的，但是如果有更多的类型呢？难道一个个全部定义嘛，这里有更好的办法。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#define GENERIC_ADD(type) \</span><br><span class="line">type type##_add(type a, type b) \</span><br><span class="line">&#123; \</span><br><span class="line">    return a + b; \</span><br><span class="line">&#125; \</span><br></pre></td></tr></table></figure><p>现在，如果我们需要一个float类型的加法，只需要这一行代码</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GENERIC_ADD(<span class="keyword">float</span>)</span><br></pre></td></tr></table></figure><p>预处理器会自动展开为</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">float_add</span><span class="params">(flaot a, <span class="keyword">float</span> b)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="keyword">return</span> a + b; </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> note </tag>
+            
+            <tag> C </tag>
+            
+            <tag> C++ </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>我的分类和标签统计</title>
+      <link href="/2020/08/15/SELF-USING/categories-and-tags/"/>
+      <url>/2020/08/15/SELF-USING/categories-and-tags/</url>
+      
+        <content type="html"><![CDATA[<h1 id="Categories"><a href="#Categories" class="headerlink" title="Categories:"></a>Categories:</h1><ul><li><p>PROJECT</p><p>项目、工程</p></li><li><p>DOCUMENT</p><p>技术文档、白皮书</p></li><li><p>NOTE</p><p>笔记、浅析、分析</p></li><li><p>SELF-USING</p><p>自用的一些笔记</p></li></ul><h1 id="Tags"><a href="#Tags" class="headerlink" title="Tags:"></a>Tags:</h1><ul><li>ARM</li><li>Linux</li><li>STM32</li><li>QT</li><li>Embedded</li><li>Hardware</li><li>MarkDown</li><li>git</li><li>shell</li><li>MAKE file</li><li>C</li><li>C++</li><li>Python</li><li>note</li><li>technique</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> SELF-USING </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> note </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+  
+  
+</search>

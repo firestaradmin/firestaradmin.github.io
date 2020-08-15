@@ -22,22 +22,23 @@
     var CONFIG = {"hostname":"firestaradmin.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"./public/search.xml"};
   </script>
 
-  <meta name="description" content="我不敢正视你的眼睛，我怕我看你的每一眼都是在表白。   #define宏定义1.’#’ 和 ‘##’ 的用法#运算符#运算符将一个宏的参数转换为字符串字面量。它仅允许出现在带参数的宏的替换列表中。如： 1#define PRINT_INT(x) printf(#x &quot; &#x3D; %d\n&quot;, x) x之前的#运算符通知预处理器根据PRINT_INT的参数创建一个字符串字面量。因此，">
+  <meta name="description" content="FTP(File Transfer Protocol)开启 linux下的 FTP 服务12sudo apt-get install vsftpdsudo vi &#x2F;etc&#x2F;vsftpd.conf  打开 vsftpd.conf 文件以后找到如下两行： 12local_enable&#x3D;YESwrite_enable&#x3D;YES  确保上面两行前面没有“#”，有的话就取消掉 保存退出后，">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C&#x2F;C++ Technique">
-<meta property="og:url" content="https://firestaradmin.top/2020/08/15/NOTE/C-technique/index.html">
+<meta property="og:title" content="（一）开发环境搭建">
+<meta property="og:url" content="https://firestaradmin.top/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/index.html">
 <meta property="og:site_name" content="firestaradmin&#39;s Fortune">
-<meta property="og:description" content="我不敢正视你的眼睛，我怕我看你的每一眼都是在表白。   #define宏定义1.’#’ 和 ‘##’ 的用法#运算符#运算符将一个宏的参数转换为字符串字面量。它仅允许出现在带参数的宏的替换列表中。如： 1#define PRINT_INT(x) printf(#x &quot; &#x3D; %d\n&quot;, x) x之前的#运算符通知预处理器根据PRINT_INT的参数创建一个字符串字面量。因此，">
+<meta property="og:description" content="FTP(File Transfer Protocol)开启 linux下的 FTP 服务12sudo apt-get install vsftpdsudo vi &#x2F;etc&#x2F;vsftpd.conf  打开 vsftpd.conf 文件以后找到如下两行： 12local_enable&#x3D;YESwrite_enable&#x3D;YES  确保上面两行前面没有“#”，有的话就取消掉 保存退出后，">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-08-15T08:21:53.730Z">
-<meta property="article:modified_time" content="2020-08-15T09:43:29.824Z">
+<meta property="og:image" content="https://firestaradmin.top/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/2222.png">
+<meta property="article:published_time" content="2020-08-15T14:33:41.524Z">
+<meta property="article:modified_time" content="2020-08-15T16:05:40.581Z">
 <meta property="article:author" content="firestaradmin">
-<meta property="article:tag" content="note">
-<meta property="article:tag" content="C">
-<meta property="article:tag" content="C++">
+<meta property="article:tag" content="Embedded">
+<meta property="article:tag" content="ARM">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://firestaradmin.top/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/2222.png">
 
-<link rel="canonical" href="https://firestaradmin.top/2020/08/15/NOTE/C-technique/">
+<link rel="canonical" href="https://firestaradmin.top/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
 
 
 <script id="page-configurations">
@@ -50,7 +51,7 @@
   };
 </script>
 
-  <title>C/C++ Technique | firestaradmin's Fortune</title>
+  <title>（一）开发环境搭建 | firestaradmin's Fortune</title>
   
 
 
@@ -201,7 +202,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://firestaradmin.top/2020/08/15/NOTE/C-technique/">
+    <link itemprop="mainEntityOfPage" href="https://firestaradmin.top/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/head.png">
@@ -214,7 +215,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          C/C++ Technique
+          （一）开发环境搭建
         </h1>
 
         <div class="post-meta">
@@ -223,10 +224,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-08-15 16:21:53 / 修改时间：17:43:29" itemprop="dateCreated datePublished" datetime="2020-08-15T16:21:53+08:00">2020-08-15</time>
+              <time title="创建时间：2020-08-15 22:33:41" itemprop="dateCreated datePublished" datetime="2020-08-15T22:33:41+08:00">2020-08-15</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-16 00:05:40" itemprop="dateModified" datetime="2020-08-16T00:05:40+08:00">2020-08-16</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -234,6 +241,10 @@
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/NOTE/" itemprop="url" rel="index"><span itemprop="name">NOTE</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">ARM嵌入式开发</span></a>
                 </span>
             </span>
 
@@ -248,29 +259,62 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <blockquote>
-<p>我不敢正视你的眼睛，我怕我看你的每一眼都是在表白。 </p>
-</blockquote>
-<h2 id="define宏定义"><a href="#define宏定义" class="headerlink" title="#define宏定义"></a>#define宏定义</h2><h3 id="1-’-’-和-‘-’-的用法"><a href="#1-’-’-和-‘-’-的用法" class="headerlink" title="1.’#’ 和 ‘##’ 的用法"></a>1.’#’ 和 ‘##’ 的用法</h3><p><strong>#运算符</strong><br><strong>#运算符</strong>将一个宏的参数转换为字符串字面量。它仅允许出现在带参数的宏的替换列表中。如：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PRINT_INT(x) printf(#x <span class="meta-string">&quot; = %d\n&quot;</span>, x)</span></span><br></pre></td></tr></table></figure>
-<p><strong>x</strong>之前的#运算符通知预处理器根据PRINT_INT的参数创建一个字符串字面量。<br>因此，调用“PRINT_INT(i/j);”等同于：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;i/j&quot;</span> <span class="string">&quot; = %d\n&quot;</span>, i/j);</span><br></pre></td></tr></table></figure>
+        <h1 id="FTP-File-Transfer-Protocol"><a href="#FTP-File-Transfer-Protocol" class="headerlink" title="FTP(File Transfer Protocol)"></a>FTP(File Transfer Protocol)</h1><h2 id="开启-linux下的-FTP-服务"><a href="#开启-linux下的-FTP-服务" class="headerlink" title="开启 linux下的 FTP 服务"></a>开启 linux下的 FTP 服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install vsftpd</span><br><span class="line">sudo vi /etc/vsftpd.conf</span><br></pre></td></tr></table></figure>
 
-<p>而在C语言中相邻的字符串字面量会被合并<br>因此上边的语句等价于：<strong>printf(“i/j = %d\n”, i/j);</strong></p>
-<hr>
-<p><strong>##运算符</strong><br> <strong>##运算符</strong>可以将两个记号（例如标识符）“粘”在一起，成为一个记号。（##运算符被称为“记号粘合”。）如果其中一个操作数是宏参数，“粘合”会在当形式参数被相应的实际参数替换后发生。</p>
-<p>例如我们需要定义一个加法函数  </p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">int_add</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>打开 vsftpd.conf 文件以后找到如下两行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">local_enable&#x3D;YES</span><br><span class="line">write_enable&#x3D;YES</span><br></pre></td></tr></table></figure>
 
-<p>但是这种情况下，如果我们要计算float类型的数据怎么办？重新在定义一个是可以的，但是如果有更多的类型呢？难道一个个全部定义嘛，这里有更好的办法。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#define GENERIC_ADD(type) \</span><br><span class="line">type type##_add(type a, type b) \</span><br><span class="line">&#123; \</span><br><span class="line">    return a + b; \</span><br><span class="line">&#125; \</span><br></pre></td></tr></table></figure>
+<p>确保上面两行前面没有“#”，有的话就取消掉</p>
+<p>保存退出后，重启服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/vsftpd restart</span><br></pre></td></tr></table></figure>
 
-<p>现在，如果我们需要一个float类型的加法，只需要这一行代码</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GENERIC_ADD(<span class="keyword">float</span>)</span><br></pre></td></tr></table></figure>
 
-<p>预处理器会自动展开为</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">float_add</span><span class="params">(flaot a, <span class="keyword">float</span> b)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="keyword">return</span> a + b; </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
 
+<h2 id="windows-下连接FTP"><a href="#windows-下连接FTP" class="headerlink" title="windows 下连接FTP:"></a>windows 下连接FTP:</h2><p>​    FTP软件中填写对应终端的IP 输入用户名和密码即可</p>
+<h1 id="NFS-Network-File-System"><a href="#NFS-Network-File-System" class="headerlink" title="NFS(Network File System)"></a>NFS(Network File System)</h1><h2 id="NFS-服务开启"><a href="#NFS-服务开启" class="headerlink" title="NFS 服务开启"></a>NFS 服务开启</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install nfs-kernel-server rpcbind</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后创建一个nfs文件夹，以后需要通过网络用的文件都放这里.</p>
+<p>之后配置文件/etc/exports：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/exports</span><br></pre></td></tr></table></figure>
+
+<p>在文件末尾添加如下所示内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxxx&#x2F;nfs *(rw,sync,no_root_squash)</span><br></pre></td></tr></table></figure>
+
+<p>重启 NFS 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/nfs-kernel-server restart</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="SSH安全外壳协议-Secure-Shell"><a href="#SSH安全外壳协议-Secure-Shell" class="headerlink" title="SSH安全外壳协议 (Secure Shell)"></a>SSH安全外壳协议 (Secure Shell)</h1><h2 id="SSH-服务开启"><a href="#SSH-服务开启" class="headerlink" title="SSH 服务开启"></a>SSH 服务开启</h2><p>安装 ssh 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install openssh-server</span><br></pre></td></tr></table></figure>
+
+<p>ssh 的配置文件为/etc/ssh/sshd_config，使用默认配置即可</p>
+<h1 id="交叉编译工具链"><a href="#交叉编译工具链" class="headerlink" title="交叉编译工具链"></a>交叉编译工具链</h1><p>编译 ARM 架构的代码，我们需要一个在 X86 架构的 PC 上运行，可以编译 ARM 架构代码的 GCC 编译器，这个编译器就叫做交叉编译器.</p>
+<h2 id="Linaro-GCC-编译工具链-编译器-安装"><a href="#Linaro-GCC-编译工具链-编译器-安装" class="headerlink" title="Linaro GCC 编译工具链(编译器)安装"></a>Linaro GCC 编译工具链(编译器)安装</h2><p>下载地址：</p>
+<p><a target="_blank" rel="noopener" href="https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/">https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/</a></p>
+<img src="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/2222.png" class="" width="2222">
+
+
+
+<p>有很多种 GCC 交叉编译工具链，因为我们所使用的 I.MX6U-ALPHA 开发板是一个 Cortex-A7 内核的开发板，因此选择 arm-linux-gnueabihf，点击后面的“Binaries”进入可执行文件下载</p>
+<p>创建目录：/usr/local/arm：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir /usr/<span class="built_in">local</span>/arm</span><br></pre></td></tr></table></figure>
+
+<p>将下载的文件放至该目录进行解压</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo tar -vxf gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf.tar.xz</span><br></pre></td></tr></table></figure>
+
+<p>解压完成以后会生成一个名为“gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf”的文件夹，这个文件夹里面就是我们的交叉编译工具链.</p>
+<p>修改环境变量，使用 VI 打开/etc/profile 文件，命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/profile</span><br></pre></td></tr></table></figure>
+
+<p>打开/etc/profile 以后，在最后面输入如下所示内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH&#x3D;$PATH:&#x2F;usr&#x2F;local&#x2F;arm&#x2F;gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf&#x2F;bin</span><br></pre></td></tr></table></figure>
+
+<p>重启 Ubuntu 系统，交叉编译工具链(编译器)就安装成功了</p>
+<p>查看版本号</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-gnueabihf-gcc -v</span><br></pre></td></tr></table></figure>
+
+<p>如果交叉编译器安装正确的话就会显示版本号</p>
 
     </div>
 
@@ -281,9 +325,8 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/note/" rel="tag"><i class="fa fa-tag"></i> note</a>
-              <a href="/tags/C/" rel="tag"><i class="fa fa-tag"></i> C</a>
-              <a href="/tags/C/" rel="tag"><i class="fa fa-tag"></i> C++</a>
+              <a href="/tags/Embedded/" rel="tag"><i class="fa fa-tag"></i> Embedded</a>
+              <a href="/tags/ARM/" rel="tag"><i class="fa fa-tag"></i> ARM</a>
           </div>
 
         
@@ -292,12 +335,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/08/15/SELF-USING/categories-and-tags/" rel="prev" title="我的分类和标签统计">
-      <i class="fa fa-chevron-left"></i> 我的分类和标签统计
+    <a href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%AB%98%E7%BA%A7C%E7%AC%94%E8%AE%B0/" rel="prev" title="高级C嵌入式深入知识点记录">
+      <i class="fa fa-chevron-left"></i> 高级C嵌入式深入知识点记录
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%AB%98%E7%BA%A7C%E7%AC%94%E8%AE%B0/" rel="next" title="高级C嵌入式深入知识点记录">
-      高级C嵌入式深入知识点记录 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/" rel="next" title="（二）I.MX6UL 启动方式浅析">
+      （二）I.MX6UL 启动方式浅析 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -358,7 +401,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#define%E5%AE%8F%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">#define宏定义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E2%80%99-%E2%80%99-%E5%92%8C-%E2%80%98-%E2%80%99-%E7%9A%84%E7%94%A8%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">1.’#’ 和 ‘##’ 的用法</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#FTP-File-Transfer-Protocol"><span class="nav-number">1.</span> <span class="nav-text">FTP(File Transfer Protocol)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%90%AF-linux%E4%B8%8B%E7%9A%84-FTP-%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.1.</span> <span class="nav-text">开启 linux下的 FTP 服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#windows-%E4%B8%8B%E8%BF%9E%E6%8E%A5FTP"><span class="nav-number">1.2.</span> <span class="nav-text">windows 下连接FTP:</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NFS-Network-File-System"><span class="nav-number">2.</span> <span class="nav-text">NFS(Network File System)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#NFS-%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%90%AF"><span class="nav-number">2.1.</span> <span class="nav-text">NFS 服务开启</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SSH%E5%AE%89%E5%85%A8%E5%A4%96%E5%A3%B3%E5%8D%8F%E8%AE%AE-Secure-Shell"><span class="nav-number">3.</span> <span class="nav-text">SSH安全外壳协议 (Secure Shell)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SSH-%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%90%AF"><span class="nav-number">3.1.</span> <span class="nav-text">SSH 服务开启</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E5%B7%A5%E5%85%B7%E9%93%BE"><span class="nav-number">4.</span> <span class="nav-text">交叉编译工具链</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linaro-GCC-%E7%BC%96%E8%AF%91%E5%B7%A5%E5%85%B7%E9%93%BE-%E7%BC%96%E8%AF%91%E5%99%A8-%E5%AE%89%E8%A3%85"><span class="nav-number">4.1.</span> <span class="nav-text">Linaro GCC 编译工具链(编译器)安装</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -533,7 +576,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'my-blog-commonts',
       owner       : 'firestaradmin',
       admin       : ['firestaradmin'],
-      id          : '643884940b4671a0d0f9405b9651e315',
+      id          : 'a279db9e5899026b899a51f799ebbd32',
         language: 'zh-CN',
       distractionFreeMode: true
     });

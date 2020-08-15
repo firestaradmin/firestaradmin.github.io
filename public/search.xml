@@ -4,9 +4,230 @@
   
     
     <entry>
+      <title>linux内核常用头文件总结</title>
+      <link href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/linux%E5%86%85%E6%A0%B8%E5%B8%B8%E7%94%A8%E5%A4%B4%E6%96%87%E4%BB%B6%E6%80%BB%E7%BB%93/"/>
+      <url>/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/linux%E5%86%85%E6%A0%B8%E5%B8%B8%E7%94%A8%E5%A4%B4%E6%96%87%E4%BB%B6%E6%80%BB%E7%BB%93/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+          <category> ARM嵌入式开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Embedded </tag>
+            
+            <tag> ARM </tag>
+            
+            <tag> Linux </tag>
+            
+            <tag> 驱动开发 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>linux驱动下of操作函数</title>
+      <link href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/linux%E9%A9%B1%E5%8A%A8%E4%B8%8Bof%E6%93%8D%E4%BD%9C%E5%87%BD%E6%95%B0/"/>
+      <url>/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/linux%E9%A9%B1%E5%8A%A8%E4%B8%8Bof%E6%93%8D%E4%BD%9C%E5%87%BD%E6%95%B0/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+          <category> ARM嵌入式开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Embedded </tag>
+            
+            <tag> ARM </tag>
+            
+            <tag> Linux </tag>
+            
+            <tag> 驱动开发 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>linux字符设备驱动框架编写</title>
+      <link href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/linux%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%A1%86%E6%9E%B6%E7%BC%96%E5%86%99/"/>
+      <url>/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/linux%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%A1%86%E6%9E%B6%E7%BC%96%E5%86%99/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+          <category> ARM嵌入式开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Embedded </tag>
+            
+            <tag> ARM </tag>
+            
+            <tag> Linux </tag>
+            
+            <tag> 驱动开发 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>uboot-bootargs&amp;bootcmd</title>
+      <link href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/uboot-bootargs&amp;bootcmd/"/>
+      <url>/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/uboot-bootargs&amp;bootcmd/</url>
+      
+        <content type="html"><![CDATA[<h1 id="Uboot下bootcmd和bootargs笔记"><a href="#Uboot下bootcmd和bootargs笔记" class="headerlink" title="Uboot下bootcmd和bootargs笔记"></a>Uboot下bootcmd和bootargs笔记</h1><p>@author:firestaradmin 2020年5月2日18:52:25</p><h2 id="1-bootcmd"><a href="#1-bootcmd" class="headerlink" title="1. bootcmd"></a>1. bootcmd</h2><ul><li><p>bootcmd 在前面已经说了很多次了，bootcmd 保存着 uboot 默认命令，uboot 倒计时结束以后就会执行 bootcmd 中的命令。</p></li><li><p>如果 EMMC 或者 NAND 中没有保存 bootcmd 的值，那么 uboot 就会使用默认的值，板子第一次运行 uboot 的时候都会使用默认值来设置 bootcmd 环境变量。保存在文件 include/env_default.h</p></li></ul><p>例如开机自动从mmc设备加载内核和设备树文件并启动linux：</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bootcmd=fatload mmc 0:1 80800000 zImage;fatload mmc0:1 83000000 imx6ull-lxg-emmc.dtb;bootz 80800000 – 83000000</span><br></pre></td></tr></table></figure><h2 id="2-bootargs"><a href="#2-bootargs" class="headerlink" title="2. bootargs"></a>2. bootargs</h2><ul><li>bootargs 保存着 uboot 传递给 Linux 内核的参数，默认配置在和bootcmd差不多的地方</li></ul><p>例：</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bootargs=console=ttymxc0,115200 root=/dev/mmcblk1p2 rootwait rw</span><br></pre></td></tr></table></figure><p><strong>设置控制台为ttymxc0 波特率115200</strong> </p><p><strong>root：根文件系统挂载路径</strong></p><p><strong>rootwait：等待FLASH启动或是一些别的初始化</strong> </p><p><strong>rw: 读写权限</strong></p><p><strong>1 、console</strong></p><p>console 用来设置 linux 终端(或者叫控制台)，也就是通过什么设备来和 Linux 进行交互，是串口还是 LCD 屏幕？如果是串口的话应该是串口几等等。一般设置串口作为 Linux 终端，这样我们就可以在电脑上通过 SecureCRT 来和 linux 交互了。这里设置 console 为 ttymxc0，因为 linux启动以后 I.MX6ULL 的串口 1 在 linux 下的设备文件就是/dev/ttymxc0，在 Linux 下，一切皆文件。ttymxc0 后面有个“,115200”，这是设置串口的波特率，console=ttymxc0,115200 综合起来就是设置 ttymxc0（也就是串口 1）作为 Linux 的终端，并且串口波特率设置为 115200。</p><p><strong>2 、root</strong></p><p>root 用来设置根文件系统的位置，root=/dev/mmcblk1p2 用于指明根文件系统存放在</p><p>mmcblk1 设备的分区 2 中。root 后面有“rootwait rw”，rootwait 表示等待 mmc 设备初始化完成以后再挂载，否则的话mmc 设备还没初始化完成就挂载根文件系统会出错的。rw 表示根文件系统是可以读写的</p><p><strong>3 、rootfstype</strong></p><p>此选项一般配置 root 一起使用，rootfstype 用于指定根文件系统类型，如果根文件系统为ext 格式的话此选项无所谓。如果根文件系统是 yaffs、jffs 或 ubifs 的话就需要设置此选项，指定根文件系统的类型。 bootargs 常设置的选项就这三个</p><h3 id="挂载根文件至mmc设备："><a href="#挂载根文件至mmc设备：" class="headerlink" title="挂载根文件至mmc设备："></a>挂载根文件至mmc设备：</h3><p>例如：</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bootargs=console=ttymxc0,115200 root=/dev/mmcblk0p2 rootwait rw</span><br></pre></td></tr></table></figure><h3 id="挂载根文件至nfs网络下："><a href="#挂载根文件至nfs网络下：" class="headerlink" title="挂载根文件至nfs网络下："></a>挂载根文件至nfs网络下：</h3><p>例如：</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setenv bootargs <span class="string">&#x27;console=ttymxc0,115200 root=/dev/nfs rw nfsroot=192.168.0.111:/home/firestaradmin/linux/nfs/rootfs ip=192.168.0.112:192.168.0.111:192.168.0.1:255.255.255.0::eth0:off&#x27;</span></span><br></pre></td></tr></table></figure><p>在 Linux 内核源码里面有相应的文档讲解如何设置，文档为Documentation/filesystems/nfs/nfsroot.txt，格式如下：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root&#x3D;&#x2F;dev&#x2F;nfs nfsroot&#x3D;[&lt;server-ip&gt;:]&lt;root-dir&gt;[,&lt;nfs-options&gt;] </span><br><span class="line">ip&#x3D;&lt;client-ip&gt;:&lt;server-ip&gt;:&lt;gw-ip&gt;:&lt;netmask&gt;:</span><br><span class="line">&lt;hostname&gt;:&lt;device&gt;:&lt;autoconf&gt;:&lt;dns0-ip&gt;:&lt;dns1-ip&gt;</span><br></pre></td></tr></table></figure><p><server-ip>：   服务器 IP 地址，也就是存放根文件系统主机的 IP 地址，那就是Ubuntu 的 IP地址，比如我的 Ubuntu 主机 IP 地址为 192.168.1.250。</p><p><root-dir> ：   根文件系统的存放路径，比如我的就是/home/firestaradmin/linux/nfs/rootfs。</p><p><nfs-options>：  NFS 的其他可选选项，一般不设置。</p><p><client-ip> ：   客户端 IP 地址，也就是我们开发板的 IP 地址，Linux 内核启动以后就会使用此 IP 地址来配置开发板。</p><p><server-ip> ：   服务器 IP 地址，前面已经说了。</p><p><gw-ip> ：     网关地址，我的就是 192.168.1.1。</p><p><netmask>：    子网掩码，我的就是 255.255.255.0。</p><p><hostname>：   客户机的名字，一般不设置，此值可以空着。</p><p><device> ：     设备名，也就是网卡名，一般是 eth0，eth1….，正点原子的 I.MX6U-ALPHA 开发板的 ENET2 为 eth0，ENET1 为 eth1。如果你的电脑只有一个网卡，那么基本只能是 eth0。这里我们使用 ENET2，所以网卡名就是 eth0。</p><p><autoconf> ：   自动配置，一般不使用，所以设置为 off。</p><p><dns0-ip> ：   DNS0 服务器 IP 地址，不使用。</p><p><dns1-ip> ：   DNS1 服务器 IP 地址，不使用。</p><h3 id="Pc机Ubuntn-的nfs配置："><a href="#Pc机Ubuntn-的nfs配置：" class="headerlink" title="Pc机Ubuntn 的nfs配置："></a>Pc机Ubuntn 的nfs配置：</h3><p>安装NFS服务：</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install nfs-kernel-server rpcbind</span><br></pre></td></tr></table></figure><p>配置NFS文件：</p><p>​    <strong>打开 nfs 配置文件/etc/exports：</strong></p><p>​    <strong>打开/etc/exports 以后在文件后面添加如下所示内容：</strong></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;home&#x2F;firestaradmin&#x2F;linux&#x2F;nfs \*(rw,sync,no_root_squash)</span><br></pre></td></tr></table></figure><p>重启 NFS 服务，使用命令如下：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/nfs-kernel-server restart</span><br></pre></td></tr></table></figure><hr><h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setenv bootargs &#39;console&#x3D;ttymxc0,115200 root&#x3D;&#x2F;dev&#x2F;nfs rw nfsroot&#x3D;192.168.0.111:&#x2F;home&#x2F;firestaradmin&#x2F;linux&#x2F;nfs&#x2F;rootfs ip&#x3D;192.168.0.112:192.168.0.111:192.168.0.1:255.255.255.0::eth0:off&#39;</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setenv bootargs &#39;console&#x3D;ttymxc0,115200 root&#x3D;&#x2F;dev&#x2F;nfs rw nfsroot&#x3D;192.168.0.111:&#x2F;home&#x2F;firestaradmin&#x2F;linux&#x2F;nfs&#x2F;rootfs ip&#x3D;192.168.0.112:192.168.0.111:192.168.0.1:255.255.255.0::eth0:off&#39;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+          <category> ARM嵌入式开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Embedded </tag>
+            
+            <tag> ARM </tag>
+            
+            <tag> Linux </tag>
+            
+            <tag> uboot </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>linux下烧录至SD卡启动</title>
+      <link href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/linux%E4%B8%8B%E7%83%A7%E5%BD%95%E8%87%B3SD%E5%8D%A1%E5%90%AF%E5%8A%A8/"/>
+      <url>/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/linux%E4%B8%8B%E7%83%A7%E5%BD%95%E8%87%B3SD%E5%8D%A1%E5%90%AF%E5%8A%A8/</url>
+      
+        <content type="html"><![CDATA[<h1 id="linux下烧录uboot、linux-kernel、dtb、rootfs到SD卡启动"><a href="#linux下烧录uboot、linux-kernel、dtb、rootfs到SD卡启动" class="headerlink" title="linux下烧录uboot、linux-kernel、dtb、rootfs到SD卡启动"></a>linux下烧录uboot、linux-kernel、dtb、rootfs到SD卡启动</h1><p><strong>[假设识别u盘为设备/dev/sdb]</strong></p><p>@author:firestaradmin 2020年4月28日19:15:33</p><h2 id="0-清除SD卡前1024MB的数据-dd命令（可选步骤）"><a href="#0-清除SD卡前1024MB的数据-dd命令（可选步骤）" class="headerlink" title="0.清除SD卡前1024MB的数据 dd命令（可选步骤）"></a>0.清除SD卡前1024MB的数据 dd命令（可选步骤）</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dd <span class="keyword">if</span>=/dev/zero of=/dev/sdb bs=1024 count=1024</span><br></pre></td></tr></table></figure><ul><li><p><strong>if=文件名</strong>：输入文件名，默认为标准输入。即指定源文件。</p><p><strong>/dev/zero</strong>，是一个输入设备，你可你用它来初始化文件。该设备无穷尽地提供0，可以使用任何你需要的数目——设备提供的要多的多。他可以用于向设备或文件写入字符串0。 </p></li><li><p><strong>of=文件名</strong>：输出文件名，默认为标准输出。即指定目的文件。 </p></li><li><p><strong>ibs=bytes</strong>：一次读入bytes个字节，即指定一个块大小为bytes个字节。</p><p><strong>obs=bytes</strong>：一次输出bytes个字节，即指定一个块大小为bytes个字节。 </p><p><strong>bs=bytes</strong>：同时设置读入/输出的块大小为bytes个字节。</p></li><li><p><strong>count=blocks</strong>：仅拷贝blocks个块，块大小等于ibs指定的字节数。     </p></li></ul><h2 id="1-插入SD卡并分区-fdisk命令"><a href="#1-插入SD卡并分区-fdisk命令" class="headerlink" title="1. 插入SD卡并分区 fdisk命令"></a>1. 插入SD卡并分区 fdisk命令</h2><p>Linux下使用fdisk命令进行分区：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fdisk /dev/sdb</span><br></pre></td></tr></table></figure><p>需要建立两个分区：  </p><ul><li><p>p1为fat32 用于存放linux-kernel和dtb文件（一般64MB）</p></li><li><p>p2为ext4 用于存放根文件系统（一般剩余空间都给它）</p></li></ul><p>（注意，第一个分区起始扇区需要为uboot保留一定空间 所以在扇区大小为512B时，一般第一个起始扇区地址为8192即512*8192B=4MB保留给uboot）</p><h2 id="2-使用mkfs命令进行分区的格式化"><a href="#2-使用mkfs命令进行分区的格式化" class="headerlink" title="2. 使用mkfs命令进行分区的格式化"></a>2. 使用mkfs命令进行分区的格式化</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkfs.vfat -F 32 -n <span class="string">&quot;boot&quot;</span> /dev/sdb1</span><br></pre></td></tr></table></figure><p>将sd卡分区1格式化为FAT32</p><p><strong>-n</strong> “boot” 设置卷标为boot</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkfs.ext4 -F -L <span class="string">&quot;rootfs&quot;</span> /dev/sdb2</span><br></pre></td></tr></table></figure><p>将sd卡分区2格式化为ext4</p><p><strong>-L</strong> “rootfs” 设置卷标为rootfs</p><p>格式化前需要先取消挂载，使用umount命令</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">umount /dev/sdb1</span><br></pre></td></tr></table></figure><h2 id="3-使用dd命令烧写uboot-imx到sd卡起始位置"><a href="#3-使用dd命令烧写uboot-imx到sd卡起始位置" class="headerlink" title="3. 使用dd命令烧写uboot.imx到sd卡起始位置"></a>3. 使用dd命令烧写uboot.imx到sd卡起始位置</h2><p>在uboot目录下打开终端 </p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dd <span class="keyword">if</span>=uboot.imx of=/dev/sdb bs=1024 seek=1 conv=fsync</span><br></pre></td></tr></table></figure><ul><li>if=文件名：输入文件名，默认为标准输入。即指定源文件。 </li></ul><ul><li>of=文件名：输出文件名，默认为标准输出。即指定目的文件。 </li></ul><ul><li><p>ibs=bytes：一次读入bytes个字节，即指定一个块大小为bytes个字节。</p><p>obs=bytes：一次输出bytes个字节，即指定一个块大小为bytes个字节。</p><p>bs=bytes：同时设置读入/输出的块大小为bytes个字节。</p></li><li><p>seek=blocks：从输出文件开头跳过blocks个块后再开始复制。</p></li></ul><ul><li><p>conv=&lt;关键字&gt;，关键字可以有以下11种：</p><ul><li><p>sync：将每个输入块填充到ibs个字节，不足部分用空（NUL）字符补齐。</p><p>……</p></li></ul></li></ul><h2 id="4-将zImage和dtb设备树文件拷贝到第一个分区"><a href="#4-将zImage和dtb设备树文件拷贝到第一个分区" class="headerlink" title="4. 将zImage和dtb设备树文件拷贝到第一个分区"></a>4. 将zImage和dtb设备树文件拷贝到第一个分区</h2><p>将p1挂载到某个地方</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir /media/boot</span><br><span class="line">mount /dev/sdb1 /media/boot/</span><br><span class="line">cp zImage *.dtb /media/boot/</span><br></pre></td></tr></table></figure><h2 id="5-拷贝根文件系统至第二个分区"><a href="#5-拷贝根文件系统至第二个分区" class="headerlink" title="5. 拷贝根文件系统至第二个分区"></a><strong>5.</strong> <strong>拷贝根文件系统至第二个分区</strong></h2><h3 id="1-压缩根文件系统"><a href="#1-压缩根文件系统" class="headerlink" title="1.压缩根文件系统"></a>1.压缩根文件系统</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> rootfs/</span><br><span class="line">tar -vcjf rootfs.tar.bz2 *</span><br></pre></td></tr></table></figure><h3 id="2-挂载设备并解压"><a href="#2-挂载设备并解压" class="headerlink" title="2.挂载设备并解压"></a>2.挂载设备并解压</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir /media/rootfs</span><br><span class="line">mount /dev/sdb2 /media/rootfs/</span><br><span class="line">tar jxfm \**rootfs.tar.bz2\** -C /media/rootfs/</span><br></pre></td></tr></table></figure><h2 id="6-插入开发板，并修改bootcmd和bootargs启动系统进行测试"><a href="#6-插入开发板，并修改bootcmd和bootargs启动系统进行测试" class="headerlink" title="6. 插入开发板，并修改bootcmd和bootargs启动系统进行测试"></a>6. 插入开发板，并修改bootcmd和bootargs启动系统进行测试</h2><h1 id="命令附录："><a href="#命令附录：" class="headerlink" title="命令附录："></a>命令附录：</h1><h2 id="fdisk命令："><a href="#fdisk命令：" class="headerlink" title="fdisk命令："></a>fdisk命令：</h2><h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fdisk [必要参数][选择参数]</span><br></pre></td></tr></table></figure><h3 id="必要参数："><a href="#必要参数：" class="headerlink" title="必要参数："></a>必要参数：</h3><ul><li><p>-l 列出素所有分区表</p></li><li><p>-u 与”-l”搭配使用，显示分区数目</p></li></ul><h3 id="选择参数："><a href="#选择参数：" class="headerlink" title="选择参数："></a>选择参数：</h3><ul><li><p>-s&lt;分区编号&gt; 指定分区</p></li><li><p>-v 版本信息</p></li></ul><h3 id="菜单操作说明"><a href="#菜单操作说明" class="headerlink" title="菜单操作说明"></a>菜单操作说明</h3><ul><li><p>m ：显示菜单和帮助信息</p></li><li><p>a ：活动分区标记/引导分区</p></li><li><p>d ：删除分区</p></li><li><p>l ：显示分区类型</p></li><li><p>n ：新建分区</p></li><li><p>p ：显示分区信息</p></li><li><p>q ：退出不保存</p></li><li><p>t ：设置分区号</p></li><li><p>v ：进行分区检查</p></li><li><p>w ：保存修改</p></li><li><p>x ：扩展应用，高级功能</p></li></ul><h2 id="mkfs命令："><a href="#mkfs命令：" class="headerlink" title="mkfs命令："></a>mkfs命令：</h2><p>Linux mkfs命令用于在特定的分区上建立 linux 文件系统</p><p>使用方式 : </p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkfs [-V] [-t fstype] [fs-options] filesys [blocks]</span><br></pre></td></tr></table></figure><h3 id="参数-："><a href="#参数-：" class="headerlink" title="参数 ："></a>参数 ：</h3><ul><li><p>device ： 预备检查的硬盘分区，例如：/dev/sda1</p></li><li><p>-V : 详细显示模式</p></li><li><p>-t : 给定档案系统的型式，Linux 的预设值为 ext2</p></li><li><p>-c : 在制做档案系统前，检查该partition 是否有坏轨</p></li><li><p>-l bad_blocks_file : 将有坏轨的block资料加到 bad_blocks_file 里面</p></li><li><p>block : 给定 block 的大小</p></li></ul><h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><ul><li><p>在 /dev/hda5 上建一个 msdos 的档案系统，同时检查是否有坏轨存在，并且将过程详细列出来 :</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkfs -V -t msdos -c /dev/hda5</span><br></pre></td></tr></table></figure></li><li><p>将sda6分区格式化为ext3格式</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mfks -t ext3 /dev/sda6 </span><br></pre></td></tr></table></figure><p><strong>注意：这里的文件系统是要指定的，比如 ext3 ；reiserfs ；ext2 ；fat32 ；msdos 等。</strong></p></li></ul><h2 id="dd命令："><a href="#dd命令：" class="headerlink" title="dd命令："></a>dd命令：</h2><p>Linux dd命令用于读取、转换并输出数据。</p><p>dd可从标准输入或文件中读取数据，根据指定的格式来转换数据，再输出到文件、设备或标准输出。</p><p>如我们上面使用的命令</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dd <span class="keyword">if</span>=/dev/zero of=/dev/sdb bs=1024 count=1024</span><br><span class="line">dd <span class="keyword">if</span>=uboot.imx of=/dev/sdb bs=1024 seek=1 conv=fsync</span><br></pre></td></tr></table></figure><h3 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明:"></a>参数说明:</h3><p>  if=文件名：输入文件名，默认为标准输入。即指定源文件。</p><p>  of=文件名：输出文件名，默认为标准输出。即指定目的文件。</p><p>  ibs=bytes：一次读入bytes个字节，即指定一个块大小为bytes个字节。</p><p>  obs=bytes：一次输出bytes个字节，即指定一个块大小为bytes个字节。</p><p>  bs=bytes：同时设置读入/输出的块大小为bytes个字节。</p><p>  cbs=bytes：一次转换bytes个字节，即指定转换缓冲区大小。</p><p>  skip=blocks：从输入文件开头跳过blocks个块后再开始复制。</p><p>  seek=blocks：从输出文件开头跳过blocks个块后再开始复制。</p><p>  count=blocks：仅拷贝blocks个块，块大小等于ibs指定的字节数。</p><p>  conv=&lt;关键字&gt;，关键字可以有以下11种：</p><p>​    conversion：用指定的参数转换文件。</p><p>​    ascii：转换ebcdic为ascii</p><p>​    ebcdic：转换ascii为ebcdic</p><p>​    ibm：转换ascii为alternate ebcdic</p><p>​    block：把每一行转换为长度为cbs，不足部分用空格填充</p><p>​    unblock：使每一行的长度都为cbs，不足部分用空格填充</p><p>​    lcase：把大写字符转换为小写字符</p><p>​    ucase：把小写字符转换为大写字符</p><p>​    swab：交换输入的每对字节</p><p>​    noerror：出错时不停止</p><p>​    notrunc：不截短输出文件</p><p>​    sync：将每个输入块填充到ibs个字节，不足部分用空（NUL）字符补齐。</p><p>​    –help：显示帮助信息</p><p>​    –version：显示版本信息</p><h2 id="tar命令"><a href="#tar命令" class="headerlink" title="tar命令:"></a>tar命令:</h2><h3 id="1．命令格式："><a href="#1．命令格式：" class="headerlink" title="1．命令格式："></a>1．命令格式：</h3><p>tar [必要参数] [选择参数] [文件] </p><h3 id="2．命令功能："><a href="#2．命令功能：" class="headerlink" title="2．命令功能："></a>2．命令功能：</h3><p>用来压缩和解压文件。tar本身不具有压缩功能。他是调用压缩功能实现的 </p><h3 id="3．命令参数："><a href="#3．命令参数：" class="headerlink" title="3．命令参数："></a>3．命令参数：</h3><p>必要参数有如下：</p><p>-A 新增压缩文件到已存在的压缩</p><p>-B 设置区块大小</p><p>-c 建立新的压缩文件</p><p>-d 记录文件的差别</p><p>-r 添加文件到已经压缩的文件</p><p>-u 添加改变了和现有的文件到已经存在的压缩文件</p><p>-x 从压缩的文件中提取文件</p><p>-t 显示压缩文件的内容</p><p>-z 支持gzip解压文件</p><p>-j 支持bzip2解压文件</p><p>-Z 支持compress解压文件</p><p>-v 显示操作过程</p><p>-l 文件系统边界设置</p><p>-k 保留原有文件不覆盖</p><p>-m 保留文件不被覆盖</p><p>-W 确认压缩文件的正确性</p><p>可选参数如下：</p><p>-b 设置区块数目</p><p>-C 切换到指定目录</p><p>-f 指定压缩文件</p><p>–help 显示帮助信息</p><p>–version 显示版本信息</p><h3 id="4．常见解压-压缩命令"><a href="#4．常见解压-压缩命令" class="headerlink" title="4．常见解压/压缩命令"></a>4．常见解压/压缩命令</h3><ul><li><p>tar </p><p>解包：tar xvf FileName.tar</p><p>打包：tar cvf FileName.tar DirName</p><p><strong>（注：tar是打包，不是压缩！）</strong></p></li><li><p>.gz</p><p>解压1：gunzip FileName.gz</p><p>解压2：gzip -d FileName.gz</p><p>压缩：gzip FileName</p></li><li><p>.tar.gz 和 .tgz</p><p>解压：tar zxvf FileName.tar.gz</p><p>压缩：tar zcvf FileName.tar.gz DirName</p></li></ul><ul><li><p>.bz2</p><p>解压1：bzip2 -d FileName.bz2</p><p>解压2：bunzip2 FileName.bz2</p><p>压缩： bzip2 -z FileName</p></li></ul><ul><li><p>.tar.bz2</p><p>解压：tar jxvf FileName.tar.bz2</p><p>压缩：tar jcvf FileName.tar.bz2 DirName</p></li></ul><ul><li><p>.bz</p><p>解压1：bzip2 -d FileName.bz</p><p>解压2：bunzip2 FileName.bz</p><p>压缩：未知</p></li></ul><ul><li><p>.tar.bz</p><p>解压：tar jxvf FileName.tar.bz</p><p>压缩：未知</p></li></ul><ul><li><p>.Z</p><p>解压：uncompress FileName.Z</p><p>压缩：compress FileName</p></li></ul><ul><li><p>.tar.Z</p><p>解压：tar Zxvf FileName.tar.Z</p><p>压缩：tar Zcvf FileName.tar.Z DirName</p></li></ul><ul><li><p>.zip</p><p>解压：unzip FileName.zip</p><p>压缩：zip FileName.zip DirName</p></li></ul><ul><li><p>.rar</p><p>解压：rar x FileName.rar</p><p>压缩：rar a FileName.rar DirName</p></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+          <category> ARM嵌入式开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Embedded </tag>
+            
+            <tag> ARM </tag>
+            
+            <tag> Linux </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>（二）I.MX6UL 启动方式浅析</title>
+      <link href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/"/>
+      <url>/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/</url>
+      
+        <content type="html"><![CDATA[<h1 id="BOOT启动方式选择"><a href="#BOOT启动方式选择" class="headerlink" title="BOOT启动方式选择"></a>BOOT启动方式选择</h1><p>I.MX6U 芯片上电以后，芯片会根据 BOOT_MODE[1:0]的设置来选择 BOOT 方式。</p><p>通过修改 BOOT_MODE[1:0]对应的 GPIO 高低电平来选择启动方式</p><img src="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/image-20200815222949425.png" class="" title="image-20200815222949425"><h2 id="串行下载"><a href="#串行下载" class="headerlink" title="串行下载"></a>串行下载</h2><p>当 BOOT_MODE1 为 0，BOOT_MODE0 为 1 的时候此模式使能，串行下载的意思就是可以通过 USB 或者UART 将代码下载到板子上的外置存储设备中，我们可以使用OTG1这个USB口向开发板上的 SD/EMMC、NAND 等存储设备下载代码。</p><h2 id="内部-BOOT模式"><a href="#内部-BOOT模式" class="headerlink" title="内部 BOOT模式"></a>内部 BOOT模式</h2><p>当 BOOT_MODE1 为 1，BOOT_MODE0 为 0 的时候此模式使能，在此模式下，芯片会执行内部的 boot ROM 代码，这段 boot ROM 代码会进行硬件初始化(一部分外设)，然后从 boot 设备(就是存放代码的设备、比如 SD/EMMC、NAND)中将代码拷贝出来复制到指定的 RAM 中，一般是 DDR。</p><p><strong>BOOT ROM</strong> <strong>工作内容：</strong></p><ul><li><p>初始化时钟</p></li><li><p>为了加快执行速度会打开 MMU 和 Cache，下载镜像的时候 L1 ICache 会打开，验证镜像的时候 L1 DCache、L2 Cache 和 MMU 都会打开。一旦镜像验证完成，boot ROM就会关闭 L1 DCache、L2 Cache 和 MMU。</p></li><li><p>中断向量偏移会被设置到 boot ROM 的起始位置，当 boot ROM 启动了用户代码以后就可以重新设置中断向量偏移了。一般是重新设置到我们用户代码的开始地方</p></li></ul><h3 id="启动设备"><a href="#启动设备" class="headerlink" title="启动设备"></a>启动设备</h3><p>当 BOOT_MODE 设置为内部 BOOT 模式以后，可以从以下设备中启动：</p><p>①、接到 EIM 接口的 CS0 上的 16 位 NOR Flash。</p><p>②、接到 EIM 接口的 CS0 上的 OneNAND Flash。</p><p>③、接到 GPMI 接口上的 MLC/SLC NAND Flash，NAND Flash 页大小支持 2KByte、4KByte和 8KByte，8 位宽。</p><p>④、Quad SPI Flash。</p><p>⑤、接到 USDHC 接口上的 SD/MMC/eSD/SDXC/eMMC 等设备。</p><p>⑥、SPI 接口的 EEPROM。</p><p><strong>这些启动设备如何选择呢？</strong></p><p>BOOT_CFG1[7:0]、BOOT_CFG2[7:0]和 BOOT_CFG4[7:0]这 24 个配置 IO，这 24 个配置 IO 刚好对应着 LCD 的 24 根数据线 LCD_DATA0~LCDDATA23，当启动完成以后这 24 个 IO 就可以作为 LCD 的数据线使用。这 24 根线和 BOOT_MODE1、BOOT_MODE0 共同组成了 I.MX6U的启动选择引脚，如图所示：</p><img src="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/clip_image005.png" class="" title="clip_image005"><img src="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/clip_image002-1597504407827.jpg" class="" title="clip_image002"><img src="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/clip_image004.jpg" class="" title="clip_image004"><h1 id="镜像烧写（启动程序分析）"><a href="#镜像烧写（启动程序分析）" class="headerlink" title="镜像烧写（启动程序分析）"></a>镜像烧写（启动程序分析）</h1><p>前面我们设置好 BOOT 以后就能从指定的设备启动了，我们使用 imxdownload 这个软件将 led.bin 烧写到了 SD 卡中。imxdownload 会在 led.bin前面添加一些头信息，重新生成一个叫做 load.imx 的文件，最终实际烧写的是 laod.imx。</p><p>学习 STM32 的时候我们可以直接将编译生成的.bin 文件烧写到 STM32 内部 flash 里面，但是 I.MX6U 不能直接烧写编译生成的.bin 文件，我们需要在.bin 文件前面添加一些头信息构成满足 I.MX6U 需求的最终可烧写文件，I.MX6U 的最终可烧写文件组成如下：</p><p><strong>①、Image vector table</strong>，简称 IVT，IVT 里面包含了一系列的地址信息，这些地址信息在ROM 中按照固定的地址存放着。</p><p><strong>②、Boot data</strong>，启动数据，包含了镜像要拷贝到哪个地址，拷贝的大小是多少等等。</p><p><strong>③、Device configuration data</strong>，简称 DCD，设备配置信息，重点是 DDR3 的初始化配置。</p><p><strong>④、用户代码可执行文件</strong>，比如 led.bin。</p><p>可以看出最终烧写到 I.MX6U 中的程序其组成为：IVT+Boot data+DCD+.bin。imxdownload 所生成的 load.imx 就是在 led.bin 前面加上 IVT+Boot data+DCD。<strong>内部 BootROM 会将 load.imx 拷贝到 DDR 中，用户代码是要一定要从 0X87800000 这个地方开始的，因为链接地址为 0X87800000</strong>，load.imx 在用户代码前面又有 3KByte 的 IVT+Boot Data+DCD 数据，下面会讲为什么是 3KByte，<strong>因此 load.imx 在 DDR 中的起始地址就是 0X87800000-3072=0X877FF400。</strong></p><p>​    <strong>内部 Boot ROM 要求 IVT 应该放到指定的位置，不同的启动设备位置不同，而 IVT 在整个 load.imx 的最前面，其实就相当于要求 load.imx 在烧写的时候应该烧写到存储设备的指定位置去</strong>。整个位置都是相对于存储设备的起始地址的偏移，如图所示：</p><img src="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/clip_image007.jpg" class="" title="clip_image007"><p>以 SD/EMMC 为例，IVT 偏移为 1Kbyte，IVT+Boot data+DCD 的总大小为 4KByte-</p><p>1KByte=3KByte。假如 SD/EMMC 每个扇区为 512 字节，那么 load.imx 应该从第三个扇区开始烧写。</p><p>​    因为SD/EMMC模式为例，整个Initial Load Region Size为4KB，包括前面的IVT1KB的偏移，所以.bin文件前面有imx添加的3KB信息</p><p><strong>具体详情请参考正点原子 I.MX6ULL 开发手册第九章9.4节</strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+          <category> ARM嵌入式开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Embedded </tag>
+            
+            <tag> ARM </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>（一）开发环境搭建</title>
+      <link href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
+      <url>/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</url>
+      
+        <content type="html"><![CDATA[<h1 id="FTP-File-Transfer-Protocol"><a href="#FTP-File-Transfer-Protocol" class="headerlink" title="FTP(File Transfer Protocol)"></a>FTP(File Transfer Protocol)</h1><h2 id="开启-linux下的-FTP-服务"><a href="#开启-linux下的-FTP-服务" class="headerlink" title="开启 linux下的 FTP 服务"></a>开启 linux下的 FTP 服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install vsftpd</span><br><span class="line">sudo vi /etc/vsftpd.conf</span><br></pre></td></tr></table></figure><p>打开 vsftpd.conf 文件以后找到如下两行：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">local_enable&#x3D;YES</span><br><span class="line">write_enable&#x3D;YES</span><br></pre></td></tr></table></figure><p>确保上面两行前面没有“#”，有的话就取消掉</p><p>保存退出后，重启服务</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/vsftpd restart</span><br></pre></td></tr></table></figure><h2 id="windows-下连接FTP"><a href="#windows-下连接FTP" class="headerlink" title="windows 下连接FTP:"></a>windows 下连接FTP:</h2><p>​    FTP软件中填写对应终端的IP 输入用户名和密码即可</p><h1 id="NFS-Network-File-System"><a href="#NFS-Network-File-System" class="headerlink" title="NFS(Network File System)"></a>NFS(Network File System)</h1><h2 id="NFS-服务开启"><a href="#NFS-服务开启" class="headerlink" title="NFS 服务开启"></a>NFS 服务开启</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install nfs-kernel-server rpcbind</span><br></pre></td></tr></table></figure><p>安装完成后创建一个nfs文件夹，以后需要通过网络用的文件都放这里.</p><p>之后配置文件/etc/exports：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/exports</span><br></pre></td></tr></table></figure><p>在文件末尾添加如下所示内容：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxxx&#x2F;nfs *(rw,sync,no_root_squash)</span><br></pre></td></tr></table></figure><p>重启 NFS 服务</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/nfs-kernel-server restart</span><br></pre></td></tr></table></figure><h1 id="SSH安全外壳协议-Secure-Shell"><a href="#SSH安全外壳协议-Secure-Shell" class="headerlink" title="SSH安全外壳协议 (Secure Shell)"></a>SSH安全外壳协议 (Secure Shell)</h1><h2 id="SSH-服务开启"><a href="#SSH-服务开启" class="headerlink" title="SSH 服务开启"></a>SSH 服务开启</h2><p>安装 ssh 服务</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install openssh-server</span><br></pre></td></tr></table></figure><p>ssh 的配置文件为/etc/ssh/sshd_config，使用默认配置即可</p><h1 id="交叉编译工具链"><a href="#交叉编译工具链" class="headerlink" title="交叉编译工具链"></a>交叉编译工具链</h1><p>编译 ARM 架构的代码，我们需要一个在 X86 架构的 PC 上运行，可以编译 ARM 架构代码的 GCC 编译器，这个编译器就叫做交叉编译器.</p><h2 id="Linaro-GCC-编译工具链-编译器-安装"><a href="#Linaro-GCC-编译工具链-编译器-安装" class="headerlink" title="Linaro GCC 编译工具链(编译器)安装"></a>Linaro GCC 编译工具链(编译器)安装</h2><p>下载地址：</p><p><a href="https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/">https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/</a></p><img src="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/2222.png" class="" width="2222"><p>有很多种 GCC 交叉编译工具链，因为我们所使用的 I.MX6U-ALPHA 开发板是一个 Cortex-A7 内核的开发板，因此选择 arm-linux-gnueabihf，点击后面的“Binaries”进入可执行文件下载</p><p>创建目录：/usr/local/arm：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir /usr/<span class="built_in">local</span>/arm</span><br></pre></td></tr></table></figure><p>将下载的文件放至该目录进行解压</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo tar -vxf gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf.tar.xz</span><br></pre></td></tr></table></figure><p>解压完成以后会生成一个名为“gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf”的文件夹，这个文件夹里面就是我们的交叉编译工具链.</p><p>修改环境变量，使用 VI 打开/etc/profile 文件，命令如下：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/profile</span><br></pre></td></tr></table></figure><p>打开/etc/profile 以后，在最后面输入如下所示内容：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH&#x3D;$PATH:&#x2F;usr&#x2F;local&#x2F;arm&#x2F;gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf&#x2F;bin</span><br></pre></td></tr></table></figure><p>重启 Ubuntu 系统，交叉编译工具链(编译器)就安装成功了</p><p>查看版本号</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-gnueabihf-gcc -v</span><br></pre></td></tr></table></figure><p>如果交叉编译器安装正确的话就会显示版本号</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+          <category> ARM嵌入式开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Embedded </tag>
+            
+            <tag> ARM </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>高级C嵌入式深入知识点记录</title>
-      <link href="/2020/08/15/NOTE/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%AB%98%E7%BA%A7C%E7%AC%94%E8%AE%B0/"/>
-      <url>/2020/08/15/NOTE/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%AB%98%E7%BA%A7C%E7%AC%94%E8%AE%B0/</url>
+      <link href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%AB%98%E7%BA%A7C%E7%AC%94%E8%AE%B0/"/>
+      <url>/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%AB%98%E7%BA%A7C%E7%AC%94%E8%AE%B0/</url>
       
         <content type="html"><![CDATA[<blockquote><p>​        如果你爱编程，那么你就应该爱C，如果你爱C，那么你就应该爱指针，如果你爱指针，那么你就应该爱函数指针。        —— 东南大学 凌明 </p></blockquote><ul><li>ARMCC编译器，函数怎么传参的？（寄存器用哪些？传参顺序？）</li></ul><ul><li>变量类型的大小？（char 几位? Short? Int? long？）</li></ul><ul><li>ARMCC编译器后，链接的地址分配？有哪些段？程序各部分存储位置？（绝对地址？相对地址？TEXT段？DATA段？）</li></ul><ul><li>ARMCC下，for循环i++,i—哪个效率相对更高一些？</li></ul><ul><li>如果要写一个内存拷贝的函数，你会怎么写？（*des++ = *src++? 汇编效率或许更高）</li></ul><ul><li>堆和栈的理解</li></ul><ul><li><p>很有意思的一个表达式：*<em>(\</em>(void (*)(void))0)();**</p><p>​        这条语句的意思是从0地址开始执行，在多数嵌入式系统中相当于系统的软复位</p><p>​        *<em>(<em>0)();</em></em> -&gt;函数调用</p><p>​        *<em>(void (</em>)(void))** -&gt;强制类型转换</p></li></ul>]]></content>
       
@@ -14,6 +235,8 @@
       <categories>
           
           <category> NOTE </category>
+          
+          <category> ARM嵌入式开发 </category>
           
       </categories>
       
@@ -66,7 +289,7 @@
       <link href="/2020/08/15/SELF-USING/categories-and-tags/"/>
       <url>/2020/08/15/SELF-USING/categories-and-tags/</url>
       
-        <content type="html"><![CDATA[<h1 id="Categories"><a href="#Categories" class="headerlink" title="Categories:"></a>Categories:</h1><ul><li><p>PROJECT</p><p>项目、工程</p></li><li><p>DOCUMENT</p><p>技术文档、白皮书</p></li><li><p>NOTE</p><p>笔记、浅析、分析</p></li><li><p>SELF-USING</p><p>自用的一些笔记</p></li></ul><h1 id="Tags"><a href="#Tags" class="headerlink" title="Tags:"></a>Tags:</h1><ul><li>ARM</li><li>Linux</li><li>STM32</li><li>QT</li><li>Embedded</li><li>Hardware</li><li>MarkDown</li><li>git</li><li>shell</li><li>MAKE file</li><li>C</li><li>C++</li><li>Python</li><li>note</li><li>technique</li></ul>]]></content>
+        <content type="html"><![CDATA[<h1 id="Categories"><a href="#Categories" class="headerlink" title="Categories:"></a>Categories:</h1><ul><li><p>PROJECT</p><p>项目、工程</p></li><li><p>DOCUMENT</p><p>技术文档、白皮书</p></li><li><p>NOTE</p><p>笔记、浅析、分析</p><ul><li>[NOTE, ARM嵌入式开发]</li></ul></li><li><p>SELF-USING</p><p>自用的一些笔记</p></li></ul><h1 id="Tags"><a href="#Tags" class="headerlink" title="Tags:"></a>Tags:</h1><ul><li>ARM</li><li>Linux</li><li>STM32</li><li>QT</li><li>Embedded</li><li>Hardware</li><li>MarkDown</li><li>git</li><li>shell</li><li>MAKE file</li><li>C</li><li>C++</li><li>Python</li><li>note</li><li>technique</li><li>uboot</li><li>dts设备树</li><li>驱动开发</li></ul>]]></content>
       
       
       <categories>

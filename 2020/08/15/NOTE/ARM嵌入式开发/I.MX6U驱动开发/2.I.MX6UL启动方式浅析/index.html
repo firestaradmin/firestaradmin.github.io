@@ -5,27 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
 <meta name="generator" content="Hexo 5.0.2">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/lxg180x180.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/lxg32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/lxg16x16.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/lxg180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/lxg32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/lxg16x16.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/blog/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-mac-osx.min.css">
-  <script src="/lib/pace/pace.min.js"></script>
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/blog/lib/pace/pace-theme-mac-osx.min.css">
+  <script src="/blog/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"firestaradmin.gitee.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"./public/search.xml"};
+    var CONFIG = {"hostname":"firestaradmin.gitee.io","root":"/blog/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"./public/search.xml"};
   </script>
 
   <meta name="description" content="BOOT启动方式选择I.MX6U 芯片上电以后，芯片会根据 BOOT_MODE[1:0]的设置来选择 BOOT 方式。 通过修改 BOOT_MODE[1:0]对应的 GPIO 高低电平来选择启动方式   串行下载当 BOOT_MODE1 为 0，BOOT_MODE0 为 1 的时候此模式使能，串行下载的意思就是可以通过 USB 或者UART 将代码下载到板子上的外置存储设备中，我们可以使用OTG1">
 <meta property="og:type" content="article">
 <meta property="og:title" content="（二）I.MX6UL 启动方式浅析">
-<meta property="og:url" content="https://firestaradmin.gitee.io/blog/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/index.html">
+<meta property="og:url" content="https://firestaradmin.gitee.io/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/index.html">
 <meta property="og:site_name" content="firestaradmin&#39;s Fortune">
 <meta property="og:description" content="BOOT启动方式选择I.MX6U 芯片上电以后，芯片会根据 BOOT_MODE[1:0]的设置来选择 BOOT 方式。 通过修改 BOOT_MODE[1:0]对应的 GPIO 高低电平来选择启动方式   串行下载当 BOOT_MODE1 为 0，BOOT_MODE0 为 1 的时候此模式使能，串行下载的意思就是可以通过 USB 或者UART 将代码下载到板子上的外置存储设备中，我们可以使用OTG1">
 <meta property="og:locale" content="zh_CN">
@@ -42,7 +42,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://firestaradmin.gitee.io/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/image-20200815222949425.png">
 
-<link rel="canonical" href="https://firestaradmin.gitee.io/blog/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/">
+<link rel="canonical" href="https://firestaradmin.gitee.io/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/">
 
 
 <script id="page-configurations">
@@ -104,7 +104,7 @@
 
   <div class="site-meta">
 
-    <a href="/" class="brand" rel="start">
+    <a href="/blog/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
       <h1 class="site-title">firestaradmin's Fortune</h1>
       <span class="logo-line-after"><i></i></span>
@@ -126,27 +126,27 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+    <a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+    <a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+    <a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+    <a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+    <a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -206,10 +206,10 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://firestaradmin.gitee.io/blog/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/">
+    <link itemprop="mainEntityOfPage" href="https://firestaradmin.gitee.io/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/head.png">
+      <meta itemprop="image" content="/blog/images/head.png">
       <meta itemprop="name" content="firestaradmin">
       <meta itemprop="description" content="孤独是时间给你的自由">
     </span>
@@ -244,11 +244,11 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/NOTE/" itemprop="url" rel="index"><span itemprop="name">NOTE</span></a>
+                  <a href="/blog/categories/NOTE/" itemprop="url" rel="index"><span itemprop="name">NOTE</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">ARM嵌入式开发</span></a>
+                  <a href="/blog/categories/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">ARM嵌入式开发</span></a>
                 </span>
             </span>
 
@@ -319,8 +319,8 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/Embedded/" rel="tag"><i class="fa fa-tag"></i> Embedded</a>
-              <a href="/tags/ARM/" rel="tag"><i class="fa fa-tag"></i> ARM</a>
+              <a href="/blog/tags/Embedded/" rel="tag"><i class="fa fa-tag"></i> Embedded</a>
+              <a href="/blog/tags/ARM/" rel="tag"><i class="fa fa-tag"></i> ARM</a>
           </div>
 
         
@@ -329,11 +329,11 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="prev" title="（一）开发环境搭建">
+    <a href="/blog/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="prev" title="（一）开发环境搭建">
       <i class="fa fa-chevron-left"></i> （一）开发环境搭建
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/linux%E4%B8%8B%E7%83%A7%E5%BD%95%E8%87%B3SD%E5%8D%A1%E5%90%AF%E5%8A%A8/" rel="next" title="linux下烧录至SD卡启动">
+    <a href="/blog/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/linux%E4%B8%8B%E7%83%A7%E5%BD%95%E8%87%B3SD%E5%8D%A1%E5%90%AF%E5%8A%A8/" rel="next" title="linux下烧录至SD卡启动">
       linux下烧录至SD卡启动 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
@@ -402,27 +402,27 @@
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="firestaradmin"
-      src="/images/head.png">
+      src="/blog/images/head.png">
   <p class="site-author-name" itemprop="name">firestaradmin</p>
   <div class="site-description" itemprop="description">孤独是时间给你的自由</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
-          <a href="/archives/">
+          <a href="/blog/archives/">
         
           <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-            <a href="/categories/">
+            <a href="/blog/categories/">
           
         <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-            <a href="/tags/">
+            <a href="/blog/tags/">
           
         <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span></a>
@@ -488,26 +488,26 @@
   </div>
 
   
-  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/blog/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
 
-<script src="/js/utils.js"></script>
+<script src="/blog/js/utils.js"></script>
 
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/pisces.js"></script>
+<script src="/blog/js/motion.js"></script>
 
 
-<script src="/js/next-boot.js"></script>
+<script src="/blog/js/schemes/pisces.js"></script>
 
 
-  <script defer src="/lib/three/three.min.js"></script>
-    <script defer src="/lib/three/three-waves.min.js"></script>
-    <script defer src="/lib/three/canvas_lines.min.js"></script>
-    <script defer src="/lib/three/canvas_sphere.min.js"></script>
+<script src="/blog/js/next-boot.js"></script>
+
+
+  <script defer src="/blog/lib/three/three.min.js"></script>
+    <script defer src="/blog/lib/three/three-waves.min.js"></script>
+    <script defer src="/blog/lib/three/canvas_lines.min.js"></script>
+    <script defer src="/blog/lib/three/canvas_sphere.min.js"></script>
 
 
   
@@ -541,7 +541,7 @@
 
 
   
-<script src="/js/local-search.js"></script>
+<script src="/blog/js/local-search.js"></script>
 
 
 
@@ -570,7 +570,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'my-blog-commonts',
       owner       : 'firestaradmin',
       admin       : ['firestaradmin'],
-      id          : 'd8956465f3459af41ca728c510b955d5',
+      id          : 'a748f3e11cf47dfaabb15d163ea6d121',
         language: 'zh-CN',
       distractionFreeMode: true
     });

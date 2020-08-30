@@ -25,7 +25,7 @@
   <meta name="description" content="BOOT启动方式选择I.MX6U 芯片上电以后，芯片会根据 BOOT_MODE[1:0]的设置来选择 BOOT 方式。 通过修改 BOOT_MODE[1:0]对应的 GPIO 高低电平来选择启动方式   串行下载当 BOOT_MODE1 为 0，BOOT_MODE0 为 1 的时候此模式使能，串行下载的意思就是可以通过 USB 或者UART 将代码下载到板子上的外置存储设备中，我们可以使用OTG1">
 <meta property="og:type" content="article">
 <meta property="og:title" content="（二）I.MX6UL 启动方式浅析">
-<meta property="og:url" content="https://firestaradmin.gitee.io/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/index.html">
+<meta property="og:url" content="https://firestaradmin.gitee.io/blog/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/index.html">
 <meta property="og:site_name" content="firestaradmin&#39;s Fortune">
 <meta property="og:description" content="BOOT启动方式选择I.MX6U 芯片上电以后，芯片会根据 BOOT_MODE[1:0]的设置来选择 BOOT 方式。 通过修改 BOOT_MODE[1:0]对应的 GPIO 高低电平来选择启动方式   串行下载当 BOOT_MODE1 为 0，BOOT_MODE0 为 1 的时候此模式使能，串行下载的意思就是可以通过 USB 或者UART 将代码下载到板子上的外置存储设备中，我们可以使用OTG1">
 <meta property="og:locale" content="zh_CN">
@@ -42,7 +42,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://firestaradmin.gitee.io/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/image-20200815222949425.png">
 
-<link rel="canonical" href="https://firestaradmin.gitee.io/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/">
+<link rel="canonical" href="https://firestaradmin.gitee.io/blog/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/">
 
 
 <script id="page-configurations">
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://firestaradmin.gitee.io/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/">
+    <link itemprop="mainEntityOfPage" href="https://firestaradmin.gitee.io/blog/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/I.MX6U%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/head.png">
@@ -333,8 +333,8 @@
       <i class="fa fa-chevron-left"></i> （一）开发环境搭建
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/2.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/" rel="next" title="（二）I.MX6UL 启动方式浅析">
-      （二）I.MX6UL 启动方式浅析 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/08/15/NOTE/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/linux%E4%B8%8B%E7%83%A7%E5%BD%95%E8%87%B3SD%E5%8D%A1%E5%90%AF%E5%8A%A8/" rel="next" title="linux下烧录至SD卡启动">
+      linux下烧录至SD卡启动 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -411,7 +411,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

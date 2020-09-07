@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lxg180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lxg32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lxg16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-mac-osx.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"firestaradmin.gitee.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"./public/search.xml"};
+  </script>
+
+  <meta name="description" content="异步通知实验在前面使用阻塞或者非阻塞的方式来读取驱动中按键值都是应用程序主动读取的，对于非阻塞方式来说还需要应用程序通过 poll 函数不断的轮询。最好的方式就是驱动程序能主动向应用程序发出通知，报告自己可以访问，然后应用程序在从驱动程序中读取或写入数据，类似于我们在裸机例程中讲解的中断。Linux 提供了异步通知这个机制来完成此功能，本章我们就来学习一下异步通知以及如何在驱动中添加异步通知相关处">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11| Linux异步通知实验">
+<meta property="og:url" content="https://firestaradmin.gitee.io/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/11%E3%80%81%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E5%AE%9E%E9%AA%8C/index.html">
+<meta property="og:site_name" content="firestaradmin&#39;s Fortune">
+<meta property="og:description" content="异步通知实验在前面使用阻塞或者非阻塞的方式来读取驱动中按键值都是应用程序主动读取的，对于非阻塞方式来说还需要应用程序通过 poll 函数不断的轮询。最好的方式就是驱动程序能主动向应用程序发出通知，报告自己可以访问，然后应用程序在从驱动程序中读取或写入数据，类似于我们在裸机例程中讲解的中断。Linux 提供了异步通知这个机制来完成此功能，本章我们就来学习一下异步通知以及如何在驱动中添加异步通知相关处">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://firestaradmin.gitee.io/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/11%E3%80%81%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E5%AE%9E%E9%AA%8C/image-20200827145821350.png">
+<meta property="og:image" content="https://firestaradmin.gitee.io/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/11%E3%80%81%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E5%AE%9E%E9%AA%8C/image-20200827160817641.png">
+<meta property="article:published_time" content="2020-09-07T11:47:34.207Z">
+<meta property="article:modified_time" content="2020-09-07T11:54:03.888Z">
+<meta property="article:author" content="firestaradmin">
+<meta property="article:tag" content="Embedded">
+<meta property="article:tag" content="ARM">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="驱动开发">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://firestaradmin.gitee.io/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/11%E3%80%81%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E5%AE%9E%E9%AA%8C/image-20200827145821350.png">
+
+<link rel="canonical" href="https://firestaradmin.gitee.io/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/11%E3%80%81%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E5%AE%9E%E9%AA%8C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>11| Linux异步通知实验 | firestaradmin's Fortune</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">firestaradmin's Fortune</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">为祖国崛起而奋斗</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/firestaradmin" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://firestaradmin.gitee.io/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/11%E3%80%81%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E5%AE%9E%E9%AA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.png">
+      <meta itemprop="name" content="firestaradmin">
+      <meta itemprop="description" content="孤独是时间给你的自由">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="firestaradmin's Fortune">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          11| Linux异步通知实验
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-07 19:47:34 / 修改时间：19:54:03" itemprop="dateCreated datePublished" datetime="2020-09-07T19:47:34+08:00">2020-09-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NOTE/" itemprop="url" rel="index"><span itemprop="name">NOTE</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NOTE/ARM-Linux/" itemprop="url" rel="index"><span itemprop="name">ARM-Linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/" itemprop="url" rel="index"><span itemprop="name">驱动开发篇</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="异步通知实验"><a href="#异步通知实验" class="headerlink" title="异步通知实验"></a>异步通知实验</h1><p>在前面<strong>使用阻塞或者非阻塞的方式来读取驱动中按键值都是应用程序主动读取的</strong>，<strong>对于非阻塞方式来说还需要应用程序通过 poll 函数不断的轮询</strong>。<strong>最好的方式就是驱动程序能主动向应用程序发出通知，报告自己可以访问，然后应用程序在从驱动程序中读取或写入数据，类似于我们在裸机例程中讲解的中断</strong>。Linux 提供了异步通知这个机制来完成此功能，本章我们就来学习一下异步通知以及如何在驱动中添加异步通知相关处理代码。</p>
+<h2 id="一、异步通知"><a href="#一、异步通知" class="headerlink" title="一、异步通知"></a>一、异步通知</h2><h3 id="1-异步通知简介"><a href="#1-异步通知简介" class="headerlink" title="1| 异步通知简介"></a>1| 异步通知简介</h3><p>我们首先来回顾一下“中断”，中断是处理器提供的一种异步机制，我们配置好中断以后就可以让处理器去处理其他的事情了，当中断发生以后会触发我们事先设置好的中断服务函数，在中断服务函数中做具体的处理。Linux 应用程序可以通过阻塞或者非阻塞这两种方式来访问驱动设备，通过阻塞方式访问的话应用程序会处于休眠态，等待驱动设备可以使用，非阻塞方式的话会通过 poll 函数来不断的轮询，查看驱动设备文件是否可以使用。这两种方式都需要应用程序主动的去查询设备的使用情况，如果能提供一种类似中断的机制，当驱动程序可以访问的时候主动告诉应用程序那就最好了。</p>
+<p>“信号”为此应运而生，信号类似于我们硬件上使用的“中断”，只不过信号是软件层次上的。算是在软件层次上对中断的一种模拟，驱动可以通过主动向应用程序发送信号的方式来报告自己可以访问了，应用程序获取到信号以后就可以从驱动设备中读取或者写入数据了。整个过程就相当于应用程序收到了驱动发送过来了的一个中断，然后应用程序去响应这个中断，在整个处理过程中应用程序并没有去查询驱动设备是否可以访问，一切都是由驱动设备自己告诉给应用程序的。</p>
+<p><strong>阻塞、非阻塞、异步通知，这三种是针对不同的场合提出来的不同的解决方法，没有优劣之分，在实际的工作和学习中，根据自己的实际需求选择合适的处理方法即可。</strong></p>
+<p>异步通知的核心就是信号，在 <strong>arch/xtensa/include/uapi/asm/signal.h</strong> 文件中定义了 Linux 所支持的所有信号，这些信号如下所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">34</span> <span class="meta">#<span class="meta-keyword">define</span> SIGHUP 1 <span class="comment">/* 终端挂起或控制进程终止 */</span></span></span><br><span class="line"><span class="number">35</span> <span class="meta">#<span class="meta-keyword">define</span> SIGINT 2 <span class="comment">/* 终端中断(Ctrl+C 组合键) */</span></span></span><br><span class="line"><span class="number">36</span> <span class="meta">#<span class="meta-keyword">define</span> SIGQUIT 3 <span class="comment">/* 终端退出(Ctrl+\组合键) */</span></span></span><br><span class="line"><span class="number">37</span> <span class="meta">#<span class="meta-keyword">define</span> SIGILL 4 <span class="comment">/* 非法指令 */</span></span></span><br><span class="line"><span class="number">38</span> <span class="meta">#<span class="meta-keyword">define</span> SIGTRAP 5 <span class="comment">/* debug 使用，有断点指令产生  */</span></span></span><br><span class="line"><span class="number">39</span> <span class="meta">#<span class="meta-keyword">define</span> SIGABRT 6 <span class="comment">/* 由 abort(3)发出的退出指令 */</span></span></span><br><span class="line"><span class="number">40</span> <span class="meta">#<span class="meta-keyword">define</span> SIGIOT 6 <span class="comment">/* IOT 指令 */</span></span></span><br><span class="line"><span class="number">41</span> <span class="meta">#<span class="meta-keyword">define</span> SIGBUS 7 <span class="comment">/* 总线错误 */</span></span></span><br><span class="line"><span class="number">42</span> <span class="meta">#<span class="meta-keyword">define</span> SIGFPE 8 <span class="comment">/* 浮点运算错误 */</span></span></span><br><span class="line"><span class="number">43</span> <span class="meta">#<span class="meta-keyword">define</span> SIGKILL 9 <span class="comment">/* 杀死、终止进程 */</span></span></span><br><span class="line"><span class="number">44</span> <span class="meta">#<span class="meta-keyword">define</span> SIGUSR1 10 <span class="comment">/* 用户自定义信号 1 */</span></span></span><br><span class="line"><span class="number">45</span> <span class="meta">#<span class="meta-keyword">define</span> SIGSEGV 11 <span class="comment">/* 段违例(无效的内存段) */</span></span></span><br><span class="line"><span class="number">46</span> <span class="meta">#<span class="meta-keyword">define</span> SIGUSR2 12 <span class="comment">/* 用户自定义信号 2 */</span></span></span><br><span class="line"><span class="number">47</span> <span class="meta">#<span class="meta-keyword">define</span> SIGPIPE 13 <span class="comment">/* 向非读管道写入数据 */</span></span></span><br><span class="line"><span class="number">48</span> <span class="meta">#<span class="meta-keyword">define</span> SIGALRM 14 <span class="comment">/* 闹钟 */</span></span></span><br><span class="line"><span class="number">49</span> <span class="meta">#<span class="meta-keyword">define</span> SIGTERM 15 <span class="comment">/* 软件终止 */</span></span></span><br><span class="line"><span class="number">50</span> <span class="meta">#<span class="meta-keyword">define</span> SIGSTKFLT 16 <span class="comment">/* 栈异常 */</span></span></span><br><span class="line"><span class="number">51</span> <span class="meta">#<span class="meta-keyword">define</span> SIGCHLD 17 <span class="comment">/* 子进程结束 */</span></span></span><br><span class="line"><span class="number">52</span> <span class="meta">#<span class="meta-keyword">define</span> SIGCONT 18 <span class="comment">/* 进程继续 */</span></span></span><br><span class="line"><span class="number">53</span> <span class="meta">#<span class="meta-keyword">define</span> SIGSTOP 19 <span class="comment">/* 停止进程的执行，只是暂停 */</span></span></span><br><span class="line"><span class="number">54</span> <span class="meta">#<span class="meta-keyword">define</span> SIGTSTP 20 <span class="comment">/* 停止进程的运行(Ctrl+Z 组合键) */</span></span></span><br><span class="line"><span class="number">55</span> <span class="meta">#<span class="meta-keyword">define</span> SIGTTIN 21 <span class="comment">/* 后台进程需要从终端读取数据  */</span></span></span><br><span class="line"><span class="number">56</span> <span class="meta">#<span class="meta-keyword">define</span> SIGTTOU 22 <span class="comment">/* 后台进程需要向终端写数据 */</span></span></span><br><span class="line"><span class="number">57</span> <span class="meta">#<span class="meta-keyword">define</span> SIGURG 23 <span class="comment">/* 有&quot;紧急&quot;数据 */</span></span></span><br><span class="line"><span class="number">58</span> <span class="meta">#<span class="meta-keyword">define</span> SIGXCPU 24 <span class="comment">/* 超过 CPU 资源限制 */</span></span></span><br><span class="line"><span class="number">59</span> <span class="meta">#<span class="meta-keyword">define</span> SIGXFSZ 25 <span class="comment">/* 文件大小超额 */</span></span></span><br><span class="line"><span class="number">60</span> <span class="meta">#<span class="meta-keyword">define</span> SIGVTALRM 26 <span class="comment">/* 虚拟时钟信号 */</span></span></span><br><span class="line"><span class="number">61</span> <span class="meta">#<span class="meta-keyword">define</span> SIGPROF 27 <span class="comment">/* 时钟信号描述 */</span></span></span><br><span class="line"><span class="number">62</span> <span class="meta">#<span class="meta-keyword">define</span> SIGWINCH 28 <span class="comment">/* 窗口大小改变 */</span></span></span><br><span class="line"><span class="number">63</span> <span class="meta">#<span class="meta-keyword">define</span> SIGIO 29 <span class="comment">/* 可以进行输入/输出操作 */</span></span></span><br><span class="line"><span class="number">64</span> <span class="meta">#<span class="meta-keyword">define</span> SIGPOLL SIGIO</span></span><br><span class="line"><span class="number">65</span> <span class="comment">/* #define SIGLOS 29 */</span></span><br><span class="line"><span class="number">66</span> <span class="meta">#<span class="meta-keyword">define</span> SIGPWR 30 <span class="comment">/* 断点重启 */</span></span></span><br><span class="line"><span class="number">67</span> <span class="meta">#<span class="meta-keyword">define</span> SIGSYS 31 <span class="comment">/* 非法的系统调用 */</span></span></span><br><span class="line"><span class="number">68</span> <span class="meta">#<span class="meta-keyword">define</span> SIGUNUSED 31 <span class="comment">/* 未使用信号 */</span></span></span><br></pre></td></tr></table></figure>
+
+<p>在示例代码 中的这些信号中，除了 SIGKILL(9)和 SIGSTOP(19)这两个信号不能被忽略外，其他的信号都可以忽略。这些信号就相当于中断号，不同的中断号代表了不同的中断，不同的中断所做的处理不同，因此，驱动程序可以通过向应用程序发送不同的信号来实现不同的功能。</p>
+<p>我们使用中断的时候需要设置中断处理函数，同样的，如果要在应用程序中使用信号，那么就必须设置信号所使用的信号处理函数，在应用程序中使用 signal 函数来设置指定信号的处理函数，signal 函数原型如下所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">sighandler_t</span> <span class="title">signal</span><span class="params">(<span class="keyword">int</span> signum, <span class="keyword">sighandler_t</span> handler)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>函数参数和返回值含义如下：</p>
+<ul>
+<li><strong>signum</strong>：要设置处理函数的信号。</li>
+<li><strong>handler</strong> ：信号的处理函数。</li>
+<li><strong>返回值</strong>：设置成功的话返回信号的前一个处理函数，设置失败的话返回 SIG_ERR。</li>
+</ul>
+<p>信号处理函数原型如下所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*<span class="keyword">sighandler_t</span>)</span><span class="params">(<span class="keyword">int</span>)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>我们前面讲解的使用“kill -9 PID”杀死指定进程的方法就是向指定的进程(PID)发送SIGKILL 这个信号。</p>
+<p>当按下键盘上的 CTRL+C 组合键以后会向当前正在占用终端的应用程序发出 SIGINT 信号，SIGINT 信号默认的动作是关闭当前应用程序。这里我们修改一下 SIGINT 信号的默认处理函数，当按下 CTRL+C 组合键以后先在终端上打印出“SIGINT signal！”这行字符串，然后再关闭当前应用程序。新建 signaltest.c 文件，然后输入如下所示内容：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sigint_handler</span><span class="params">(<span class="keyword">int</span> num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\r\nSIGINT signal!\r\n&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    signal(SIGINT, sigint_handler);</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">        ;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在示例代码  中我们设置 SIGINT 信号的处理函数为 sigint_handler，当按下 CTRL+C向 signaltest 发送 SIGINT 信号以后 sigint_handler 函数就会执行，此函数先输出一行“SIGINT<br>signal!”字符串，然后调用 exit 函数关闭 signaltest 应用程序。使用如下命令编译 signaltest.c：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc signaltest.c -o <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p>然后输入“./test”命令打开 test 这个应用程序，然后按下键盘上的 CTRL+C 组<br>合键，结果如图所示：</p>
+<img src="/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/11%E3%80%81%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E5%AE%9E%E9%AA%8C/image-20200827145821350.png" class="" title="image-20200827145821350">
+
+<p>从图  可以看出，当按下 CTRL+C 组合键以后 sigint_handler 这个 SIGINT 信号处理函数执行了，并且输出了“SIGINT signal！”这行字符串。</p>
+<h3 id="2-驱动中的信号处理"><a href="#2-驱动中的信号处理" class="headerlink" title="2| 驱动中的信号处理"></a>2| 驱动中的信号处理</h3><h4 id="1-fasync-struct-结构体"><a href="#1-fasync-struct-结构体" class="headerlink" title="1. fasync_struct 结构体"></a>1. fasync_struct 结构体</h4><p>首先我们需要在驱动程序中定义一个 fasync_struct 结构体指针变量，fasync_struct 结构体内容如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">fasync_struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">spinlock_t</span> fa_lock;</span><br><span class="line">    <span class="keyword">int</span> magic;</span><br><span class="line">    <span class="keyword">int</span> fa_fd;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">fasync_struct</span> *<span class="title">fa_next</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">fa_file</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rcu_head</span> <span class="title">fa_rcu</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>一般将 fasync_struct 结构体指针变量定义到设备结构体中，比如在上一章节的imx6uirq_dev结构体中添加一个 fasync_struct 结构体指针变量。</p>
+<h4 id="2-fasync函数"><a href="#2-fasync函数" class="headerlink" title="2.fasync函数"></a>2.fasync函数</h4><p>如果要<strong>使用异步通知</strong>，<strong>需要在设备驱动中实现 file_operations 操作集中的 fasync 函数</strong>，此函数格式如下所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> (*fasync) (<span class="keyword">int</span> fd, struct file *filp, <span class="keyword">int</span> on)</span><br></pre></td></tr></table></figure>
+
+<p>fasync 函数里面一般通过调用 fasync_helper 函数来初始化前面定义的 fasync_struct 结构体指针，fasync_helper 函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fasync_helper</span><span class="params">(<span class="keyword">int</span> fd, struct file * filp, <span class="keyword">int</span> on, struct fasync_struct **fapp)</span> </span></span><br></pre></td></tr></table></figure>
+
+<p>fasync_helper 函数的前三个参数就是 fasync 函数的那三个参数，第四个参数就是要初始化的 fasync_struct 结构体指针变量。</p>
+<p>当应用程序通过<code>fcntl(fd, F_SETFL, flags | FASYNC)</code>改变fasync 标记的时候，驱动程序 file_operations 操作集中的 fasync 函数就会执行。</p>
+<p>驱动程序中的 fasync 函数参考示例如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="class"><span class="keyword">struct</span> <span class="title">xxx_dev</span> &#123;</span></span><br><span class="line"><span class="number">2</span>         ......</span><br><span class="line"><span class="number">3</span>         <span class="class"><span class="keyword">struct</span> <span class="title">fasync_struct</span> *<span class="title">async_queue</span>;</span> <span class="comment">/* 异步相关结构体 */</span></span><br><span class="line"><span class="number">4</span> &#125;;</span><br><span class="line"><span class="number">5</span></span><br><span class="line"><span class="number">6</span> <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">xxx_fasync</span><span class="params">(<span class="keyword">int</span> fd, struct file *filp, <span class="keyword">int</span> on)</span></span></span><br><span class="line"><span class="function">7 </span>&#123;</span><br><span class="line"><span class="number">8</span>         <span class="class"><span class="keyword">struct</span> <span class="title">xxx_dev</span> *<span class="title">dev</span> = (<span class="title">xxx_dev</span>)<span class="title">filp</span>-&gt;<span class="title">private_data</span>;</span></span><br><span class="line"><span class="number">9</span></span><br><span class="line"><span class="number">10</span>         <span class="keyword">if</span> (fasync_helper(fd, filp, on, &amp;dev-&gt;async_queue) &lt; <span class="number">0</span>)</span><br><span class="line"><span class="number">11</span>         <span class="keyword">return</span> -EIO;</span><br><span class="line"><span class="number">12</span>         <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"><span class="number">13</span> &#125;</span><br><span class="line"><span class="number">14</span></span><br><span class="line"><span class="number">15</span> <span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> <span class="title">xxx_ops</span> = &#123;</span></span><br><span class="line"><span class="number">16</span>         ......</span><br><span class="line"><span class="number">17</span>         .fasync = xxx_fasync,</span><br><span class="line"><span class="number">18</span>         ......</span><br><span class="line"><span class="number">19</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在关闭驱动文件的时候需要在 file_operations 操作集中的 release 函数中释放fasync_struct，fasync_struct 的释放函数同样为 fasync_helper，release 函数参数参考实例如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">xxx_release</span><span class="params">(struct inode *inode, struct file *filp)</span></span></span><br><span class="line"><span class="function">2 </span>&#123;</span><br><span class="line"><span class="number">3</span>         <span class="keyword">return</span> xxx_fasync(<span class="number">-1</span>, filp, <span class="number">0</span>); <span class="comment">/*  删除异步通知 */</span></span><br><span class="line"><span class="number">4</span> &#125;</span><br><span class="line"><span class="number">5</span></span><br><span class="line"><span class="number">6</span> <span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> <span class="title">xxx_ops</span> = &#123;</span></span><br><span class="line"><span class="number">7</span>         ......</span><br><span class="line"><span class="number">8</span>         .release = xxx_release,</span><br><span class="line"><span class="number">9</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>第 3 行通过调用示例代码中的 xxx_fasync 函数来完成 fasync_struct 的释放工作，但是，其最终还是通过 fasync_helper 函数完成释放工作。</p>
+<h4 id="3-kill-fasync函数"><a href="#3-kill-fasync函数" class="headerlink" title="3.kill_fasync函数"></a>3.kill_fasync函数</h4><p>当设备可以访问的时候，驱动程序需要向应用程序发出信号，相当于产生“中断”。<strong>kill_fasync函数负责发送指定的信号</strong>，kill_fasync 函数原型如下所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">kill_fasync</span><span class="params">(struct fasync_struct **fp, <span class="keyword">int</span> sig, <span class="keyword">int</span> band)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>函数参数和返回值含义如下：</p>
+<ul>
+<li><strong>fp</strong>：要操作的 fasync_struct。</li>
+<li><strong>sig</strong> ：要发送的信号。</li>
+<li><strong>band</strong> ：可读时设置为 POLL_IN，可写时设置为 POLL_OUT。</li>
+<li><strong>返回值</strong>：无。</li>
+</ul>
+<h3 id="3-应用程序对异步通知的处理"><a href="#3-应用程序对异步通知的处理" class="headerlink" title="3| 应用程序对异步通知的处理"></a>3| 应用程序对异步通知的处理</h3><p>应用程序对异步通知的处理包括以下三步：</p>
+<p><strong>1 、注册信号处理函数</strong></p>
+<p>应用程序根据驱动程序所使用的信号来设置信号的处理函数，应用程序使用 signal 函数来设置信号的处理函数。前面已经详细的讲过了，这里就不细讲了。</p>
+<p><strong>2 、将本应用程序的进程号告诉给内核</strong></p>
+<p>使用<code> fcntl(fd, F_SETOWN, getpid())</code>将本应用程序的进程号告诉给内核。</p>
+<p><strong>3 、开启异步通知</strong></p>
+<p>使用如下两行程序开启异步通知：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">flags = fcntl(fd, F_GETFL); <span class="comment">/* 获取当前的进程状态  */</span></span><br><span class="line">fcntl(fd, F_SETFL, flags | FASYNC); <span class="comment">/* 开启当前进程异步通知功能 */</span></span><br></pre></td></tr></table></figure>
+
+<p>重点就是通过 fcntl 函数设置进程状态为 FASYNC，经过这一步，驱动程序中的 fasync 函数就会执行。</p>
+<h2 id="二、硬件原理图分析"><a href="#二、硬件原理图分析" class="headerlink" title="二、硬件原理图分析"></a>二、硬件原理图分析</h2><p>参考前面的按键实验。</p>
+<h2 id="三、实验程序编写"><a href="#三、实验程序编写" class="headerlink" title="三、实验程序编写"></a>三、实验程序编写</h2><p>本实验我们在上一章实验“15_noblockio”的基础上完成，在其中加入异步通知相关内容即可，当按键按下以后驱动程序向应用程序发送 SIGIO 信号，应用程序获取到 SIGIO 信号以后读取并且打印出按键值。</p>
+<h3 id="修改设备树文件"><a href="#修改设备树文件" class="headerlink" title="修改设备树文件"></a>修改设备树文件</h3><p>因为是在实验“15_noblockio”的基础上完成的，因此不需要修改设备树。</p>
+<h3 id="驱动程序编写"><a href="#驱动程序编写" class="headerlink" title="驱动程序编写"></a>驱动程序编写</h3><p>新建名为“16_asyncnoti”的文件夹，然后在 16_asyncnoti 文件夹里面创建 vscode 工程，工作区命名为“asyncnoti”。将“15_noblockio”实验中的 noblockio.c 复制到 16_asyncnoti 文件夹中，并重命名为 asyncnoti.c。</p>
+<p>接下来我们就修改 asyncnoti.c 这个文件，在其中添加异步通知关的代码，完成以后的asyncnoti.c 内容如下所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/module.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/delay.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/ide.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/kernel.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/init.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/uaccess.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/io.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/cdev.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/device.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/of.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/of_address.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/slab.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/gpio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/of_gpio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/timer.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/of_irq.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/irq.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/poll.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEV_CNT     1            <span class="comment">/* 设备号个数 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEV_NAME <span class="meta-string">&quot;noblockio&quot;</span>        <span class="comment">/* 设备名 */</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> KEY0VALUE     0X01 <span class="comment">/* KEY0 按键值 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> INVAKEY     0XFF <span class="comment">/* 无效的按键值 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> KEY_CNT     1      <span class="comment">/* 按键数量 */</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 中断 IO 描述结构体 */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">irq_keydesc</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> gpio;                 <span class="comment">/* gpio */</span></span><br><span class="line">    <span class="keyword">int</span> irqnum;             <span class="comment">/* 中断号 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> value;     <span class="comment">/* 按键对应的键值  */</span></span><br><span class="line">    <span class="keyword">char</span> name[<span class="number">10</span>];             <span class="comment">/* 名字 */</span></span><br><span class="line">    <span class="keyword">irqreturn_t</span> (*handler)(<span class="keyword">int</span>, <span class="keyword">void</span> *); <span class="comment">/* 中断服务函数 */</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* imx6uirq设备结构体 */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">imx6uirq_dev</span> &#123;</span>    </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cdev</span> <span class="title">cdev</span>;</span></span><br><span class="line">    <span class="keyword">dev_t</span> devid;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">class</span> *<span class="title">class</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">device</span> *<span class="title">device</span>;</span></span><br><span class="line">    <span class="keyword">int</span> major;</span><br><span class="line">    <span class="keyword">int</span> minor;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">device_node</span> *<span class="title">nd</span>;</span>        <span class="comment">/* 设备树节点 */</span></span><br><span class="line">    <span class="keyword">atomic_t</span> keyvalue;             <span class="comment">/* 有效的按键键值 */</span></span><br><span class="line">    <span class="keyword">atomic_t</span> releasekey;         <span class="comment">/* 标记是否完成一次完成的按键*/</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timer_list</span> <span class="title">timer</span>;</span>     <span class="comment">/* 定义一个定时器*/</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">irq_keydesc</span> <span class="title">irqkeydesc</span>[<span class="title">KEY_CNT</span>];</span> <span class="comment">/* 按键描述数组 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> curkeynum;     <span class="comment">/* 当前的按键号 */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">wait_queue_head_t</span> r_wait;    <span class="comment">/* 读等待对列头 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">fasync_struct</span> *<span class="title">async_queue</span>;</span> <span class="comment">/*  异步相关结构体 */</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">imx6uirq_dev</span> <span class="title">imx6uirq</span>;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* @description : 中断服务函数，开启定时器，延时 10ms，</span></span><br><span class="line"><span class="comment"> * 定时器用于按键消抖。</span></span><br><span class="line"><span class="comment"> * @param - irq : 中断号</span></span><br><span class="line"><span class="comment"> * @param - dev_id : 设备结构。</span></span><br><span class="line"><span class="comment"> * @return : 中断执行结果</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">irqreturn_t</span> <span class="title">key0_handler</span><span class="params">(<span class="keyword">int</span> irq, <span class="keyword">void</span> *dev_id)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">imx6uirq_dev</span> *<span class="title">dev</span> = (<span class="title">struct</span> <span class="title">imx6uirq_dev</span> *)<span class="title">dev_id</span>;</span></span><br><span class="line"></span><br><span class="line">    dev-&gt;curkeynum = <span class="number">0</span>;</span><br><span class="line">    dev-&gt;timer.data = (<span class="keyword">volatile</span> <span class="keyword">long</span>)dev_id;</span><br><span class="line">    mod_timer(&amp;dev-&gt;timer, jiffies + msecs_to_jiffies(<span class="number">10</span>));</span><br><span class="line">    <span class="keyword">return</span> IRQ_RETVAL(IRQ_HANDLED);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* @description : 定时器服务函数，用于按键消抖，定时器到了以后</span></span><br><span class="line"><span class="comment"> * 再次读取按键值，如果按键还是处于按下状态就表示按键有效。</span></span><br><span class="line"><span class="comment"> * @param – arg  : 设备结构变量</span></span><br><span class="line"><span class="comment"> * @return : 无</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">timer_function</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span> arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> value;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> num;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">irq_keydesc</span> *<span class="title">keydesc</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">imx6uirq_dev</span> *<span class="title">dev</span> = (<span class="title">struct</span> <span class="title">imx6uirq_dev</span> *)<span class="title">arg</span>;</span></span><br><span class="line"></span><br><span class="line">    num = dev-&gt;curkeynum;</span><br><span class="line">    keydesc = &amp;dev-&gt;irqkeydesc[num];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    value = gpio_get_value(keydesc-&gt;gpio); <span class="comment">/* 读取 IO 值 */</span></span><br><span class="line">    <span class="keyword">if</span>(value == <span class="number">0</span>)&#123; <span class="comment">/* 按下按键 */</span></span><br><span class="line">        atomic_set(&amp;dev-&gt;keyvalue, keydesc-&gt;value);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;             <span class="comment">/* 按键松开 */</span></span><br><span class="line">        atomic_set(&amp;dev-&gt;keyvalue, <span class="number">0x80</span> | keydesc-&gt;value);</span><br><span class="line">        atomic_set(&amp;dev-&gt;releasekey, <span class="number">1</span>); <span class="comment">/* 标记松开按键 */</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(atomic_read(&amp;dev-&gt;releasekey)) &#123;        <span class="comment">/* 一次完整的按键过程 */</span></span><br><span class="line">        <span class="keyword">if</span>(dev-&gt;async_queue)</span><br><span class="line">            kill_fasync(&amp;dev-&gt;async_queue, SIGIO, POLL_IN);    <span class="comment">/* 释放SIGIO信号 */</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> 0</span></span><br><span class="line">    <span class="comment">/* 唤醒进程 */</span></span><br><span class="line">    <span class="keyword">if</span>(atomic_read(&amp;dev-&gt;releasekey)) &#123;    <span class="comment">/* 完成一次按键过程 */</span></span><br><span class="line">        <span class="comment">/* wake_up(&amp;dev-&gt;r_wait); */</span></span><br><span class="line">        wake_up_interruptible(&amp;dev-&gt;r_wait);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @description : 按键 IO 初始化</span></span><br><span class="line"><span class="comment"> * @param : 无</span></span><br><span class="line"><span class="comment"> * @return : 无</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">keyio_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> ret = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    imx6uirq.nd = of_find_node_by_path(<span class="string">&quot;/key&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (imx6uirq.nd == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        printk(<span class="string">&quot;k:key node not find!\r\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> -EINVAL;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 提取 GPIO */</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; KEY_CNT; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        imx6uirq.irqkeydesc[i].gpio = of_get_named_gpio(imx6uirq.nd,</span><br><span class="line">                                                        <span class="string">&quot;key-gpios&quot;</span>, i);</span><br><span class="line">        <span class="keyword">if</span> (imx6uirq.irqkeydesc[i].gpio &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            printk(<span class="string">&quot;k:can&#x27;t get key%d\r\n&quot;</span>, i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 初始化 key 所使用的 IO，并且设置成中断模式 */</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; KEY_CNT; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">memset</span>(imx6uirq.irqkeydesc[i].name, <span class="number">0</span>,</span><br><span class="line">               <span class="keyword">sizeof</span>(imx6uirq.irqkeydesc[i].name));</span><br><span class="line">        <span class="built_in">sprintf</span>(imx6uirq.irqkeydesc[i].name, <span class="string">&quot;KEY%d&quot;</span>, i);</span><br><span class="line">        gpio_request(imx6uirq.irqkeydesc[i].gpio, imx6uirq.irqkeydesc[i].name);</span><br><span class="line">        gpio_direction_input(imx6uirq.irqkeydesc[i].gpio);</span><br><span class="line">        imx6uirq.irqkeydesc[i].irqnum = irq_of_parse_and_map(</span><br><span class="line">            imx6uirq.nd, i);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> 0</span></span><br><span class="line">imx6uirq.irqkeydesc[i].irqnum = gpio_to_irq(</span><br><span class="line">imx6uirq.irqkeydesc[i].gpio);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">        printk(<span class="string">&quot;k:key%d:gpio=%d, irqnum=%d\r\n&quot;</span>, i,</span><br><span class="line">               imx6uirq.irqkeydesc[i].gpio,</span><br><span class="line">               imx6uirq.irqkeydesc[i].irqnum);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* 申请中断 */</span></span><br><span class="line">    imx6uirq.irqkeydesc[<span class="number">0</span>].handler = key0_handler;</span><br><span class="line">    imx6uirq.irqkeydesc[<span class="number">0</span>].value = KEY0VALUE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; KEY_CNT; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ret = request_irq(imx6uirq.irqkeydesc[i].irqnum,</span><br><span class="line">                          imx6uirq.irqkeydesc[i].handler,</span><br><span class="line">                          IRQF_TRIGGER_FALLING | IRQF_TRIGGER_RISING,</span><br><span class="line">                          imx6uirq.irqkeydesc[i].name, &amp;imx6uirq);</span><br><span class="line">        <span class="keyword">if</span> (ret &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            printk(<span class="string">&quot;k:irq %d request failed!\r\n&quot;</span>,</span><br><span class="line">                   imx6uirq.irqkeydesc[i].irqnum);</span><br><span class="line">            <span class="keyword">return</span> -EFAULT;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 创建定时器 */</span></span><br><span class="line">    init_timer(&amp;imx6uirq.timer);</span><br><span class="line">    imx6uirq.timer.function = timer_function;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/*  初始化等待队列头 */</span></span><br><span class="line">    init_waitqueue_head(&amp;imx6uirq.r_wait);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">imx6uirq_open</span><span class="params">(struct inode *inode, struct file *filp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    filp-&gt;private_data = &amp;imx6uirq; <span class="comment">/* 设置私有数据 */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @description : 从设备读取数据</span></span><br><span class="line"><span class="comment"> * @param – filp : 要打开的设备文件(文件描述符)</span></span><br><span class="line"><span class="comment"> * @param – buf : 返回给用户空间的数据缓冲区</span></span><br><span class="line"><span class="comment"> * @param - cnt : 要读取的数据长度</span></span><br><span class="line"><span class="comment"> * @param – offt : 相对于文件首地址的偏移</span></span><br><span class="line"><span class="comment"> * @return : 读取的字节数，如果为负值，表示读取失败</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">ssize_t</span> <span class="title">imx6uirq_read</span><span class="params">(struct file *filp, <span class="keyword">char</span> __user *buf,</span></span></span><br><span class="line"><span class="function"><span class="params">                             <span class="keyword">size_t</span> cnt, <span class="keyword">loff_t</span> *offt)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> keyvalue = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> releasekey = <span class="number">0</span>;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">imx6uirq_dev</span> *<span class="title">dev</span> = (<span class="title">struct</span> <span class="title">imx6uirq_dev</span> *)</span></span><br><span class="line"><span class="class">                                   <span class="title">filp</span>-&gt;<span class="title">private_data</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (filp-&gt;f_flags &amp; O_NONBLOCK)&#123;            <span class="comment">/*  非阻塞访问 */</span></span><br><span class="line">        <span class="keyword">if</span> (atomic_read(&amp;dev-&gt;releasekey) == <span class="number">0</span>) <span class="comment">/*  没有按键按下 */</span></span><br><span class="line">            <span class="keyword">return</span> -EAGAIN;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;    <span class="comment">/* 阻塞访问 */</span></span><br><span class="line">        <span class="comment">/* 加入等待队列，等待被唤醒,也就是有按键按下 */</span></span><br><span class="line">        ret = wait_event_interruptible(dev-&gt;r_wait,</span><br><span class="line">                                       atomic_read(&amp;dev-&gt;releasekey));</span><br><span class="line">        <span class="keyword">if</span> (ret)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">goto</span> wait_error;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    keyvalue = atomic_read(&amp;dev-&gt;keyvalue);</span><br><span class="line">    releasekey = atomic_read(&amp;dev-&gt;releasekey);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (releasekey)</span><br><span class="line">    &#123; <span class="comment">/* 有按键按下 */</span></span><br><span class="line">        <span class="keyword">if</span> (keyvalue &amp; <span class="number">0x80</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            keyvalue &amp;= ~<span class="number">0x80</span>;</span><br><span class="line">            ret = copy_to_user(buf, &amp;keyvalue, <span class="keyword">sizeof</span>(keyvalue));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">goto</span> data_error;</span><br><span class="line">        &#125;</span><br><span class="line">        atomic_set(&amp;dev-&gt;releasekey, <span class="number">0</span>); <span class="comment">/* 按下标志清零 */</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">goto</span> data_error;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">wait_error:</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line"></span><br><span class="line">data_error:</span><br><span class="line">    <span class="keyword">return</span> -EINVAL;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/*</span></span><br><span class="line"><span class="comment">  * @description     : poll函数，用于处理非阻塞访问</span></span><br><span class="line"><span class="comment">  * @param - filp    : 要打开的设备文件(文件描述符)</span></span><br><span class="line"><span class="comment">  * @param - wait    : 等待列表(poll_table)</span></span><br><span class="line"><span class="comment">  * @return          : 设备或者资源状态，</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">imx6uirq_poll</span><span class="params">(struct file *filp, struct poll_table_struct *wait)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> mask = <span class="number">0</span>;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">imx6uirq_dev</span> *<span class="title">dev</span> = (<span class="title">struct</span> <span class="title">imx6uirq_dev</span> *)<span class="title">filp</span>-&gt;<span class="title">private_data</span>;</span></span><br><span class="line"></span><br><span class="line">    poll_wait(filp, &amp;dev-&gt;r_wait, wait);    <span class="comment">/* 将等待队列头添加到poll_table中 */</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span>(atomic_read(&amp;dev-&gt;releasekey)) &#123;        <span class="comment">/* 按键按下 */</span></span><br><span class="line">        mask = POLLIN | POLLRDNORM;            <span class="comment">/* 返回PLLIN */</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> mask;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @description     : fasync函数，用于处理异步通知</span></span><br><span class="line"><span class="comment"> * @param - fd        : 文件描述符</span></span><br><span class="line"><span class="comment"> * @param - filp    : 要打开的设备文件(文件描述符)</span></span><br><span class="line"><span class="comment"> * @param - on      : 模式</span></span><br><span class="line"><span class="comment"> * @return          : 负数表示函数执行失败</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">imx6uirq_fasync</span><span class="params">(<span class="keyword">int</span> fd, struct file *filp, <span class="keyword">int</span> on)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">imx6uirq_dev</span> *<span class="title">dev</span> = (<span class="title">struct</span> <span class="title">imx6uirq_dev</span> *)<span class="title">filp</span>-&gt;<span class="title">private_data</span>;</span></span><br><span class="line">    <span class="keyword">return</span> fasync_helper(fd, filp, on, &amp;dev-&gt;async_queue);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @description     : release函数，应用程序调用close关闭驱动文件的时候会执行</span></span><br><span class="line"><span class="comment"> * @param - inode    : inode节点</span></span><br><span class="line"><span class="comment"> * @param - filp    : 要打开的设备文件(文件描述符)</span></span><br><span class="line"><span class="comment"> * @return          : 负数表示函数执行失败</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">imx6uirq_release</span><span class="params">(struct inode *inode, struct file *filp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> imx6uirq_fasync(<span class="number">-1</span>, filp, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 设备操作函数 */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> <span class="title">imx6uirq_fops</span> = &#123;</span></span><br><span class="line">    .owner = THIS_MODULE,</span><br><span class="line">    .open = imx6uirq_open,</span><br><span class="line">    .read = imx6uirq_read,</span><br><span class="line">    .poll = imx6uirq_poll,</span><br><span class="line">    .fasync = imx6uirq_fasync,</span><br><span class="line">    .release = imx6uirq_release,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> __init <span class="title">imx6uirq_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> result = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 注册设备号 */</span></span><br><span class="line">    imx6uirq.major = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span>(imx6uirq.major)&#123;</span><br><span class="line">        imx6uirq.devid = MKDEV(imx6uirq.major, imx6uirq.minor);</span><br><span class="line">        ret = register_chrdev_region(imx6uirq.devid, DEV_CNT, DEV_NAME);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        ret = alloc_chrdev_region(&amp;imx6uirq.devid, <span class="number">0</span>, DEV_CNT, DEV_NAME);</span><br><span class="line">    &#125;</span><br><span class="line">    imx6uirq.major = MAJOR(imx6uirq.devid);</span><br><span class="line">    imx6uirq.minor = MINOR(imx6uirq.devid);</span><br><span class="line">    <span class="keyword">if</span>(ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        printk(<span class="string">&quot;k:register devid failed!\r\n&quot;</span>);</span><br><span class="line">        result = -EINVAL;</span><br><span class="line">        <span class="keyword">goto</span> fail_register_devid;</span><br><span class="line">    &#125;</span><br><span class="line">    printk(<span class="string">&quot;k:imx6uirq  MAJOR:%d  MINOR:%d\r\n&quot;</span>, imx6uirq.major, imx6uirq.minor);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 添加字符设备 */</span></span><br><span class="line">    imx6uirq.cdev.owner = imx6uirq_fops.owner;</span><br><span class="line">    cdev_init(&amp;imx6uirq.cdev, &amp;imx6uirq_fops);</span><br><span class="line">    ret = cdev_add(&amp;imx6uirq.cdev, imx6uirq.devid, DEV_CNT);</span><br><span class="line">    <span class="keyword">if</span>(ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        printk(<span class="string">&quot;k:register chrdev failed!\r\n&quot;</span>);</span><br><span class="line">        result = -EINVAL;</span><br><span class="line">        <span class="keyword">goto</span> fail_register_cdev;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* 创建设备节点 */</span></span><br><span class="line">    <span class="comment">/*     1.创建类 */</span></span><br><span class="line">    imx6uirq.class = class_create(THIS_MODULE, DEV_NAME);</span><br><span class="line">    <span class="keyword">if</span>(IS_ERR(imx6uirq.class))&#123;</span><br><span class="line">        printk(<span class="string">&quot;k:fail to create class!\r\n&quot;</span>);</span><br><span class="line">        result = PTR_ERR(imx6uirq.class);</span><br><span class="line">        <span class="keyword">goto</span> fail_class;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/*    2.创建设备*/</span></span><br><span class="line">    imx6uirq.device = device_create(imx6uirq.class, <span class="literal">NULL</span>, imx6uirq.devid, <span class="literal">NULL</span>, DEV_NAME);</span><br><span class="line">    <span class="keyword">if</span>(IS_ERR(imx6uirq.device))&#123;</span><br><span class="line">        printk(<span class="string">&quot;k:fail to create device!\r\n&quot;</span>);</span><br><span class="line">        result = PTR_ERR(imx6uirq.device);</span><br><span class="line">        <span class="keyword">goto</span> fail_device;</span><br><span class="line">    &#125;</span><br><span class="line">        </span><br><span class="line">    <span class="comment">/* 5、初始化按键 */</span></span><br><span class="line">    atomic_set(&amp;imx6uirq.keyvalue, INVAKEY);</span><br><span class="line">    atomic_set(&amp;imx6uirq.releasekey, <span class="number">0</span>);</span><br><span class="line">    keyio_init();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">fail_device:</span><br><span class="line">    <span class="comment">/* 摧毁类 */</span></span><br><span class="line">    class_destroy(imx6uirq.class);</span><br><span class="line">fail_class:</span><br><span class="line">    <span class="comment">/* 注销字符设备 */</span></span><br><span class="line">    cdev_del(&amp;imx6uirq.cdev);</span><br><span class="line">fail_register_cdev:</span><br><span class="line">    <span class="comment">/* 注销设备号 */</span></span><br><span class="line">    unregister_chrdev_region(imx6uirq.devid, DEV_CNT);</span><br><span class="line">fail_register_devid:</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> __exit <span class="title">imx6uirq_exit</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 删除定时器 */</span></span><br><span class="line">    del_timer_sync(&amp;imx6uirq.timer);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 释放中断 */</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; KEY_CNT; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        free_irq(imx6uirq.irqkeydesc[i].irqnum, &amp;imx6uirq);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 摧毁设备 */</span></span><br><span class="line">    device_destroy(imx6uirq.class, imx6uirq.devid);</span><br><span class="line">    <span class="comment">/* 摧毁类 */</span></span><br><span class="line">    class_destroy(imx6uirq.class);</span><br><span class="line">    <span class="comment">/* 注销字符设备 */</span></span><br><span class="line">    cdev_del(&amp;imx6uirq.cdev);</span><br><span class="line">    <span class="comment">/* 注销设备号 */</span></span><br><span class="line">    unregister_chrdev_region(imx6uirq.devid, DEV_CNT);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 驱动入口和出口 */</span></span><br><span class="line">module_init(imx6uirq_init);</span><br><span class="line">module_exit(imx6uirq_exit);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 许可 */</span></span><br><span class="line">MODULE_LICENSE(<span class="string">&quot;GPL&quot;</span>);</span><br><span class="line"><span class="comment">/* 作者信息 */</span></span><br><span class="line">MODULE_AUTHOR(<span class="string">&quot;LXG@firestaradmin&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>添加 fcntl.h 头文件，因为要用到相关的 API 函数。</li>
+<li>在设备结构体 imx6uirq_dev 中添加 fasync_struct 指针变量。</li>
+<li>如果是一次完整的按键过程，那么就通过 kill_fasync 函数发送 SIGIO 信号。</li>
+<li>imx6uirq_fasync 函数，为 file_operations 操作集中的 fasync 函数，此函数内容很简单，就是调用一下 fasync_helper。</li>
+<li>release 函数，应用程序调用 close 函数关闭驱动设备文件的时候此函数就会执行，在此函数中释放掉 fasync_struct 指针变量。</li>
+</ul>
+<h3 id="编写测试APP"><a href="#编写测试APP" class="headerlink" title="编写测试APP"></a>编写测试APP</h3><p>测试 APP 要实现的内容很简单，设置 SIGIO 信号的处理函数为 sigio_signal_func，当驱动程序向应用程序发送 SIGIO 信号以后 sigio_signal_func 函数就会执行。sigio_signal_func 函数内容很简单，就是通过 read 函数读取按键值。新建名为 asyncnotiApp.c 的文件，然后输入如下所示内容：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;linux/ioctl.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;poll.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;sys/select.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;sys/time.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;signal.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> fd = <span class="number">0</span>;    <span class="comment">/* 文件描述符 */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * SIGIO信号处理函数</span></span><br><span class="line"><span class="comment"> * @param - signum     : 信号值</span></span><br><span class="line"><span class="comment"> * @return             : 无</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sigio_signal_func</span><span class="params">(<span class="keyword">int</span> signum)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> err = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> keyvalue = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    err = read(fd, &amp;keyvalue, <span class="keyword">sizeof</span>(keyvalue));</span><br><span class="line">    <span class="keyword">if</span>(err &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">/* 读取错误 */</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;sigio signal! key value=%d\r\n&quot;</span>, keyvalue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @description        : main主程序</span></span><br><span class="line"><span class="comment"> * @param - argc     : argv数组元素个数</span></span><br><span class="line"><span class="comment"> * @param - argv     : 具体参数</span></span><br><span class="line"><span class="comment"> * @return             : 0 成功;其他 失败</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> flags = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">char</span> *filename;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Error Usage!\r\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    filename = argv[<span class="number">1</span>];</span><br><span class="line">    fd = open(filename, O_RDWR);</span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Can&#x27;t open file %s\r\n&quot;</span>, filename);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 设置信号SIGIO的处理函数 */</span></span><br><span class="line">    signal(SIGIO, sigio_signal_func);</span><br><span class="line">    </span><br><span class="line">    fcntl(fd, F_SETOWN, getpid());        <span class="comment">/* 将当前进程的进程号告诉给内核     */</span></span><br><span class="line">    flags = fcntl(fd, F_GETFL);            <span class="comment">/* 获取当前的进程状态             */</span></span><br><span class="line">    fcntl(fd, F_SETFL, flags | FASYNC);    <span class="comment">/* 设置进程启用异步通知功能     */</span>    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">        sleep(<span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    close(fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>sigio_signal_func 函数，SIGIO 信号的处理函数，当驱动程序有效按键按下以后就会发送 SIGIO 信号，此函数就会执行。此函数通过 read 函数读取按键值，然后通过printf 函数打印在终端上。</li>
+<li>通过 signal 函数设置 SIGIO 信号的处理函数为 sigio_signal_func。</li>
+<li>设置当前进程的状态，开启异步通知的功能。 </li>
+<li>while 循环，等待信号产生。</li>
+</ul>
+<h2 id="四、运行测试"><a href="#四、运行测试" class="headerlink" title="四、运行测试"></a>四、运行测试</h2><p>编译运行。</p>
+<p>驱动加载成功以后使用如下命令来测试中断：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./asyncnotiApp /dev/asyncnoti</span><br></pre></td></tr></table></figure>
+
+<p>按下开发板上的 KEY0 键，终端就会输出按键值，如图 所示：</p>
+<img src="/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/11%E3%80%81%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E5%AE%9E%E9%AA%8C/image-20200827160817641.png" class="" title="image-20200827160817641">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Embedded/" rel="tag"><i class="fa fa-tag"></i> Embedded</a>
+              <a href="/tags/ARM/" rel="tag"><i class="fa fa-tag"></i> ARM</a>
+              <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+              <a href="/tags/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag"><i class="fa fa-tag"></i> 驱动开发</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/10%E3%80%81Linux%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9EIO%E5%AE%9E%E9%AA%8C/" rel="prev" title="10| Linux阻塞非阻塞IO实验">
+      <i class="fa fa-chevron-left"></i> 10| Linux阻塞非阻塞IO实验
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/12%E3%80%81platform%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C/" rel="next" title="12| Platform 设备驱动实验">
+      12| Platform 设备驱动实验 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E5%AE%9E%E9%AA%8C"><span class="nav-text">异步通知实验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5"><span class="nav-text">一、异步通知</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%AE%80%E4%BB%8B"><span class="nav-text">1| 异步通知简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%A9%B1%E5%8A%A8%E4%B8%AD%E7%9A%84%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86"><span class="nav-text">2| 驱动中的信号处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-fasync-struct-%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-text">1. fasync_struct 结构体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-fasync%E5%87%BD%E6%95%B0"><span class="nav-text">2.fasync函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-kill-fasync%E5%87%BD%E6%95%B0"><span class="nav-text">3.kill_fasync函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E5%AF%B9%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-text">3| 应用程序对异步通知的处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%A1%AC%E4%BB%B6%E5%8E%9F%E7%90%86%E5%9B%BE%E5%88%86%E6%9E%90"><span class="nav-text">二、硬件原理图分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E9%AA%8C%E7%A8%8B%E5%BA%8F%E7%BC%96%E5%86%99"><span class="nav-text">三、实验程序编写</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E8%AE%BE%E5%A4%87%E6%A0%91%E6%96%87%E4%BB%B6"><span class="nav-text">修改设备树文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E7%BC%96%E5%86%99"><span class="nav-text">驱动程序编写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E6%B5%8B%E8%AF%95APP"><span class="nav-text">编写测试APP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%BF%90%E8%A1%8C%E6%B5%8B%E8%AF%95"><span class="nav-text">四、运行测试</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="firestaradmin"
+      src="/images/head.png">
+  <p class="site-author-name" itemprop="name">firestaradmin</p>
+  <div class="site-description" itemprop="description">孤独是时间给你的自由</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/firestaradmin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;firestaradmin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:firestardog@qq.com" title="E-Mail → mailto:firestardog@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/6260159" title="BiliBili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;6260159" rel="noopener" target="_blank"><i class="fa fa-tv fa-fw"></i>BiliBili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/yougeng123" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;yougeng123" rel="noopener" target="_blank"><i class="fas fa-sign-out-alt fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">firestaradmin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+    <script defer src="/lib/three/canvas_sphere.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'f2506e9cab18a7cac5cb',
+      clientSecret: '08a51a77f3077637b137727e7199e2842b9cdde5',
+      repo        : 'my-blog-commonts',
+      owner       : 'firestaradmin',
+      admin       : ['firestaradmin'],
+      id          : 'c55d23ef53f1bee01156227b2300dcda',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+  
+
+</body>
+</html>
+

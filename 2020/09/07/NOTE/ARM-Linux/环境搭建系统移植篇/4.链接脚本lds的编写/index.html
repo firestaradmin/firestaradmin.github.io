@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lxg180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lxg32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lxg16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-mac-osx.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"firestaradmin.gitee.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"./public/search.xml"};
+  </script>
+
+  <meta name="description" content="链接脚本.lds说明我们链接代码的时候可以使用如下语句： 1arm-linux-gnueabihf-ld -Ttext 0X87800000 -o ledc.elf $^  上面语句中我们是通过“-Ttext”来指定链接地址是 0X87800000 的，这样的话所有的文件都会链接到以 0X87800000 为起始地址的区域。 但是有时候我们很多文件需要链接到指定的区域，或者叫做段里面，比如在 Li">
+<meta property="og:type" content="article">
+<meta property="og:title" content="4| 链接脚本lds的编写">
+<meta property="og:url" content="https://firestaradmin.gitee.io/2020/09/07/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/4.%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AClds%E7%9A%84%E7%BC%96%E5%86%99/index.html">
+<meta property="og:site_name" content="firestaradmin&#39;s Fortune">
+<meta property="og:description" content="链接脚本.lds说明我们链接代码的时候可以使用如下语句： 1arm-linux-gnueabihf-ld -Ttext 0X87800000 -o ledc.elf $^  上面语句中我们是通过“-Ttext”来指定链接地址是 0X87800000 的，这样的话所有的文件都会链接到以 0X87800000 为起始地址的区域。 但是有时候我们很多文件需要链接到指定的区域，或者叫做段里面，比如在 Li">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-07T11:39:47.052Z">
+<meta property="article:modified_time" content="2020-09-07T11:43:58.514Z">
+<meta property="article:author" content="firestaradmin">
+<meta property="article:tag" content="Embedded">
+<meta property="article:tag" content="ARM">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://firestaradmin.gitee.io/2020/09/07/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/4.%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AClds%E7%9A%84%E7%BC%96%E5%86%99/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>4| 链接脚本lds的编写 | firestaradmin's Fortune</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">firestaradmin's Fortune</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">为祖国崛起而奋斗</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/firestaradmin" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://firestaradmin.gitee.io/2020/09/07/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/4.%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AClds%E7%9A%84%E7%BC%96%E5%86%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.png">
+      <meta itemprop="name" content="firestaradmin">
+      <meta itemprop="description" content="孤独是时间给你的自由">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="firestaradmin's Fortune">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          4| 链接脚本lds的编写
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-07 19:39:47 / 修改时间：19:43:58" itemprop="dateCreated datePublished" datetime="2020-09-07T19:39:47+08:00">2020-09-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NOTE/" itemprop="url" rel="index"><span itemprop="name">NOTE</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NOTE/ARM-Linux/" itemprop="url" rel="index"><span itemprop="name">ARM-Linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/" itemprop="url" rel="index"><span itemprop="name">环境搭建系统移植篇</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="链接脚本-lds"><a href="#链接脚本-lds" class="headerlink" title="链接脚本.lds"></a>链接脚本.lds</h1><h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>我们链接代码的时候可以使用如下语句：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-gnueabihf-ld -Ttext 0X87800000 -o ledc.elf <span class="variable">$^</span></span><br></pre></td></tr></table></figure>
+
+<p>上面语句中我们是通过“-Ttext”来指定链接地址是 0X87800000 的，这样的话所有的文件都会链接到以 0X87800000 为起始地址的区域。</p>
+<p>但是有时候我们很多文件需要链接到指定的区域，或者叫做段里面，比如在 Linux 里面初始化函数就会放到 init 段里面。因此我们需要能够自定义一些段，这些段的起始地址我们可以自由指定，同样的我们也可以指定一个文件或者函数应该存放到哪个段里面去。要完成这个功能我们就需要使用到链接脚本，看名字就知道链接脚本主要用于链接的，用于描述文件应该如何被链接在一起形成最终的可执行文件。其主要目的是描述输入文件中的段如何被映射到输出文件中，并且控制输出文件中的内存排布。比如我们编译生成的文件一般都包含 text 段、data 段等等。</p>
+<p>链接脚本的语法很简单，就是编写一系列的命令，这些命令组成了链接脚本，每个命令是一个带有参数的关键字或者一个对符号的赋值，可以使用分号分隔命令。像文件名之类的字符串可以直接键入,也可以使用通配符“*”。</p>
+<p>最简单的链接脚本可以只包含一个命令“SECTIONS”,我们可以在这一个 “SECTIONS”里面来描述输出文件的内存布局。我们一般编译出来的代码都包含在 text、data、bss 和 rodata 这四个段内，假设现在的代码要被链接到 0X10000000 这个地址，数据要被链接到 0X30000000 这个地方，下面就是完成此功能的最简单的链接脚本：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SECTIONS&#123;</span><br><span class="line">    . = <span class="number">0X10000000</span>;</span><br><span class="line">    .text : &#123;*(.text)&#125;</span><br><span class="line">    . = <span class="number">0X30000000</span>;</span><br><span class="line">    .<span class="function">data <span class="title">ALIGN</span><span class="params">(<span class="number">4</span>)</span> : </span>&#123; *(.data) &#125;</span><br><span class="line">    .<span class="function">bss <span class="title">ALIGN</span><span class="params">(<span class="number">4</span>)</span> : </span>&#123; *(.bss) &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第 1 行我们先写了一个关键字“SECTIONS”，后面跟了一个大括号，这个大括号和第 7 行的大括号是一对，这是必须的。看起来就跟 C 语言里面的函数一样。</p>
+<p>第 2 行对一个特殊符号“.”进行赋值，“.”在链接脚本里面叫做定位计数器，默认的定位计数器为 0。我们要求代码链接到以 0X10000000 为起始地址的地方，因此这一行给“.”赋值0X10000000，表示以 0X10000000 开始，后面的文件或者段都会以 0X10000000 为起始地址开始链接。</p>
+<p>第 3 行的“.text”是段名，后面的冒号是语法要求，冒号后面的大括号里面可以填上要链接到“.text”这个段里面的所有文件，“*(.text)”中的“*”是通配符，表示所有输入文件的.text段都放到“.text”中。</p>
+<p>第 4 行，我们的要求是数据放到 0X30000000 开始的地方，所以我们需要重新设置定位计数器“.”，将其改为 0X30000000。</p>
+<p>第 5 行跟第 3 行一样，定义了一个名为“.data”的段，然后所有文件的“.data”段都放到这里面。但是这一行多了一个“ALIGN(4)”，这是什么意思呢？这是用来对“.data”这个段的起始地址做字节对齐的，ALIGN(4)表示 4 字节对齐。也就是说段“.data”的起始地址要能被 4 整除，一般常见的都是ALIGN(4)或者 ALIGN(8)，也就是 4 字节或者 8 字节对齐。</p>
+<p>第 6 行定义了一个“.bss”段，所有文件中的“.bss”数据都会被放到这个里面，“.bss”数据就是那些定义了但是没有被初始化的变量。</p>
+<h2 id="I-MX6U的裸机例程链接脚本例子"><a href="#I-MX6U的裸机例程链接脚本例子" class="headerlink" title="I.MX6U的裸机例程链接脚本例子"></a>I.MX6U的裸机例程链接脚本例子</h2><p>我们本试验的链接脚本要求如下：</p>
+<ul>
+<li>链接起始地址为 0X87800000。</li>
+<li>start.o 要被链接到最开始的地方，因为 start.o 里面包含这第一个要执行的命令。</li>
+</ul>
+<p>根据要求，在 Makefile 同目录下新建一个名为“imx6ul.lds”的文件</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SECTIONS&#123;</span><br><span class="line">    . = <span class="number">0X87800000</span>;</span><br><span class="line">    .text :</span><br><span class="line">    &#123;</span><br><span class="line">        start.o</span><br><span class="line">        main.o</span><br><span class="line">        *(.text)</span><br><span class="line">    &#125;</span><br><span class="line">    .<span class="function">rodata <span class="title">ALIGN</span><span class="params">(<span class="number">4</span>)</span> : </span>&#123;*(.rodata*)&#125;</span><br><span class="line">    .<span class="function">data <span class="title">ALIGN</span><span class="params">(<span class="number">4</span>)</span> : </span>&#123; *(.data) &#125;</span><br><span class="line">    __bss_start = .;</span><br><span class="line">    .<span class="function">bss <span class="title">ALIGN</span><span class="params">(<span class="number">4</span>)</span> : </span>&#123; *(.bss) *(COMMON) &#125;</span><br><span class="line">    __bss_end = .;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第5行设置链接到开始位置的文件为start.o，因为 start.o 里面包含着第一个要执行的指令，所以一定要链接到最开始的地方。</p>
+<p>第 6 行是 main.o这个文件，其实可以不用写出来，因为 main.o 的位置就无所谓了，可以由编译器自行决定链接位置。</p>
+<p>在第 11、13 行有“__bss_start”和“__bss_end”这两个东西？这个是什么呢？“__bss_start”和“__bss_end”是符号第 11、13 这两行其实就是对这两个符号进行赋值，其值为定位符“.”，这两个符号用来保存.bss 段的起始地址和结束地址。</p>
+<p>前面说了.bss 段是定义了但是没有被初始化的变量，我们需要手动对.bss 段的变量清零的，因此我们需要知道.bss 段的起始和结束地址，这样我们直接对这段内存赋 0 即可完成清零。通过第 11、13 行代码，.bss 段的起始地址和结束地址就保存在了“__bss_start”和“__bss_end”中，我们就可以直接在汇编或者 C 文件里面使用这两个符号。</p>
+<p>之后我们就可以将 Makefile 中的如下一行代码：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-gnueabihf-ld -Ttext 0X87800000 -o ledc.elf <span class="variable">$^</span></span><br></pre></td></tr></table></figure>
+
+<p>改为：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-gnueabihf-ld -Timx6ul.lds -o ledc.elf <span class="variable">$^</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Embedded/" rel="tag"><i class="fa fa-tag"></i> Embedded</a>
+              <a href="/tags/ARM/" rel="tag"><i class="fa fa-tag"></i> ARM</a>
+              <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/07/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/3.I.MX6UL%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%B5%85%E6%9E%90/" rel="prev" title="3| I.MX6UL 启动方式浅析">
+      <i class="fa fa-chevron-left"></i> 3| I.MX6UL 启动方式浅析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/07/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/5.Makefile%E7%9A%84%E7%AE%80%E5%8D%95%E7%BC%96%E5%86%99/" rel="next" title="5| Makefile的简单编写">
+      5| Makefile的简单编写 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC-lds"><span class="nav-text">链接脚本.lds</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-MX6U%E7%9A%84%E8%A3%B8%E6%9C%BA%E4%BE%8B%E7%A8%8B%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC%E4%BE%8B%E5%AD%90"><span class="nav-text">I.MX6U的裸机例程链接脚本例子</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="firestaradmin"
+      src="/images/head.png">
+  <p class="site-author-name" itemprop="name">firestaradmin</p>
+  <div class="site-description" itemprop="description">孤独是时间给你的自由</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/firestaradmin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;firestaradmin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:firestardog@qq.com" title="E-Mail → mailto:firestardog@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/6260159" title="BiliBili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;6260159" rel="noopener" target="_blank"><i class="fa fa-tv fa-fw"></i>BiliBili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/yougeng123" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;yougeng123" rel="noopener" target="_blank"><i class="fas fa-sign-out-alt fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">firestaradmin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+    <script defer src="/lib/three/canvas_sphere.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'f2506e9cab18a7cac5cb',
+      clientSecret: '08a51a77f3077637b137727e7199e2842b9cdde5',
+      repo        : 'my-blog-commonts',
+      owner       : 'firestaradmin',
+      admin       : ['firestaradmin'],
+      id          : 'bcc7e7f9bbbf881ff2cebbdd4de9eb72',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+  
+
+</body>
+</html>
+

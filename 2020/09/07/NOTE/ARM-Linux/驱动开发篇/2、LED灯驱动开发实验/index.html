@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lxg180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lxg32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lxg16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-mac-osx.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"firestaradmin.gitee.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"./public/search.xml"};
+  </script>
+
+  <meta name="description" content="LED灯驱动开发实验记录一、Linux 下 LED  灯驱动原理Linux 下的任何外设驱动，最终都是要配置相应的硬件寄存器。所以本章的 LED 灯驱动最终也是对 I.MX6ULL 的 IO 口进行配置，与裸机实验不同的是，在 Linux 下编写驱动要符合 Linux的驱动框架。I.MX6U-ALPHA开发板上的LED连接到 I.MX6ULL 的 GPIO1_IO03 这个引脚上，因此本实验的重点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2| LED灯驱动开发实验记录">
+<meta property="og:url" content="https://firestaradmin.gitee.io/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/2%E3%80%81LED%E7%81%AF%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E5%AE%9E%E9%AA%8C/index.html">
+<meta property="og:site_name" content="firestaradmin&#39;s Fortune">
+<meta property="og:description" content="LED灯驱动开发实验记录一、Linux 下 LED  灯驱动原理Linux 下的任何外设驱动，最终都是要配置相应的硬件寄存器。所以本章的 LED 灯驱动最终也是对 I.MX6ULL 的 IO 口进行配置，与裸机实验不同的是，在 Linux 下编写驱动要符合 Linux的驱动框架。I.MX6U-ALPHA开发板上的LED连接到 I.MX6ULL 的 GPIO1_IO03 这个引脚上，因此本实验的重点">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-07T11:47:34.370Z">
+<meta property="article:modified_time" content="2020-09-07T11:51:24.752Z">
+<meta property="article:author" content="firestaradmin">
+<meta property="article:tag" content="Embedded">
+<meta property="article:tag" content="ARM">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="驱动开发">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://firestaradmin.gitee.io/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/2%E3%80%81LED%E7%81%AF%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E5%AE%9E%E9%AA%8C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>2| LED灯驱动开发实验记录 | firestaradmin's Fortune</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">firestaradmin's Fortune</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">为祖国崛起而奋斗</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/firestaradmin" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://firestaradmin.gitee.io/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/2%E3%80%81LED%E7%81%AF%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E5%AE%9E%E9%AA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.png">
+      <meta itemprop="name" content="firestaradmin">
+      <meta itemprop="description" content="孤独是时间给你的自由">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="firestaradmin's Fortune">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2| LED灯驱动开发实验记录
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-07 19:47:34 / 修改时间：19:51:24" itemprop="dateCreated datePublished" datetime="2020-09-07T19:47:34+08:00">2020-09-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NOTE/" itemprop="url" rel="index"><span itemprop="name">NOTE</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NOTE/ARM-Linux/" itemprop="url" rel="index"><span itemprop="name">ARM-Linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/" itemprop="url" rel="index"><span itemprop="name">驱动开发篇</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="LED灯驱动开发实验记录"><a href="#LED灯驱动开发实验记录" class="headerlink" title="LED灯驱动开发实验记录"></a>LED灯驱动开发实验记录</h1><h2 id="一、Linux-下-LED-灯驱动原理"><a href="#一、Linux-下-LED-灯驱动原理" class="headerlink" title="一、Linux 下 LED  灯驱动原理"></a>一、Linux 下 LED  灯驱动原理</h2><p>Linux 下的任何外设驱动，最终都是要配置相应的硬件寄存器。所以本章的 LED 灯驱动最终也是对 I.MX6ULL 的 IO 口进行配置，与裸机实验不同的是，在 Linux 下编写驱动要符合 Linux的驱动框架。I.MX6U-ALPHA开发板上的LED连接到 I.MX6ULL 的 GPIO1_IO03 这个引脚上，因此本实验的重点就是编写 Linux 下 I.MX6UL 引脚控制驱动。</p>
+<h3 id="1、地址映射"><a href="#1、地址映射" class="headerlink" title="1、地址映射"></a>1、地址映射</h3><p>在编写驱动之前，我们需要先简单了解一下 MMU 这个神器，MMU 全称叫做 MemoryManage Unit，也就是内存管理单元。在老版本的 Linux 中要求处理器必须有 MMU，但是现在Linux 内核已经支持无 MMU 的处理器了。</p>
+<p><strong>MMU 主要完成的功能如下</strong>：<br><strong>①、</strong>完成虚拟空间到物理空间的映射。<br><strong>②、</strong>内存保护，设置存储器的访问权限，设置虚拟存储空间的缓冲特性。</p>
+<p>我们重点来看一下第①点，也就是<strong>虚拟空间到物理空间的映射，也叫做地址映射</strong>。首先了解两个地址概念：</p>
+<p><strong>虚拟地址(VA,Virtual Address)、物理地址(PA，Physcical Address)</strong></p>
+<p>对于 32 位的处理器来说，虚拟地址范围是 2^32=4GB，我们的开发板上有 512MB 的 DDR3，这 512MB 的<br>内存就是物理内存，经过 MMU 可以将其映射到整个 4GB 的虚拟空间，如图所示：</p>
+
+
+<p>物理内存只有 512MB，虚拟内存有 4GB，那么肯定存在多个虚拟地址映射到同一个物理地址上去，虚拟地址范围比物理地址范围大的问题处理器自会处理，这里我们不要去深究，因为MMU 是很复杂的一个东西，后续有时间的话可以再参考正点原子 Linux 团队打算做的MMU 专题教程。</p>
+<p>Linux 内核启动的时候会初始化 MMU，设置好内存映射，设置好以后 CPU 访问的都是虚拟地址。比如I.MX6ULL 的 <strong>GPIO1_IO03</strong> 引 脚 的 复 用 寄 存 器<strong>IOMUXC_SW_MUX_CTL_PAD_GPIO1_IO03</strong>的地址为 <strong>0X020E0068</strong>。如果没有开启 MMU 的话直接向 0X020E0068 这个寄存器地址写入数据就可以配置GPIO1_IO03 的复用功能。现在开启了 MMU，并且设置了内存映射，因此就不能直接向 0X020E0068 这个地址写入数据了。我们必须得到 0X020E0068 这个物理地址在 Linux 系统里面对应的虚拟地址，这里就涉及到了物理内存和虚拟内存之间的转换，需要用到两个函数：<strong>ioremap</strong> 和 <strong>iounmap</strong>。</p>
+<h4 id="ioremap-函数"><a href="#ioremap-函数" class="headerlink" title="ioremap  函数"></a>ioremap  函数</h4><p>ioremap 函 数 用 于 获 取 指 定 物 理 地 址 空 间 对 应 的 虚 拟 地 址 空 间 ， 定 义 在arch/arm/include/asm/io.h 文件中，定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ioremap(cookie,size) __arm_ioremap((cookie), (size),</span></span><br><span class="line">MT_DEVICE)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">void</span> __iomem * __arm_ioremap(<span class="keyword">phys_addr_t</span> phys_addr, <span class="keyword">size_t</span> size,</span><br><span class="line">                                 <span class="keyword">unsigned</span> <span class="keyword">int</span> mtype)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> arch_ioremap_caller(phys_addr, size, mtype,</span><br><span class="line">                               __builtin_return_address(<span class="number">0</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ioremap 是个宏，有两个参数：<strong>cookie</strong> 和 <strong>size</strong>，真正起作用的是函数<strong>__arm_ioremap</strong>，此函数有三个参数和一个返回值，这些参数和返回值的含义如下：<br><strong>phys_addr</strong>：要映射给的物理起始地址。<br><strong>size</strong>：要映射的内存空间大小。<br><strong>mtype</strong>：ioremap 的类型，可以选择 MT_DEVICE、MT_DEVICE_NONSHARED、MT_DEVICE_CACHED 和 MT_DEVICE_WC，ioremap 函数选择 MT_DEVICE。<br><strong>返回值</strong>：__iomem 类型的指针，指向映射后的虚拟空间首地址。</p>
+<p>假如我们要获取 I.MX6ULL 的<strong>IOMUXC_SW_MUX_CTL_PAD_GPIO1_IO03</strong> 寄存器对应的虚拟地址，使用如下代码即可：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SW_MUX_GPIO1_IO03_BASE  (0X020E0068)</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __iomem* SW_MUX_GPIO1_IO03;</span><br><span class="line">SW_MUX_GPIO1_IO03 = ioremap(SW_MUX_GPIO1_IO03_BASE, <span class="number">4</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>宏 SW_MUX_GPIO1_IO03_BASE</strong> 是寄存器物理地址，<strong>SW_MUX_GPIO1_IO03</strong> 是映射后的虚拟地址。对于 I.MX6ULL 来说一个寄存器是 4 字节(32 位)的，因此映射的内存长度为 4。映射完成以后直接对SW_MUX_GPIO1_IO03 进行读写操作即可。</p>
+<h4 id="iounmap-函数"><a href="#iounmap-函数" class="headerlink" title="iounmap  函数"></a>iounmap  函数</h4><p>卸载驱动的时候需要使用 iounmap 函数释放掉 ioremap 函数所做的映射，iounmap 函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">iounmap</span> <span class="params">(<span class="keyword">volatile</span> <span class="keyword">void</span> __iomem *addr)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>iounmap 只有一个参数 addr，此参数就是要取消映射的虚拟地址空间首地址。假如我们现在要取消掉 IOMUXC_SW_MUX_CTL_PAD_GPIO1_IO03 寄存器的地址映射，使用如下代码即可：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iounmap(SW_MUX_GPIO1_IO03);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2、-I-O-内存访问函数"><a href="#2、-I-O-内存访问函数" class="headerlink" title="2、 I/O  内存访问函数"></a>2、 I/O  内存访问函数</h3><p>这里说的 I/O 是输入/输出的意思，并不是我们学习单片机的时候讲的 GPIO 引脚。这里涉及到两个概念：<strong>I/O 端口</strong>和 <strong>I/O 内存</strong>。</p>
+<p>当外部寄存器或内存映射到 IO 空间时，称为 <strong>I/O 端口</strong>。</p>
+<p>当外部寄存器或内存映射到内存空间时，称为 <strong>I/O 内存</strong>。</p>
+<p>但是<strong>对于 ARM 来说没有 I/O 空间这个概念</strong>，**因此 ARM 体系下只有 I/O 内存(可以直接理解为内存)**。</p>
+<p>使用ioremap函数将寄存器的物理地址映射到虚拟地址以后，我们就可以直接通过指针访问这些地址，但是 Linux 内核不建议这么做，而是推荐使用一组操作函数来对映射后的内存进行读写操作。</p>
+<h4 id="1、读操作函数"><a href="#1、读操作函数" class="headerlink" title="1、读操作函数"></a>1、读操作函数</h4><p>读操作函数有如下几个：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">u8 <span class="title">readb</span><span class="params">(<span class="keyword">const</span> <span class="keyword">volatile</span> <span class="keyword">void</span> __iomem *addr)</span></span></span><br><span class="line"><span class="function">u16 <span class="title">readw</span><span class="params">(<span class="keyword">const</span> <span class="keyword">volatile</span> <span class="keyword">void</span> __iomem *addr)</span></span></span><br><span class="line"><span class="function">u32 <span class="title">readl</span><span class="params">(<span class="keyword">const</span> <span class="keyword">volatile</span> <span class="keyword">void</span> __iomem *addr)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>readb、readw 和 readl 这三个函数分别对应 8bit、16bit 和 32bit 读操作，参数 addr 就是要读取写内存地址，返回值就是读取到的数据。</p>
+<h4 id="2-、写操作函数"><a href="#2-、写操作函数" class="headerlink" title="2 、写操作函数"></a>2 、写操作函数</h4><p>写操作函数有如下几个：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">writeb</span><span class="params">(u8 value, <span class="keyword">volatile</span> <span class="keyword">void</span> __iomem *addr)</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">writew</span><span class="params">(u16 value, <span class="keyword">volatile</span> <span class="keyword">void</span> __iomem *addr)</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">writel</span><span class="params">(u32 value, <span class="keyword">volatile</span> <span class="keyword">void</span> __iomem *addr)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>writeb、writew 和 writel 这三个函数分别对应 8bit、16bit 和 32bit 写操作，参数 value 是要写入的数值，addr 是要写入的地址。</p>
+<h2 id="二、硬件原理图"><a href="#二、硬件原理图" class="headerlink" title="二、硬件原理图"></a>二、硬件原理图</h2>
+
+<h2 id="三、实验程序编写"><a href="#三、实验程序编写" class="headerlink" title="三、实验程序编写"></a>三、实验程序编写</h2><h3 id="LED-灯驱动程序编写"><a href="#LED-灯驱动程序编写" class="headerlink" title="LED  灯驱动程序编写"></a>LED  灯驱动程序编写</h3><p>新建名为“2_led”文件夹，然后在 2_led 文件夹里面创建 VSCode 工程，工作区命名为“led”。工程创建好以后新建 led.c 文件，此文件就是 led 的驱动文件，在 led.c 里面输入如下内容：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/module.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/kernel.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/init.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/uaccess.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/io.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LED_MAJOR 200</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LED_NAME <span class="meta-string">&quot;led_driver&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// #define LED_ON     1</span></span><br><span class="line"><span class="comment">// #define LED_OFF 0</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">enum</span> led_switch_enum&#123;</span><br><span class="line">    LED_OFF = <span class="number">0</span>,</span><br><span class="line">    LED_ON = !LED_OFF</span><br><span class="line">&#125;<span class="keyword">led_switch_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 寄存器物理地址 */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PA_CCM_CCGR1_BASE                (0X020C406C)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PA_SW_MUX_GPIO1_IO03_BASE        (0X020E0068)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PA_SW_PAD_GPIO1_IO03_BASE        (0X020E02F4)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PA_GPIO1_DR_BASE                 (0X0209C000)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PA_GPIO1_GDIR_BASE                 (0X0209C004)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 寄存器虚拟地址 */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __iomem *VA_CCM_CCGR1;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __iomem *VA_SW_MUX_GPIO1_IO03;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __iomem *VA_SW_PAD_GPIO1_IO03;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __iomem *VA_GPIO1_DR;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __iomem *VA_GPIO1_GDIR;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">led_switch</span><span class="params">(<span class="keyword">led_switch_t</span> sw)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> val = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span>(sw == LED_ON)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* 设置GPIO电平为低电平 默认点亮LED */</span></span><br><span class="line">        val = readl(VA_GPIO1_DR);</span><br><span class="line">        val &amp;= ~(<span class="number">1</span> &lt;&lt; <span class="number">3</span>);</span><br><span class="line">        writel(val, VA_GPIO1_DR);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* 设置GPIO电平为高电平 关闭LED */</span></span><br><span class="line">        val = readl(VA_GPIO1_DR);</span><br><span class="line">        val |= (<span class="number">1</span> &lt;&lt; <span class="number">3</span>);</span><br><span class="line">        writel(val, VA_GPIO1_DR);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">led_open</span><span class="params">(struct inode *inode, struct file *filp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">ssize_t</span> <span class="title">led_write</span><span class="params">(struct file *filp, <span class="keyword">const</span> <span class="keyword">char</span> __user *buf, <span class="keyword">size_t</span> cnt, <span class="keyword">loff_t</span> *offt)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(cnt &gt; <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        printk(<span class="string">&quot;write led failed!\r\nwrite conut exceed limit,should be 1.\r\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">char</span> userDataBuf[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">int</span> ret = <span class="number">0</span>;</span><br><span class="line">    ret = copy_from_user(userDataBuf, buf, cnt);</span><br><span class="line">    <span class="keyword">if</span>(ret &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        printk(<span class="string">&quot;write led failed!\r\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    led_switch(userDataBuf[<span class="number">0</span>]);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">led_release</span><span class="params">(struct inode *inode, struct file *filp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 字符设备操作集 */</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> <span class="title">led_fops</span> = &#123;</span></span><br><span class="line">    .owner = THIS_MODULE, </span><br><span class="line">    .open = led_open, </span><br><span class="line">    .write = led_write,</span><br><span class="line">    .release = led_release</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 入口 */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> __init <span class="title">led_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> val;</span><br><span class="line">    printk(<span class="string">&quot;led_init\r\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* LED 初始化 地址映射 */</span></span><br><span class="line">    VA_CCM_CCGR1 = ioremap(PA_CCM_CCGR1_BASE, <span class="number">4</span>);</span><br><span class="line">    VA_SW_MUX_GPIO1_IO03 = ioremap(PA_SW_MUX_GPIO1_IO03_BASE, <span class="number">4</span>);</span><br><span class="line">    VA_SW_PAD_GPIO1_IO03 = ioremap(PA_SW_PAD_GPIO1_IO03_BASE, <span class="number">4</span>);</span><br><span class="line">    VA_GPIO1_DR = ioremap(PA_GPIO1_DR_BASE, <span class="number">4</span>);</span><br><span class="line">    VA_GPIO1_GDIR = ioremap(PA_GPIO1_GDIR_BASE, <span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 使能 GPIO1 时钟 */</span></span><br><span class="line">    val = readl(VA_CCM_CCGR1);</span><br><span class="line">    val &amp;=  ~(<span class="number">3</span> &lt;&lt; <span class="number">26</span>);</span><br><span class="line">    val |= (<span class="number">3</span> &lt;&lt; <span class="number">26</span>);</span><br><span class="line">    writel(val, VA_CCM_CCGR1);</span><br><span class="line"></span><br><span class="line">    writel(<span class="number">0x5</span>, VA_SW_MUX_GPIO1_IO03);        <span class="comment">/* 设置复用 */</span></span><br><span class="line">    writel(<span class="number">0x10B0</span>, VA_SW_PAD_GPIO1_IO03);    <span class="comment">/* 设置电气属性 */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 设置GPIO方向为输出*/</span></span><br><span class="line">    val = readl(VA_GPIO1_GDIR);</span><br><span class="line">    val |= (<span class="number">1</span> &lt;&lt; <span class="number">3</span>);</span><br><span class="line">    writel(val, VA_GPIO1_GDIR);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 设置GPIO电平为低电平 默认点亮LED */</span></span><br><span class="line">    val = readl(VA_GPIO1_DR);</span><br><span class="line">    val &amp;= ~(<span class="number">1</span> &lt;&lt; <span class="number">3</span>);</span><br><span class="line">    writel(val, VA_GPIO1_DR);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 注册字符设备 */</span></span><br><span class="line">    ret = register_chrdev(LED_MAJOR, LED_NAME, &amp;led_fops);</span><br><span class="line">    <span class="keyword">if</span>(ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        printk(<span class="string">&quot;register %s failed!\r\n&quot;</span>, LED_NAME);</span><br><span class="line">        <span class="keyword">return</span> -EIO;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 出口 */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> __exit <span class="title">led_exit</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> val;</span><br><span class="line">    printk(<span class="string">&quot;led_exit\r\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 设置GPIO电平为高电平 关闭LED */</span></span><br><span class="line">    val = readl(VA_GPIO1_DR);</span><br><span class="line">    val |= (<span class="number">1</span> &lt;&lt; <span class="number">3</span>);</span><br><span class="line">    writel(val, VA_GPIO1_DR);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 地址映射释放 */</span></span><br><span class="line">    iounmap(VA_CCM_CCGR1);</span><br><span class="line">    iounmap(VA_SW_MUX_GPIO1_IO03);</span><br><span class="line">    iounmap(VA_SW_PAD_GPIO1_IO03);</span><br><span class="line">    iounmap(VA_GPIO1_DR);</span><br><span class="line">    iounmap(VA_GPIO1_GDIR);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 卸载字符设备 */</span></span><br><span class="line">    unregister_chrdev(LED_MAJOR, LED_NAME);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 驱动入口和出口 */</span></span><br><span class="line">module_init(led_init);</span><br><span class="line">module_exit(led_exit);</span><br><span class="line"></span><br><span class="line">MODULE_LICENSE(<span class="string">&quot;GPL&quot;</span>);</span><br><span class="line">MODULE_AUTHOR(<span class="string">&quot;LXG@firestaradmin&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="编写测试APP"><a href="#编写测试APP" class="headerlink" title="编写测试APP"></a>编写测试APP</h3><p>编写测试 APP，led 驱动加载成功以后手动创建/dev/led 节点，应用 APP 通过操作/dev/led文件来完成对 LED 设备的控制。</p>
+<p>向/dev/led 文件写 0 表示关闭 LED 灯，写 1 表示打开 LED 灯。新建 ledApp.c 文件，在里面输入如下内容：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> *  usage:</span></span><br><span class="line"><span class="comment"> *  ./ledAPP     &lt;openFileName&gt;     &lt;0:OFF|1:ON&gt;   </span></span><br><span class="line"><span class="comment"> *  ./ledAPP     /dev/led           0               //关灯</span></span><br><span class="line"><span class="comment"> *  ./ledAPP     /dev/led           1               //开灯</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> fd = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">char</span> *filename;</span><br><span class="line">    <span class="keyword">char</span> writebuf [<span class="number">1</span>]; </span><br><span class="line">    filename = argv[<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(argc != <span class="number">3</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;bad usage!\r\n&quot;</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;usage:\r\n./ledAPP     &lt;openFileName&gt;     &lt;0:OFF|1:ON&gt;  \r\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 打开 */</span></span><br><span class="line">    fd =  open(filename, O_WRONLY);</span><br><span class="line">    <span class="keyword">if</span>(fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;can&#x27;t open file %s\r\n&quot;</span>, filename);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    writebuf[<span class="number">0</span>] = atoi(argv[<span class="number">2</span>]);</span><br><span class="line">    ret = write(fd, writebuf, <span class="keyword">sizeof</span>(writebuf));</span><br><span class="line">    <span class="keyword">if</span>(ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;write file %s failed!\r\n&quot;</span>, filename);</span><br><span class="line">        close(fd);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;write file %s success!\r\n&quot;</span>, filename);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 关闭 */</span></span><br><span class="line">    ret = close(fd);</span><br><span class="line">    <span class="keyword">if</span>(ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;close file %s failed！\r\n&quot;</span>, filename);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ledApp.c 的内容还是很简单的，就是对 led 的驱动文件进行最基本的打开、关闭、写操作等。</p>
+<h2 id="四、运行测试"><a href="#四、运行测试" class="headerlink" title="四、运行测试"></a>四、运行测试</h2><h3 id="1、编译驱动程序和测试-APP"><a href="#1、编译驱动程序和测试-APP" class="headerlink" title="1、编译驱动程序和测试 APP"></a>1、编译驱动程序和测试 APP</h3><p>编译驱动程序</p>
+<p>编写 Makefile 文件，本章实验的 Makefile 文件和前面实验基本一样，只是将 obj-m 变量的值改为 led.o，Makefile 内容如下所示：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">KERNEL_DIR := /home/firestaradmin/linux/IMX6U/linux/linux-imx-rel_imx_4.1.15_2.1.0_ga_lxg</span><br><span class="line">CURRENT_PATH := <span class="variable">$(<span class="built_in">shell</span> pwd)</span></span><br><span class="line">obj-m := led.o</span><br><span class="line"></span><br><span class="line"><span class="section">build: kernel_modules</span></span><br><span class="line"></span><br><span class="line"><span class="section">kernel_modules:  </span></span><br><span class="line">    <span class="variable">$(MAKE)</span> -C <span class="variable">$(KERNEL_DIR)</span> M=<span class="variable">$(CURRENT_PATH)</span> modules</span><br><span class="line"><span class="section">clean: </span></span><br><span class="line">    <span class="variable">$(MAKE)</span> -C <span class="variable">$(KERNEL_DIR)</span> M=<span class="variable">$(CURRENT_PATH)</span> clean</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>编译测试 APP</p>
+<p>输入如下命令编译测试 ledApp.c 这个测试程序：</p>
+<p><code>arm-linux-gnueabihf-gcc ledAPP.c -o ledAPP</code></p>
+<p>编译成功以后就会生成 ledApp 这个应用程序。</p>
+<h3 id="2、运行测试"><a href="#2、运行测试" class="headerlink" title="2、运行测试"></a>2、运行测试</h3><p>将上一小节编译出来的led.ko和ledApp这两个文件拷贝到rootfs/lib/modules/4.1.15目录中，重启开发板，进入到目录 lib/modules/4.1.15 中，输入如下命令加载 led.ko 驱动模块：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">depmod &#x2F;&#x2F;第一次加载驱动的时候需要运行此命令</span><br><span class="line">modprobe led.ko  &#x2F;&#x2F;加载驱动</span><br></pre></td></tr></table></figure>
+
+<p>驱动加载成功以后创建“/dev/led”设备节点，命令如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mknod &#x2F;dev&#x2F;led c 200 0</span><br></pre></td></tr></table></figure>
+
+<p>驱动节点创建成功以后就可以使用 ledApp 软件来测试驱动是否工作正常，输入如下命令打开 LED 灯：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;ledAPP &#x2F;dev&#x2F;led 1 &#x2F;&#x2F;打开 LED 灯</span><br></pre></td></tr></table></figure>
+
+<p>输入上述命令以后观察 I.MX6U-ALPHA 开发板上的红色 LED 灯是否点亮，如果点亮的话</p>
+<p>说明驱动工作正常。在输入如下命令关闭 LED 灯：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;ledApp &#x2F;dev&#x2F;led 0 &#x2F;&#x2F;关闭 LED 灯</span><br></pre></td></tr></table></figure>
+
+<p>输入上述命令以后观察 I.MX6U-ALPHA 开发板上的红色 LED 灯是否熄灭，如果熄灭的话说明我们编写的 LED 驱动工作完全正常！至此，我们成功编写了第一个真正的 Linux 驱动设备程序。</p>
+<p>如果要卸载驱动的话输入如下命令即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rmmod led.ko</span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Embedded/" rel="tag"><i class="fa fa-tag"></i> Embedded</a>
+              <a href="/tags/ARM/" rel="tag"><i class="fa fa-tag"></i> ARM</a>
+              <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+              <a href="/tags/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="tag"><i class="fa fa-tag"></i> 驱动开发</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/22%E3%80%81Linux%20%E9%9F%B3%E9%A2%91%E9%A9%B1%E5%8A%A8%E5%AE%9E%E9%AA%8C/" rel="prev" title="22| Linux 音频驱动">
+      <i class="fa fa-chevron-left"></i> 22| Linux 音频驱动
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/3%E3%80%81%E6%96%B0%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="next" title="3| 新字符设备驱动实验">
+      3| 新字符设备驱动实验 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#LED%E7%81%AF%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95"><span class="nav-text">LED灯驱动开发实验记录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81Linux-%E4%B8%8B-LED-%E7%81%AF%E9%A9%B1%E5%8A%A8%E5%8E%9F%E7%90%86"><span class="nav-text">一、Linux 下 LED  灯驱动原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84"><span class="nav-text">1、地址映射</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ioremap-%E5%87%BD%E6%95%B0"><span class="nav-text">ioremap  函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iounmap-%E5%87%BD%E6%95%B0"><span class="nav-text">iounmap  函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81-I-O-%E5%86%85%E5%AD%98%E8%AE%BF%E9%97%AE%E5%87%BD%E6%95%B0"><span class="nav-text">2、 I&#x2F;O  内存访问函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E8%AF%BB%E6%93%8D%E4%BD%9C%E5%87%BD%E6%95%B0"><span class="nav-text">1、读操作函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E3%80%81%E5%86%99%E6%93%8D%E4%BD%9C%E5%87%BD%E6%95%B0"><span class="nav-text">2 、写操作函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%A1%AC%E4%BB%B6%E5%8E%9F%E7%90%86%E5%9B%BE"><span class="nav-text">二、硬件原理图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E9%AA%8C%E7%A8%8B%E5%BA%8F%E7%BC%96%E5%86%99"><span class="nav-text">三、实验程序编写</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LED-%E7%81%AF%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E7%BC%96%E5%86%99"><span class="nav-text">LED  灯驱动程序编写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E6%B5%8B%E8%AF%95APP"><span class="nav-text">编写测试APP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%BF%90%E8%A1%8C%E6%B5%8B%E8%AF%95"><span class="nav-text">四、运行测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E7%BC%96%E8%AF%91%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E5%92%8C%E6%B5%8B%E8%AF%95-APP"><span class="nav-text">1、编译驱动程序和测试 APP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E8%BF%90%E8%A1%8C%E6%B5%8B%E8%AF%95"><span class="nav-text">2、运行测试</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="firestaradmin"
+      src="/images/head.png">
+  <p class="site-author-name" itemprop="name">firestaradmin</p>
+  <div class="site-description" itemprop="description">孤独是时间给你的自由</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/firestaradmin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;firestaradmin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:firestardog@qq.com" title="E-Mail → mailto:firestardog@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/6260159" title="BiliBili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;6260159" rel="noopener" target="_blank"><i class="fa fa-tv fa-fw"></i>BiliBili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/yougeng123" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;yougeng123" rel="noopener" target="_blank"><i class="fas fa-sign-out-alt fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">firestaradmin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+    <script defer src="/lib/three/canvas_sphere.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'f2506e9cab18a7cac5cb',
+      clientSecret: '08a51a77f3077637b137727e7199e2842b9cdde5',
+      repo        : 'my-blog-commonts',
+      owner       : 'firestaradmin',
+      admin       : ['firestaradmin'],
+      id          : 'c2f8fb7f21728d9d92f37d07dcfca3c8',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+  
+
+</body>
+</html>
+

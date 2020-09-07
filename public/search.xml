@@ -4,147 +4,6 @@
   
     
     <entry>
-      <title>我的分类和标签统计</title>
-      <link href="/2020/09/07/SELF-USING/%E6%96%87%E6%A1%A3%E5%88%86%E7%B1%BB%E5%92%8C%E6%A0%87%E7%AD%BE/"/>
-      <url>/2020/09/07/SELF-USING/%E6%96%87%E6%A1%A3%E5%88%86%E7%B1%BB%E5%92%8C%E6%A0%87%E7%AD%BE/</url>
-      
-        <content type="html"><![CDATA[<h1 id="Categories"><a href="#Categories" class="headerlink" title="Categories:"></a>Categories:</h1><ul><li><p>PROJECT</p><blockquote><p>项目、工程</p></blockquote></li><li><p>DOCUMENT</p><blockquote><p>技术文档、白皮书</p></blockquote></li><li><p>NOTE </p><blockquote><p>笔记、浅析、分析</p></blockquote><ul><li>[NOTE, ARM-Linux]<ul><li>[NOTE, ARM-Linux, 环境搭建系统移植篇]</li><li>[NOTE, ARM-Linux, 驱动开发篇]</li></ul></li></ul><blockquote><p>嵌入式Linux开发笔记</p></blockquote><ul><li>[NOTE, Linux]</li></ul><blockquote><p>Linux 笔记</p></blockquote><ul><li>[NOTE, C&amp;C++]</li></ul></li><li><p>SELF-USING</p><blockquote><p>自用的一些笔记、备注</p></blockquote></li></ul><p>栗子：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: test</span><br><span class="line">tags: </span><br><span class="line">- Embedded</span><br><span class="line">- Linux</span><br><span class="line">- ARM</span><br><span class="line">categories:</span><br><span class="line">- [NOTE, ARM-Linux, 环境搭建系统移植篇]</span><br><span class="line">---</span><br></pre></td></tr></table></figure><h1 id="Tags"><a href="#Tags" class="headerlink" title="Tags:"></a>Tags:</h1><ul><li>ARM</li><li>Linux</li><li>STM32</li><li>QT</li><li>Embedded</li><li>Hardware</li><li>MarkDown</li><li>git</li><li>shell</li><li>Makefile</li><li>C</li><li>C++</li><li>Python</li><li>note</li><li>technique</li><li>uboot</li><li>dts设备树</li><li>驱动开发</li><li>rootfs</li><li>Net</li></ul>]]></content>
-      
-      
-      <categories>
-          
-          <category> SELF-USING </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> note </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>zsh终端以及ohmyzsh安装配置</title>
-      <link href="/2020/09/07/NOTE/Linux/zsh%E7%BB%88%E7%AB%AF%E4%BB%A5%E5%8F%8Aohmyzsh%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/"/>
-      <url>/2020/09/07/NOTE/Linux/zsh%E7%BB%88%E7%AB%AF%E4%BB%A5%E5%8F%8Aohmyzsh%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/</url>
-      
-        <content type="html"><![CDATA[<h1 id="zsh终端以及ohmyzsh安装配置"><a href="#zsh终端以及ohmyzsh安装配置" class="headerlink" title="zsh终端以及ohmyzsh安装配置"></a>zsh终端以及ohmyzsh安装配置</h1><h2 id="1-安装zsh"><a href="#1-安装zsh" class="headerlink" title="1.安装zsh"></a>1.安装zsh</h2><p>安装zsh<code>sudo apt-get install zsh</code></p><p>确认安装是否成功，查看版本<code>zsh --version </code></p><img src="/2020/09/07/NOTE/Linux/zsh%E7%BB%88%E7%AB%AF%E4%BB%A5%E5%8F%8Aohmyzsh%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/image-20200817121050528.png" class="" title="image-20200817121050528"><h2 id="2-安装oh-my-zsh"><a href="#2-安装oh-my-zsh" class="headerlink" title="2.安装oh-my-zsh"></a>2.安装oh-my-zsh</h2><p>去<code>https://github.com/ohmyzsh/ohmyzsh</code>这里把tools目录下的<code>install.sh</code>弄到本地去执行就好了</p><p>记得要安装<code>git</code></p><h2 id="3-设置默认终端"><a href="#3-设置默认终端" class="headerlink" title="3.设置默认终端"></a>3.设置默认终端</h2><p>设置zsh为默认shell</p><p><code>sudo chsh -s $(which zsh)</code></p><p>注销重新登录, 打开终端</p><p>确认zsh是否是默认SHELL<code>echo $SHELL</code></p><p>如果是则会输出<code>/usr/bin/zsh</code></p><h2 id="4-设置配置文件主题"><a href="#4-设置配置文件主题" class="headerlink" title="4.设置配置文件主题"></a>4.设置配置文件主题</h2><p>Oh-My-Zsh的默认配置文件在：~/.zshrc</p><p>主题配置 <code>ZSH_THEME=&quot;xxx&quot;</code></p><p>这里我喜欢用 <code>af-magic</code> 作为主题。</p><h2 id="5-语法高亮插件下载"><a href="#5-语法高亮插件下载" class="headerlink" title="5.语法高亮插件下载"></a>5.语法高亮插件下载</h2><p>下载zsh-syntax-highlighting插件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.oh-my-zsh/custom/plugins</span><br><span class="line">git <span class="built_in">clone</span> git://github.com/zsh-users/zsh-syntax-highlighting.git</span><br></pre></td></tr></table></figure><p>在.zshrc中增加配置</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plugins&#x3D;( [plugins...] zsh-syntax-highlighting)</span><br></pre></td></tr></table></figure><img src="/2020/09/07/NOTE/Linux/zsh%E7%BB%88%E7%AB%AF%E4%BB%A5%E5%8F%8Aohmyzsh%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/image-20200817124337943.png" class="" title="image-20200817124337943"><p>读取配置使其生效</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure><p>然后就会有效果了</p><img src="/2020/09/07/NOTE/Linux/zsh%E7%BB%88%E7%AB%AF%E4%BB%A5%E5%8F%8Aohmyzsh%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/image-20200817124500987.png" class="" title="image-20200817124500987">]]></content>
-      
-      
-      <categories>
-          
-          <category> NOTE </category>
-          
-          <category> Linux </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Linux </tag>
-            
-            <tag> zsh </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Linux网络相关问题解决</title>
-      <link href="/2020/09/07/NOTE/Linux/Linux%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/"/>
-      <url>/2020/09/07/NOTE/Linux/Linux%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/</url>
-      
-        <content type="html"><![CDATA[<p>网络图标不见了怎么办：</p><p>如下操作：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo service network-manager stop</span><br><span class="line">sudo rm &#x2F;var&#x2F;lib&#x2F;NetworkManager&#x2F;NetworkManager.state</span><br><span class="line">sudo service network-manager start</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit &#x2F;etc&#x2F;NetworkManager&#x2F;NetworkManager.conf</span><br></pre></td></tr></table></figure><p>把false改成true</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service network-manager restart</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
-      <categories>
-          
-          <category> NOTE </category>
-          
-          <category> Linux </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Linux </tag>
-            
-            <tag> Net </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Linux下后台运行软件</title>
-      <link href="/2020/09/07/NOTE/Linux/Linux%E4%B8%8B%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E8%BD%AF%E4%BB%B6/"/>
-      <url>/2020/09/07/NOTE/Linux/Linux%E4%B8%8B%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E8%BD%AF%E4%BB%B6/</url>
-      
-        <content type="html"><![CDATA[<h1 id="Linux下后台运行软件"><a href="#Linux下后台运行软件" class="headerlink" title="Linux下后台运行软件"></a>Linux下后台运行软件</h1><p>让一个软件进入后台的方法很简单，运行软件的时候加上“&amp;”即可，比如<strong>“./hello &amp;”</strong>就是让 hello 在后台运行。</p><p>在后台运行的软件可以使用<strong>“kill -9 pid(进程 ID)”</strong>命令来关闭掉，首先使用<strong>“ps”</strong>命令查看要关闭的软件 PID 是多少，ps 命令用于查看所有当前正在运行的进程，并且会给出进程的 PID。</p><p><strong>总结：</strong></p><p><strong>软件后面加“&amp;”、使用 ps 查看要关闭的软件 PID、使用“kill -9 pid”来关闭指定的软件。</strong></p>]]></content>
-      
-      
-      <categories>
-          
-          <category> NOTE </category>
-          
-          <category> Linux </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Linux </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>高级C嵌入式深入知识点记录</title>
-      <link href="/2020/09/07/NOTE/ARM-Linux/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%AB%98%E7%BA%A7C%E7%AC%94%E8%AE%B0/"/>
-      <url>/2020/09/07/NOTE/ARM-Linux/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%AB%98%E7%BA%A7C%E7%AC%94%E8%AE%B0/</url>
-      
-        <content type="html"><![CDATA[<blockquote><p>​        如果你爱编程，那么你就应该爱C，如果你爱C，那么你就应该爱指针，如果你爱指针，那么你就应该爱函数指针。        —— 东南大学 凌明 </p></blockquote><h3 id="ARMCC编译器，函数怎么传参的？（寄存器用哪些？传参顺序？）"><a href="#ARMCC编译器，函数怎么传参的？（寄存器用哪些？传参顺序？）" class="headerlink" title="ARMCC编译器，函数怎么传参的？（寄存器用哪些？传参顺序？）"></a>ARMCC编译器，函数怎么传参的？（寄存器用哪些？传参顺序？）</h3><h3 id="变量类型的大小？（char-几位-Short-Int-long？）"><a href="#变量类型的大小？（char-几位-Short-Int-long？）" class="headerlink" title="变量类型的大小？（char 几位? Short? Int? long？）"></a>变量类型的大小？（char 几位? Short? Int? long？）</h3><h3 id="ARMCC编译器后，链接的地址分配？有哪些段？程序各部分存储位置？（绝对地址？相对地址？TEXT段？DATA段？）"><a href="#ARMCC编译器后，链接的地址分配？有哪些段？程序各部分存储位置？（绝对地址？相对地址？TEXT段？DATA段？）" class="headerlink" title="ARMCC编译器后，链接的地址分配？有哪些段？程序各部分存储位置？（绝对地址？相对地址？TEXT段？DATA段？）"></a>ARMCC编译器后，链接的地址分配？有哪些段？程序各部分存储位置？（绝对地址？相对地址？TEXT段？DATA段？）</h3><h3 id="ARMCC下，for循环i-i—哪个效率相对更高一些？"><a href="#ARMCC下，for循环i-i—哪个效率相对更高一些？" class="headerlink" title="ARMCC下，for循环i++,i—哪个效率相对更高一些？"></a>ARMCC下，for循环i++,i—哪个效率相对更高一些？</h3><h3 id="如果要写一个内存拷贝的函数，你会怎么写？（-des-src-汇编效率或许更高）"><a href="#如果要写一个内存拷贝的函数，你会怎么写？（-des-src-汇编效率或许更高）" class="headerlink" title="如果要写一个内存拷贝的函数，你会怎么写？（*des++ = *src++? 汇编效率或许更高）"></a>如果要写一个内存拷贝的函数，你会怎么写？（*des++ = *src++? 汇编效率或许更高）</h3><h3 id="堆和栈的理解"><a href="#堆和栈的理解" class="headerlink" title="堆和栈的理解"></a>堆和栈的理解</h3><h3 id="很有意思的一个表达式：-void-void-0"><a href="#很有意思的一个表达式：-void-void-0" class="headerlink" title="很有意思的一个表达式：*(\(void (*)(void))0)();**"></a>很有意思的一个表达式：*<em>(\</em>(void (*)(void))0)();**</h3><ul><li>这条语句的意思是从0地址开始执行，在多数嵌入式系统中相当于系统的软复位</li><li>*<em>(<em>0)();</em></em> -&gt;函数调用</li><li>*<em>(void (</em>)(void))** -&gt;强制类型转换</li></ul>]]></content>
-      
-      
-      <categories>
-          
-          <category> NOTE </category>
-          
-          <category> ARM-Linux </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> C </tag>
-            
-            <tag> Embedded </tag>
-            
-            <tag> ARM </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>内核常用函数</title>
       <link href="/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E4%B8%80%E4%BA%9B%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/"/>
       <url>/2020/09/07/NOTE/ARM-Linux/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%AF%87/Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E4%B8%80%E4%BA%9B%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
@@ -952,6 +811,147 @@
     
     
     <entry>
+      <title>我的分类和标签统计</title>
+      <link href="/2020/09/07/SELF-USING/%E6%96%87%E6%A1%A3%E5%88%86%E7%B1%BB%E5%92%8C%E6%A0%87%E7%AD%BE/"/>
+      <url>/2020/09/07/SELF-USING/%E6%96%87%E6%A1%A3%E5%88%86%E7%B1%BB%E5%92%8C%E6%A0%87%E7%AD%BE/</url>
+      
+        <content type="html"><![CDATA[<h1 id="Categories"><a href="#Categories" class="headerlink" title="Categories:"></a>Categories:</h1><ul><li><p>PROJECT</p><blockquote><p>项目、工程</p></blockquote></li><li><p>DOCUMENT</p><blockquote><p>技术文档、白皮书</p></blockquote></li><li><p>NOTE </p><blockquote><p>笔记、浅析、分析</p></blockquote><ul><li>[NOTE, ARM-Linux]<ul><li>[NOTE, ARM-Linux, 环境搭建系统移植篇]</li><li>[NOTE, ARM-Linux, 驱动开发篇]</li></ul></li></ul><blockquote><p>嵌入式Linux开发笔记</p></blockquote><ul><li>[NOTE, Linux]</li></ul><blockquote><p>Linux 笔记</p></blockquote><ul><li>[NOTE, C&amp;C++]</li></ul></li><li><p>SELF-USING</p><blockquote><p>自用的一些笔记、备注</p></blockquote></li></ul><p>栗子：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: test</span><br><span class="line">tags: </span><br><span class="line">- Embedded</span><br><span class="line">- Linux</span><br><span class="line">- ARM</span><br><span class="line">categories:</span><br><span class="line">- [NOTE, ARM-Linux, 环境搭建系统移植篇]</span><br><span class="line">---</span><br></pre></td></tr></table></figure><h1 id="Tags"><a href="#Tags" class="headerlink" title="Tags:"></a>Tags:</h1><ul><li>ARM</li><li>Linux</li><li>STM32</li><li>QT</li><li>Embedded</li><li>Hardware</li><li>MarkDown</li><li>git</li><li>shell</li><li>Makefile</li><li>C</li><li>C++</li><li>Python</li><li>note</li><li>technique</li><li>uboot</li><li>dts设备树</li><li>驱动开发</li><li>rootfs</li><li>Net</li></ul><img src="/2020/09/07/SELF-USING/%E6%96%87%E6%A1%A3%E5%88%86%E7%B1%BB%E5%92%8C%E6%A0%87%E7%AD%BE/image-20200907231630369.png" class="" title="image-20200907231630369">]]></content>
+      
+      
+      <categories>
+          
+          <category> SELF-USING </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> note </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>zsh终端以及ohmyzsh安装配置</title>
+      <link href="/2020/09/07/NOTE/Linux/zsh%E7%BB%88%E7%AB%AF%E4%BB%A5%E5%8F%8Aohmyzsh%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/"/>
+      <url>/2020/09/07/NOTE/Linux/zsh%E7%BB%88%E7%AB%AF%E4%BB%A5%E5%8F%8Aohmyzsh%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/</url>
+      
+        <content type="html"><![CDATA[<h1 id="zsh终端以及ohmyzsh安装配置"><a href="#zsh终端以及ohmyzsh安装配置" class="headerlink" title="zsh终端以及ohmyzsh安装配置"></a>zsh终端以及ohmyzsh安装配置</h1><h2 id="1-安装zsh"><a href="#1-安装zsh" class="headerlink" title="1.安装zsh"></a>1.安装zsh</h2><p>安装zsh<code>sudo apt-get install zsh</code></p><p>确认安装是否成功，查看版本<code>zsh --version </code></p><img src="/2020/09/07/NOTE/Linux/zsh%E7%BB%88%E7%AB%AF%E4%BB%A5%E5%8F%8Aohmyzsh%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/image-20200817121050528.png" class="" title="image-20200817121050528"><h2 id="2-安装oh-my-zsh"><a href="#2-安装oh-my-zsh" class="headerlink" title="2.安装oh-my-zsh"></a>2.安装oh-my-zsh</h2><p>去<code>https://github.com/ohmyzsh/ohmyzsh</code>这里把tools目录下的<code>install.sh</code>弄到本地去执行就好了</p><p>记得要安装<code>git</code></p><h2 id="3-设置默认终端"><a href="#3-设置默认终端" class="headerlink" title="3.设置默认终端"></a>3.设置默认终端</h2><p>设置zsh为默认shell</p><p><code>sudo chsh -s $(which zsh)</code></p><p>注销重新登录, 打开终端</p><p>确认zsh是否是默认SHELL<code>echo $SHELL</code></p><p>如果是则会输出<code>/usr/bin/zsh</code></p><h2 id="4-设置配置文件主题"><a href="#4-设置配置文件主题" class="headerlink" title="4.设置配置文件主题"></a>4.设置配置文件主题</h2><p>Oh-My-Zsh的默认配置文件在：~/.zshrc</p><p>主题配置 <code>ZSH_THEME=&quot;xxx&quot;</code></p><p>这里我喜欢用 <code>af-magic</code> 作为主题。</p><h2 id="5-语法高亮插件下载"><a href="#5-语法高亮插件下载" class="headerlink" title="5.语法高亮插件下载"></a>5.语法高亮插件下载</h2><p>下载zsh-syntax-highlighting插件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.oh-my-zsh/custom/plugins</span><br><span class="line">git <span class="built_in">clone</span> git://github.com/zsh-users/zsh-syntax-highlighting.git</span><br></pre></td></tr></table></figure><p>在.zshrc中增加配置</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plugins&#x3D;( [plugins...] zsh-syntax-highlighting)</span><br></pre></td></tr></table></figure><img src="/2020/09/07/NOTE/Linux/zsh%E7%BB%88%E7%AB%AF%E4%BB%A5%E5%8F%8Aohmyzsh%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/image-20200817124337943.png" class="" title="image-20200817124337943"><p>读取配置使其生效</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure><p>然后就会有效果了</p><img src="/2020/09/07/NOTE/Linux/zsh%E7%BB%88%E7%AB%AF%E4%BB%A5%E5%8F%8Aohmyzsh%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/image-20200817124500987.png" class="" title="image-20200817124500987">]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+          <category> Linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+            <tag> zsh </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Linux网络相关问题解决</title>
+      <link href="/2020/09/07/NOTE/Linux/Linux%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/"/>
+      <url>/2020/09/07/NOTE/Linux/Linux%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/</url>
+      
+        <content type="html"><![CDATA[<p>网络图标不见了怎么办：</p><p>如下操作：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo service network-manager stop</span><br><span class="line">sudo rm &#x2F;var&#x2F;lib&#x2F;NetworkManager&#x2F;NetworkManager.state</span><br><span class="line">sudo service network-manager start</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit &#x2F;etc&#x2F;NetworkManager&#x2F;NetworkManager.conf</span><br></pre></td></tr></table></figure><p>把false改成true</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service network-manager restart</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+          <category> Linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+            <tag> Net </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Linux下后台运行软件</title>
+      <link href="/2020/09/07/NOTE/Linux/Linux%E4%B8%8B%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E8%BD%AF%E4%BB%B6/"/>
+      <url>/2020/09/07/NOTE/Linux/Linux%E4%B8%8B%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E8%BD%AF%E4%BB%B6/</url>
+      
+        <content type="html"><![CDATA[<h1 id="Linux下后台运行软件"><a href="#Linux下后台运行软件" class="headerlink" title="Linux下后台运行软件"></a>Linux下后台运行软件</h1><p>让一个软件进入后台的方法很简单，运行软件的时候加上“&amp;”即可，比如<strong>“./hello &amp;”</strong>就是让 hello 在后台运行。</p><p>在后台运行的软件可以使用<strong>“kill -9 pid(进程 ID)”</strong>命令来关闭掉，首先使用<strong>“ps”</strong>命令查看要关闭的软件 PID 是多少，ps 命令用于查看所有当前正在运行的进程，并且会给出进程的 PID。</p><p><strong>总结：</strong></p><p><strong>软件后面加“&amp;”、使用 ps 查看要关闭的软件 PID、使用“kill -9 pid”来关闭指定的软件。</strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+          <category> Linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>高级C嵌入式深入知识点记录</title>
+      <link href="/2020/09/07/NOTE/ARM-Linux/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%AB%98%E7%BA%A7C%E7%AC%94%E8%AE%B0/"/>
+      <url>/2020/09/07/NOTE/ARM-Linux/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%AB%98%E7%BA%A7C%E7%AC%94%E8%AE%B0/</url>
+      
+        <content type="html"><![CDATA[<blockquote><p>​        如果你爱编程，那么你就应该爱C，如果你爱C，那么你就应该爱指针，如果你爱指针，那么你就应该爱函数指针。        —— 东南大学 凌明 </p></blockquote><h3 id="ARMCC编译器，函数怎么传参的？（寄存器用哪些？传参顺序？）"><a href="#ARMCC编译器，函数怎么传参的？（寄存器用哪些？传参顺序？）" class="headerlink" title="ARMCC编译器，函数怎么传参的？（寄存器用哪些？传参顺序？）"></a>ARMCC编译器，函数怎么传参的？（寄存器用哪些？传参顺序？）</h3><h3 id="变量类型的大小？（char-几位-Short-Int-long？）"><a href="#变量类型的大小？（char-几位-Short-Int-long？）" class="headerlink" title="变量类型的大小？（char 几位? Short? Int? long？）"></a>变量类型的大小？（char 几位? Short? Int? long？）</h3><h3 id="ARMCC编译器后，链接的地址分配？有哪些段？程序各部分存储位置？（绝对地址？相对地址？TEXT段？DATA段？）"><a href="#ARMCC编译器后，链接的地址分配？有哪些段？程序各部分存储位置？（绝对地址？相对地址？TEXT段？DATA段？）" class="headerlink" title="ARMCC编译器后，链接的地址分配？有哪些段？程序各部分存储位置？（绝对地址？相对地址？TEXT段？DATA段？）"></a>ARMCC编译器后，链接的地址分配？有哪些段？程序各部分存储位置？（绝对地址？相对地址？TEXT段？DATA段？）</h3><h3 id="ARMCC下，for循环i-i—哪个效率相对更高一些？"><a href="#ARMCC下，for循环i-i—哪个效率相对更高一些？" class="headerlink" title="ARMCC下，for循环i++,i—哪个效率相对更高一些？"></a>ARMCC下，for循环i++,i—哪个效率相对更高一些？</h3><h3 id="如果要写一个内存拷贝的函数，你会怎么写？（-des-src-汇编效率或许更高）"><a href="#如果要写一个内存拷贝的函数，你会怎么写？（-des-src-汇编效率或许更高）" class="headerlink" title="如果要写一个内存拷贝的函数，你会怎么写？（*des++ = *src++? 汇编效率或许更高）"></a>如果要写一个内存拷贝的函数，你会怎么写？（*des++ = *src++? 汇编效率或许更高）</h3><h3 id="堆和栈的理解"><a href="#堆和栈的理解" class="headerlink" title="堆和栈的理解"></a>堆和栈的理解</h3><h3 id="很有意思的一个表达式：-void-void-0"><a href="#很有意思的一个表达式：-void-void-0" class="headerlink" title="很有意思的一个表达式：*(\(void (*)(void))0)();**"></a>很有意思的一个表达式：*<em>(\</em>(void (*)(void))0)();**</h3><ul><li>这条语句的意思是从0地址开始执行，在多数嵌入式系统中相当于系统的软复位</li><li>*<em>(<em>0)();</em></em> -&gt;函数调用</li><li>*<em>(void (</em>)(void))** -&gt;强制类型转换</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+          <category> ARM-Linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> C </tag>
+            
+            <tag> Embedded </tag>
+            
+            <tag> ARM </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>10| linux下烧录至SD卡启动</title>
       <link href="/2020/09/07/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/10.linux%E4%B8%8B%E7%83%A7%E5%BD%95%E8%87%B3SD%E5%8D%A1%E5%90%AF%E5%8A%A8/"/>
       <url>/2020/09/07/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/10.linux%E4%B8%8B%E7%83%A7%E5%BD%95%E8%87%B3SD%E5%8D%A1%E5%90%AF%E5%8A%A8/</url>
@@ -1261,9 +1261,9 @@
       
         <tags>
             
-            <tag> note </tag>
-            
             <tag> C </tag>
+            
+            <tag> note </tag>
             
             <tag> C++ </tag>
             

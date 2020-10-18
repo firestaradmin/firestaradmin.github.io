@@ -1,0 +1,211 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>1| 开发环境搭建 | firestaradmin's Fortune</title><meta name="description" content="一、FTP(File Transfer Protocol)开启 linux下的 FTP 服务12sudo apt-get install vsftpdsudo vi &#x2F;etc&#x2F;vsftpd.conf  打开 vsftpd.conf 文件以后找到如下两行： 12local_enable&#x3D;YESwrite_enable&#x3D;YES  确保上面两行前面没有“#”，有的话就取消掉 保存退出"><meta name="keywords" content="Embedded,ARM"><meta name="author" content="firestaradmin"><meta name="copyright" content="firestaradmin"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://firestaradmin.gitee.io/2020/10/18/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta property="og:type" content="article"><meta property="og:title" content="1| 开发环境搭建"><meta property="og:url" content="https://firestaradmin.gitee.io/2020/10/18/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"><meta property="og:site_name" content="firestaradmin's Fortune"><meta property="og:description" content="一、FTP(File Transfer Protocol)开启 linux下的 FTP 服务12sudo apt-get install vsftpdsudo vi &#x2F;etc&#x2F;vsftpd.conf  打开 vsftpd.conf 文件以后找到如下两行： 12local_enable&#x3D;YESwrite_enable&#x3D;YES  确保上面两行前面没有“#”，有的话就取消掉 保存退出"><meta property="og:image" content="https://firestaradmin.gitee.io/img/banner3.jpg"><meta property="article:published_time" content="2020-10-18T04:12:52.291Z"><meta property="article:modified_time" content="2020-09-07T11:43:46.452Z"><meta name="twitter:card" content="summary"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.0.2',
+  algolia: undefined,
+  localSearch: {"path":"./public/search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime: '',
+  date_suffix: {"one_hour":"刚刚","hours":"小时前","day":"天前"},
+  copyright: undefined,
+  ClickShowText: {"text":"I,LOVE,YOU,努力,奋斗,zsh万岁,庚庚好帅","fontSize":"15px"},
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isanchor: true
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+    },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2020-09-07 19:43:46'
+}</script><noscript><style type="text/css">
+#nav {
+  opacity: 1
+}
+.justified-gallery img {
+  opacity: 1
+}
+</style></noscript><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+  }
+}
+
+var autoChangeMode = 'false'
+var t = saveToLocal.get('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (saveToLocal.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><meta name="generator" content="Hexo 5.0.2"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/head2.JPG" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">53</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">21</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">15</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81FTP-File-Transfer-Protocol"><span class="toc-text">一、FTP(File Transfer Protocol)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%90%AF-linux%E4%B8%8B%E7%9A%84-FTP-%E6%9C%8D%E5%8A%A1"><span class="toc-text">开启 linux下的 FTP 服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#windows-%E4%B8%8B%E8%BF%9E%E6%8E%A5FTP"><span class="toc-text">windows 下连接FTP:</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81NFS-Network-File-System"><span class="toc-text">二、NFS(Network File System)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#NFS-%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%90%AF"><span class="toc-text">NFS 服务开启</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%A4%B1%E8%B4%A5%E6%83%85%E5%86%B5%E8%A7%A3%E5%86%B3%EF%BC%9A"><span class="toc-text">连接失败情况解决：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81SSH%E5%AE%89%E5%85%A8%E5%A4%96%E5%A3%B3%E5%8D%8F%E8%AE%AE-Secure-Shell"><span class="toc-text">三、SSH安全外壳协议 (Secure Shell)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SSH-%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%90%AF"><span class="toc-text">SSH 服务开启</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E5%B7%A5%E5%85%B7%E9%93%BE"><span class="toc-text">四、交叉编译工具链</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linaro-GCC-%E7%BC%96%E8%AF%91%E5%B7%A5%E5%85%B7%E9%93%BE-%E7%BC%96%E8%AF%91%E5%99%A8-%E5%AE%89%E8%A3%85"><span class="toc-text">Linaro GCC 编译工具链(编译器)安装</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E3%80%81TFTP%E6%9C%8D%E5%8A%A1"><span class="toc-text">五、TFTP服务</span></a></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(/img/banner3.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">firestaradmin's Fortune</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">1| 开发环境搭建</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-10-18T04:12:52.291Z" title="发表于 2020-10-18 12:12:52">2020-10-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-09-07T11:43:46.452Z" title="更新于 2020-09-07 19:43:46">2020-09-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NOTE/">NOTE</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NOTE/ARM-Linux/">ARM-Linux</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/">环境搭建系统移植篇</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h1 id="一、FTP-File-Transfer-Protocol"><a href="#一、FTP-File-Transfer-Protocol" class="headerlink" title="一、FTP(File Transfer Protocol)"></a>一、FTP(File Transfer Protocol)</h1><h2 id="开启-linux下的-FTP-服务"><a href="#开启-linux下的-FTP-服务" class="headerlink" title="开启 linux下的 FTP 服务"></a>开启 linux下的 FTP 服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install vsftpd</span><br><span class="line">sudo vi /etc/vsftpd.conf</span><br></pre></td></tr></table></figure>
+
+<p>打开 vsftpd.conf 文件以后找到如下两行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">local_enable&#x3D;YES</span><br><span class="line">write_enable&#x3D;YES</span><br></pre></td></tr></table></figure>
+
+<p>确保上面两行前面没有“#”，有的话就取消掉</p>
+<p>保存退出后，重启服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/vsftpd restart</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="windows-下连接FTP"><a href="#windows-下连接FTP" class="headerlink" title="windows 下连接FTP:"></a>windows 下连接FTP:</h2><p>​    FTP软件中填写对应终端的IP 输入用户名和密码即可</p>
+<h1 id="二、NFS-Network-File-System"><a href="#二、NFS-Network-File-System" class="headerlink" title="二、NFS(Network File System)"></a>二、NFS(Network File System)</h1><h2 id="NFS-服务开启"><a href="#NFS-服务开启" class="headerlink" title="NFS 服务开启"></a>NFS 服务开启</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install nfs-kernel-server rpcbind</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后创建一个nfs文件夹，以后需要通过网络用的文件都放这里.<code>xxxx/nfs</code></p>
+<p>之后配置文件/etc/exports：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/exports</span><br></pre></td></tr></table></figure>
+
+<p>在文件末尾添加如下所示内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxxx&#x2F;nfs *(rw,sync,no_root_squash)</span><br></pre></td></tr></table></figure>
+
+<p>重启 NFS 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/nfs-kernel-server restart</span><br></pre></td></tr></table></figure>
+
+<h2 id="连接失败情况解决："><a href="#连接失败情况解决：" class="headerlink" title="连接失败情况解决："></a>连接失败情况解决：</h2><p>如果出现以下情况</p>
+<img src="/2020/10/18/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/image-20200820013608568.png" class="" title="image-20200820013608568">
+
+<p>ARM-Linux NFS挂载不上，是由于高版本的NFS服务，默认不支持nfs v2的连接，而uboot中nfs服务是 V2版本的，所以需要修改<code>/etc/default/nfs-kernel-server </code>文件以支持v2 nfs。</p>
+<p>修改完内容如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Number of servers to start up</span></span><br><span class="line"><span class="comment">#RPCNFSDCOUNT=8</span></span><br><span class="line">RPCNFSDCOUNT=<span class="string">&#x27;-V 2 8&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Runtime priority of server (see nice(1))</span></span><br><span class="line">RPCNFSDPRIORITY=0</span><br><span class="line"></span><br><span class="line"><span class="comment"># Options for rpc.mountd.</span></span><br><span class="line"><span class="comment"># If you have a port-based firewall, you might want to set up</span></span><br><span class="line"><span class="comment"># a fixed port here using the --port option. For more information, </span></span><br><span class="line"><span class="comment"># see rpc.mountd(8) or http://wiki.debian.org/SecuringNFS</span></span><br><span class="line"><span class="comment"># To disable NFSv4 on the server, specify &#x27;--no-nfs-version 4&#x27; here</span></span><br><span class="line"><span class="comment">#RPCMOUNTDOPTS=&quot;--manage-gids&quot;</span></span><br><span class="line">RPCMOUNTDOPTS=<span class="string">&quot;-V 2 --manage-gids&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Do you want to start the svcgssd daemon? It is only required for Kerberos</span></span><br><span class="line"><span class="comment"># exports. Valid alternatives are &quot;yes&quot; and &quot;no&quot;; the default is &quot;no&quot;.</span></span><br><span class="line">NEED_SVCGSSD=<span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Options for rpc.svcgssd.</span></span><br><span class="line">RPCSVCGSSDOPTS=<span class="string">&quot;--nfs-version 2,3,4 --debug --syslog&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h1 id="三、SSH安全外壳协议-Secure-Shell"><a href="#三、SSH安全外壳协议-Secure-Shell" class="headerlink" title="三、SSH安全外壳协议 (Secure Shell)"></a>三、SSH安全外壳协议 (Secure Shell)</h1><h2 id="SSH-服务开启"><a href="#SSH-服务开启" class="headerlink" title="SSH 服务开启"></a>SSH 服务开启</h2><p>安装 ssh 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install openssh-server</span><br></pre></td></tr></table></figure>
+
+<p>ssh 的配置文件为/etc/ssh/sshd_config，使用默认配置即可</p>
+<h1 id="四、交叉编译工具链"><a href="#四、交叉编译工具链" class="headerlink" title="四、交叉编译工具链"></a>四、交叉编译工具链</h1><p>编译 ARM 架构的代码，我们需要一个在 X86 架构的 PC 上运行，可以编译 ARM 架构代码的 GCC 编译器，这个编译器就叫做交叉编译器.</p>
+<h2 id="Linaro-GCC-编译工具链-编译器-安装"><a href="#Linaro-GCC-编译工具链-编译器-安装" class="headerlink" title="Linaro GCC 编译工具链(编译器)安装"></a>Linaro GCC 编译工具链(编译器)安装</h2><p>下载地址：</p>
+<p><a target="_blank" rel="noopener" href="https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/">https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/</a></p>
+<img src="/2020/10/18/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/2222.png" class="" width="2222">
+
+
+
+<p>有很多种 GCC 交叉编译工具链，因为我们所使用的 I.MX6U-ALPHA 开发板是一个 Cortex-A7 内核的开发板，因此选择 arm-linux-gnueabihf，点击后面的“Binaries”进入可执行文件下载</p>
+<p>创建目录：/usr/local/arm：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir /usr/<span class="built_in">local</span>/arm</span><br></pre></td></tr></table></figure>
+
+<p>将下载的文件放至该目录进行解压</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo tar -vxf gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf.tar.xz</span><br></pre></td></tr></table></figure>
+
+<p>解压完成以后会生成一个名为“gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf”的文件夹，这个文件夹里面就是我们的交叉编译工具链.</p>
+<p>修改环境变量，使用 VI 打开/etc/profile 文件，命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/profile</span><br></pre></td></tr></table></figure>
+
+<p>打开/etc/profile 以后，在最后面输入如下所示内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH&#x3D;$PATH:&#x2F;usr&#x2F;local&#x2F;arm&#x2F;gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf&#x2F;bin</span><br></pre></td></tr></table></figure>
+
+<p>重启 Ubuntu 系统，交叉编译工具链(编译器)就安装成功了</p>
+<p>查看版本号</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-gnueabihf-gcc -v</span><br></pre></td></tr></table></figure>
+
+<p>如果交叉编译器安装正确的话就会显示版本号</p>
+<h1 id="五、TFTP服务"><a href="#五、TFTP服务" class="headerlink" title="五、TFTP服务"></a>五、TFTP服务</h1><p>tftp 命令的作用和 nfs 命令一样，都是用于通过网络下载东西到 DRAM 中，只是 tftp 命令使用的 TFTP 协议，Ubuntu 主机作为 TFTP 服务器。因此需要在 Ubuntu 上搭建 TFTP 服务器，需要安装 tftp-hpa 和 tftpd-hpa，命令如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install tftp-hpa tftpd-hpa</span><br><span class="line">sudo apt-get install xinetd</span><br></pre></td></tr></table></figure>
+
+<p>和 NFS 一样，TFTP 也需要一个文件夹来存放文件，在用户目录下新建一个目录，命令如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir /home/firestaradmin/linux/tftpboot</span><br><span class="line">chmod 777 /home/firestaradmin/linux/tftpboot</span><br></pre></td></tr></table></figure>
+
+<p>这 样 我 就 在 我 的 电 脑 上 创 建 了 一 个 名 为 tftpboot 的目录 ( 文 件 夹 )，路径为**/home/firestaradmin/linux/tftpboot**</p>
+<p>注意！我们要给 tftpboot 文件夹权限，否则的话 uboot 不能从tftpboot 文件夹里面下载文件。最后配置 tftp，安装完成以后新建文件/etc/xinetd.d/tftp，如果没有/etc/xinetd.d 目录的话自行创建，然后在里面输入如下内容：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">server tftp</span><br><span class="line">&#123;</span><br><span class="line">    socket_type = dgram</span><br><span class="line">    protocol = udp</span><br><span class="line">    wait = yes</span><br><span class="line">    user = root</span><br><span class="line">    server = /usr/sbin/in.tftpd</span><br><span class="line">    server_args = -s /home/firestaradmin/linux/tftpboot/</span><br><span class="line">    disable = no</span><br><span class="line">    per_source = <span class="number">11</span></span><br><span class="line">    cps = <span class="number">100</span> <span class="number">2</span></span><br><span class="line">    flags = IPv4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 完了以后启动 tftp 服务<code>sudo service tftpd-hpa start</code></p>
+<p>之后打开**/etc/default/tftpd-hpa** 文件，将其修改为如下所示内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># &#x2F;etc&#x2F;default&#x2F;tftpd-hpa</span><br><span class="line"></span><br><span class="line">TFTP_USERNAME&#x3D;&quot;tftp&quot;</span><br><span class="line">TFTP_DIRECTORY&#x3D;&quot;&#x2F;home&#x2F;firestaradmin&#x2F;linux&#x2F;tftpboot&quot;</span><br><span class="line">TFTP_ADDRESS&#x3D;&quot;:69&quot;</span><br><span class="line">TFTP_OPTIONS&#x3D;&quot;-l -c -s&quot;</span><br></pre></td></tr></table></figure>
+
+<p>TFTP_DIRECTORY 就是我们上面创建的 tftp 文件夹目录，以后我们就将所有需要通过TFTP 传输的文件都放到这个文件夹里面，并且要给予这些文件相应的权限。</p>
+<p>最后输入如下命令， 重启 tftp 服务器：<br><code>sudo service tftpd-hpa restart</code></p>
+<p>tftp 服务器已经搭建好了，接下来就是使用了。将 zImage 镜像文件拷贝到 tftpboot 文件夹中，并且给予 zImage 相应的权限，命令如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cp zImage /home/firestaradmin/linux/tftpboot/</span><br><span class="line"><span class="built_in">cd</span> /home/firestaradmin/linux/tftpboot/</span><br><span class="line">chmod 777 zImage</span><br></pre></td></tr></table></figure>
+
+<p>万事俱备，只剩验证了，uboot 中的 tftp 命令格式如下：<br><code>tftpboot [loadAddress] [[hostIPaddr:]bootfilename]</code></p>
+<p>看起来和 nfs 命令格式一样的，loadAddress 是文件在 DRAM 中的存放地址，**[[hostIPaddr:]bootfilename]**是要从 Ubuntu 中下载的文件。</p>
+<p>但是和 nfs 命令的区别在于，tftp 命令不需要输入文件在 Ubuntu 中的完整路径，只需要输入文件名即可。比如我们现在将 tftpboot 文件夹里面的 zImage 文件下载到开发板 DRAM 的 0X80800000 地址处，命令如下：<br><code>tftp 80800000 zImage</code></p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">firestaradmin</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://firestaradmin.gitee.io/2020/10/18/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">https://firestaradmin.gitee.io/2020/10/18/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/1.%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://firestaradmin.gitee.io" target="_blank">firestaradmin's Fortune</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Embedded/">Embedded</a><a class="post-meta__tags" href="/tags/ARM/">ARM</a></div><div class="post_share"><div class="social-share" data-image="/img/banner3.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/10/18/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/10.linux%E4%B8%8B%E7%83%A7%E5%BD%95%E8%87%B3SD%E5%8D%A1%E5%90%AF%E5%8A%A8/"><img class="prev-cover" src="/img/banner3.jpg" onerror="onerror=null;src='/img/404.png'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">10| linux下烧录至SD卡启动</div></div></a></div><div class="next-post pull-right"><a href="/2020/10/18/NOTE/ARM-Linux/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%AB%98%E7%BA%A7C%E7%AC%94%E8%AE%B0/"><img class="next-cover" src="/img/banner3.jpg" onerror="onerror=null;src='/img/404.png'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">高级C嵌入式深入知识点记录</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/09/18/PROJECT/hardware/Kite_V1/" title="Kite_V1.0 [ESP32开发板]"><img class="cover" src="/img/covers/Kite_V1.png"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-18</div><div class="title">Kite_V1.0 [ESP32开发板]</div></div></a></div><div><a href="/2020/10/18/NOTE/ARM-Linux/嵌入式高级C笔记/" title="高级C嵌入式深入知识点记录"><img class="cover" src="/img/banner3.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-18</div><div class="title">高级C嵌入式深入知识点记录</div></div></a></div><div><a href="/2020/10/18/NOTE/ESP/1、esp-idf应用程序启动流程/" title="1、esp-idf应用程序启动流程"><img class="cover" src="/img/banner3.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-18</div><div class="title">1、esp-idf应用程序启动流程</div></div></a></div><div><a href="/2020/10/18/NOTE/ARM-Linux/环境搭建系统移植篇/10.linux下烧录至SD卡启动/" title="10| linux下烧录至SD卡启动"><img class="cover" src="/img/banner3.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-18</div><div class="title">10| linux下烧录至SD卡启动</div></div></a></div><div><a href="/2020/10/18/NOTE/ARM-Linux/环境搭建系统移植篇/2.ARM交叉编译器的使用/" title="2| ARM交叉编译器的使用"><img class="cover" src="/img/banner3.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-18</div><div class="title">2| ARM交叉编译器的使用</div></div></a></div><div><a href="/2020/10/18/NOTE/ARM-Linux/环境搭建系统移植篇/3.I.MX6UL启动方式浅析/" title="3| I.MX6UL 启动方式浅析"><img class="cover" src="/img/banner3.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-18</div><div class="title">3| I.MX6UL 启动方式浅析</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div class="comment-switch"><span class="first-comment">g</span><label><input id="switch-comments-btn" type="checkbox"/><span class="slider"></span></label><span class="second-comment">i</span></div></div><div class="comment-wrap"><div></div><div></div><div></div><div></div><div></div><div></div></div></div></article></main><footer id="footer" style="background-image: url(/img/banner3.jpg)" data-type="photo"><div id="footer-wrap"><div class="copyright">&copy;2020 By firestaradmin</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">一起为了祖国崛起而奋斗吧！</div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="/js/third-party/canvas-nest.js"></script><script src="/js/third-party/ClickShowText.js" async="async"></script></div></body></html>

@@ -1,0 +1,549 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Python 脚本基础模块 | firestaradmin's Fortune</title><meta name="description" content="Python 脚本基础模块@firestaradmin 2020年12月15日15:14:34  如果死亡会带来平静，和安息。死去吧。  一、键盘鼠标操作模拟autopy 模块安装：pip3 install autopy 主要用来模拟鼠标和键盘的点击操作。 1. 键盘 这个模块包含控制键盘的函数.  函数按下键或者释放键 12autopy.key.toggle(autopy.key.Code.UP"><meta name="keywords" content="Windows,Python"><meta name="author" content="firestaradmin"><meta name="copyright" content="firestaradmin"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://firestaradmin.gitee.io/2020/12/15/NOTE/Python/%E9%80%9A%E7%94%A8%E8%84%9A%E6%9C%AC%E6%A8%A1%E5%9D%97API/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta property="og:type" content="article"><meta property="og:title" content="Python 脚本基础模块"><meta property="og:url" content="https://firestaradmin.gitee.io/2020/12/15/NOTE/Python/%E9%80%9A%E7%94%A8%E8%84%9A%E6%9C%AC%E6%A8%A1%E5%9D%97API/"><meta property="og:site_name" content="firestaradmin's Fortune"><meta property="og:description" content="Python 脚本基础模块@firestaradmin 2020年12月15日15:14:34  如果死亡会带来平静，和安息。死去吧。  一、键盘鼠标操作模拟autopy 模块安装：pip3 install autopy 主要用来模拟鼠标和键盘的点击操作。 1. 键盘 这个模块包含控制键盘的函数.  函数按下键或者释放键 12autopy.key.toggle(autopy.key.Code.UP"><meta property="og:image" content="https://firestaradmin.gitee.io/img/banner3.jpg"><meta property="article:published_time" content="2020-12-14T16:00:00.000Z"><meta property="article:modified_time" content="2020-12-14T16:00:00.000Z"><meta name="twitter:card" content="summary"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.0.2',
+  algolia: undefined,
+  localSearch: {"path":"./public/search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime: '',
+  date_suffix: {"one_hour":"刚刚","hours":"小时前","day":"天前"},
+  copyright: undefined,
+  ClickShowText: {"text":"I,LOVE,YOU,努力,奋斗,zsh万岁,庚庚好帅","fontSize":"15px"},
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isanchor: true
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+    },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2020-12-15 00:00:00'
+}</script><noscript><style type="text/css">
+#nav {
+  opacity: 1
+}
+.justified-gallery img {
+  opacity: 1
+}
+</style></noscript><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+  }
+}
+
+var autoChangeMode = 'false'
+var t = saveToLocal.get('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (saveToLocal.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><meta name="generator" content="Hexo 5.0.2"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/head2.JPG" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">62</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">28</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">17</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Python-%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%9D%97"><span class="toc-text">Python 脚本基础模块</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E9%94%AE%E7%9B%98%E9%BC%A0%E6%A0%87%E6%93%8D%E4%BD%9C%E6%A8%A1%E6%8B%9F"><span class="toc-text">一、键盘鼠标操作模拟</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#autopy-%E6%A8%A1%E5%9D%97"><span class="toc-text">autopy 模块</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%94%AE%E7%9B%98"><span class="toc-text">1. 键盘</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%87%BD%E6%95%B0"><span class="toc-text">函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%B8%E9%87%8F"><span class="toc-text">常量</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%BC%A0%E6%A0%87"><span class="toc-text">2. 鼠标</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%87%BD%E6%95%B0-1"><span class="toc-text">函数</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%8E%A7%E5%88%B6%E5%B1%8F%E5%B9%95%E7%9A%84%E6%A8%A1%E5%9D%97screen"><span class="toc-text">3.控制屏幕的模块screen</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%87%BD%E6%95%B0-2"><span class="toc-text">函数</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE"><span class="toc-text">二、屏幕截图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pillow"><span class="toc-text">Pillow</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%AA%97%E5%8F%A3%E6%8E%A7%E5%88%B6"><span class="toc-text">三、窗口控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pywin32"><span class="toc-text">pywin32</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E8%8E%B7%E5%8F%96%E7%AA%97%E5%8F%A3%E5%8F%A5%E6%9F%84"><span class="toc-text">1、获取窗口句柄</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E7%AA%97%E5%8F%A3%E7%A7%BB%E5%88%B0%E6%9C%80%E5%89%8D"><span class="toc-text">2、窗口移到最前</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E8%8E%B7%E5%8F%96%E7%AA%97%E5%8F%A3%E5%9D%90%E6%A0%87%E4%BD%8D%E7%BD%AE"><span class="toc-text">3、获取窗口坐标位置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E6%9B%B4%E5%A5%BD%E7%9A%84%E8%8E%B7%E5%8F%96%E5%8F%A5%E6%9F%84%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="toc-text">4、更好的获取句柄的方式</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB"><span class="toc-text">四、图像识别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CV2-opencv-python"><span class="toc-text">CV2 [ opencv-python ]</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%EF%BC%9A"><span class="toc-text">安装：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%BA%93%E5%87%BD%E6%95%B0"><span class="toc-text">基本库函数</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%E3%80%81%E8%AF%BB%E5%85%A5%E4%B8%80%E5%BC%A0%E5%9B%BE%E5%83%8F"><span class="toc-text">1、读入一张图像</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%E3%80%81%E6%98%BE%E7%A4%BA%E5%9B%BE%E5%83%8F"><span class="toc-text">2、显示图像</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3%E3%80%81%E4%BF%9D%E5%AD%98%E5%9B%BE%E5%83%8F"><span class="toc-text">3、保存图像</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4%E3%80%81%E5%85%B6%E4%BB%96%E9%83%A8%E5%88%86%E5%87%BD%E6%95%B0"><span class="toc-text">4、其他部分函数</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%B1%8F%E5%B9%95%E4%B8%8A%E6%89%BE%E5%88%B0%E7%89%B9%E5%AE%9A%E5%9B%BE%E5%83%8F"><span class="toc-text">实现屏幕上找到特定图像</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">五、配置文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#configparser"><span class="toc-text">configparser</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%85%B6%E4%BB%96%E7%9F%A5%E8%AF%86"><span class="toc-text">六、其他知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E4%BB%A5%E7%AE%A1%E7%90%86%E5%91%98%E6%A8%A1%E5%BC%8F%E8%BF%90%E8%A1%8C"><span class="toc-text">1、判断是否以管理员模式运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E8%8E%B7%E5%8F%96%E7%A8%8B%E5%BA%8F%E5%BD%93%E5%89%8D%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84"><span class="toc-text">2、获取程序当前绝对路径</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81NBA2kOL2-%E6%8C%82%E6%9C%BA%E5%AE%9E%E4%BE%8B"><span class="toc-text">七、NBA2kOL2 挂机实例</span></a></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(/img/banner3.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">firestaradmin's Fortune</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">Python 脚本基础模块</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-12-14T16:00:00.000Z" title="发表于 2020-12-15 00:00:00">2020-12-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-12-14T16:00:00.000Z" title="更新于 2020-12-15 00:00:00">2020-12-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NOTE/">NOTE</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NOTE/Python/">Python</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h1 id="Python-脚本基础模块"><a href="#Python-脚本基础模块" class="headerlink" title="Python 脚本基础模块"></a>Python 脚本基础模块</h1><p>@firestaradmin 2020年12月15日15:14:34</p>
+<blockquote>
+<p>如果死亡会带来平静，和安息。死去吧。</p>
+</blockquote>
+<h2 id="一、键盘鼠标操作模拟"><a href="#一、键盘鼠标操作模拟" class="headerlink" title="一、键盘鼠标操作模拟"></a>一、键盘鼠标操作模拟</h2><h3 id="autopy-模块"><a href="#autopy-模块" class="headerlink" title="autopy 模块"></a>autopy 模块</h3><p>安装：<code>pip3 install autopy</code></p>
+<p>主要用来模拟鼠标和键盘的点击操作。</p>
+<h4 id="1-键盘"><a href="#1-键盘" class="headerlink" title="1. 键盘"></a>1. 键盘</h4><blockquote>
+<p>这个模块包含控制键盘的函数.</p>
+</blockquote>
+<h5 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h5><p>按下键或者释放键</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">autopy.key.toggle(autopy.key.Code.UP_ARROW, <span class="literal">True</span>, [])  <span class="comment">#按下方向键</span></span><br><span class="line">autopy.key.toggle(autopy.key.Code.UP_ARROW, <span class="literal">False</span>, [])  <span class="comment">#释放方向键</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>autopy.key.toggle(autopy.key.Code.UP_ARROW, True, [autopy.key.Modifier.CONTROL], 0)</strong>  </p>
+<p>#参数1  键盘代码(看下表)或键名</p>
+<p>#参数2  True表示按下,False松开</p>
+<p>#参数3  同时按下的修饰键</p>
+<p>#参数4 延迟n秒后再往下执行</p>
+<p>#注意释放，要不然会电脑会一直按着那个键，直到你终止程序</p>
+<hr>
+<p><strong>autopy.key.tap(autopy.key.Code.CONTROL, [], 2)</strong>  </p>
+<p>#对autopy.key.toggle进行的封装,方便使用,按下并自动释放.</p>
+<hr>
+<p><strong>autopy.key.type_string(‘Hello123’, 0)</strong></p>
+<p>#输入相应的字符串</p>
+<p>#参数2  每分钟的字符个数，0表示最快</p>
+<h5 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h5><p><strong>class autopy.key.Code</strong></p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>code</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Code</td>
+<td>F1</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>F2</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>F3</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>F4</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>F5</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>F6</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>F7</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>F8</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>F9</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>F10</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>F11</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>F12</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>ALT</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>BACKSPACE</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>CAPS_LOCK</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>CONTROL</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>DELETE</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>DOWN_ARROW</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>END</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>ESCAPE</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>HOME</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>LEFT_ARROW</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>PAGE_DOWN</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>PAGE_UP</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>RETURN</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>RIGHT_ARROW</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>SHIFT</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>SHIFT</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>SPACE</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>UP_ARROW</td>
+</tr>
+</tbody></table>
+<p><strong>class autopy.key.Modifier</strong></p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>code</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Modifier</td>
+<td>META</td>
+</tr>
+<tr>
+<td>Modifier</td>
+<td>ALT</td>
+</tr>
+<tr>
+<td>Modifier</td>
+<td>CONTROL</td>
+</tr>
+<tr>
+<td>Modifier</td>
+<td>SHIFT</td>
+</tr>
+</tbody></table>
+<h4 id="2-鼠标"><a href="#2-鼠标" class="headerlink" title="2. 鼠标"></a>2. 鼠标</h4><p><strong>有些窗口可能需要管理员运行，才能移动鼠标！！！</strong></p>
+<blockquote>
+<p>这个模块包含获取发鼠标状态和控制鼠标光标的函数.非特殊情况下,都使用屏幕坐标系,原点在左上角.</p>
+</blockquote>
+<h5 id="函数-1"><a href="#函数-1" class="headerlink" title="函数"></a>函数</h5><p><strong>#移动鼠标到指定点–相对于屏幕，没有移动过程</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">autopy.mouse.move(<span class="number">100</span>, <span class="number">100</span>)  </span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p><strong>#移动鼠标到指定点–相对于屏幕，有直线移动过程</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">autopy.mouse.smooth_move(<span class="number">500</span>, <span class="number">500</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p><strong>#返回鼠标的当前位置–相对于屏幕</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">i = autopy.mouse.location()</span><br><span class="line"><span class="comment">#i =&gt; (500.0, 500.0)</span></span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p> <strong>#按下指定鼠标键</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">autopy.mouse.toggle(autopy.mouse.Button.LEFT, <span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#autopy.mouse.Button.LEFT   鼠标左键</span></span><br><span class="line"><span class="comment">#autopy.mouse.Button.RIGHT  鼠标右键</span></span><br><span class="line"><span class="comment">#autopy.mouse.Button.MIDDLE  鼠标中键</span></span><br><span class="line"><span class="comment">#None   默认左键</span></span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p><strong>#释放指定鼠标键</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">autopy.mouse.toggle(autopy.mouse.Button.LEFT, <span class="literal">False</span>)  </span><br><span class="line"><span class="comment">#注意释放，要不然会电脑会一直按着那个键，直到你终止程序</span></span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">autopy.mouse.click(<span class="literal">None</span>)   <span class="comment"># 点左键一下,然后松开</span></span><br><span class="line">autopy.mouse.click(autopy.mouse.Button.RIGHT)  <span class="comment"># 点右键一下,然后松开</span></span><br><span class="line">autopy.mouse.click(autopy.mouse.Button.LEFT, <span class="number">3</span>)   <span class="comment"># 按住左键保持3秒,然后松开</span></span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p><strong>autopy.mouse.Button:Code</strong></p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>code</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Button</td>
+<td>LEFT</td>
+</tr>
+<tr>
+<td>Button</td>
+<td>RIGHT</td>
+</tr>
+<tr>
+<td>Button</td>
+<td>MIDDLE</td>
+</tr>
+</tbody></table>
+<hr>
+<h4 id="3-控制屏幕的模块screen"><a href="#3-控制屏幕的模块screen" class="headerlink" title="3.控制屏幕的模块screen"></a>3.控制屏幕的模块screen</h4><blockquote>
+<p>这个模块包含控制屏幕的函数</p>
+</blockquote>
+<h5 id="函数-2"><a href="#函数-2" class="headerlink" title="函数"></a>函数</h5><ol>
+<li><strong>autopy.screen,scale()-&gt;float</strong><br>  获得屏幕的<strong>scale</strong>值,多少像素代表一个点.</li>
+<li><strong>autopy.screen.size()-&gt;(float,float)</strong><br>  返回<strong>tuple(width,height)</strong>,代表屏幕宽高有多少个像素点.</li>
+<li><strong>autopy.screen.is_point_visible(x:float,y:float)-&gt;bool</strong><br>  如果这个点在屏幕的范围内,返回<strong>True</strong></li>
+<li><strong>autopy.screen.get_color(x:float,y:float)-&gt;(int,int,int)</strong><br>  返回屏幕上对应点的颜色值.异常:如果点不在屏幕上,抛出ValueError.</li>
+</ol>
+<hr>
+<p>autopy 也有图像识别，但是是位图识别，它的处理图像不适合脚本编写，我们会使用其他的模块，更加适合。</p>
+<h2 id="二、屏幕截图"><a href="#二、屏幕截图" class="headerlink" title="二、屏幕截图"></a>二、屏幕截图</h2><h3 id="Pillow"><a href="#Pillow" class="headerlink" title="Pillow"></a>Pillow</h3><p>Pillow是PIL的一个派生分支，但如今已经发展成为比PIL本身更具活力的图像处理库。pillow可以说已经取代了PIL，将其封装成python的库（pip即可安装），且支持python2和python3，目前最新版本是3.0.0。</p>
+<p><strong>安装：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install pillow</span><br></pre></td></tr></table></figure>
+
+<p><strong>屏幕截图：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> ImageGrab </span><br><span class="line">im = ImageGrab.grab((<span class="number">0</span>,<span class="number">0</span>,<span class="number">800</span>,<span class="number">200</span>))     <span class="comment">#截取屏幕指定区域的图像 </span></span><br><span class="line">im = ImageGrab.grab()                 <span class="comment">#不带参数表示全屏幕截图</span></span><br><span class="line">im.save(<span class="string">&quot;D:\\test.jpg&quot;</span>);            <span class="comment">#储存为.jpg</span></span><br></pre></td></tr></table></figure>
+
+<p>其他图像处理功能，如缩放、颜色等操作，百度。</p>
+<h2 id="三、窗口控制"><a href="#三、窗口控制" class="headerlink" title="三、窗口控制"></a>三、窗口控制</h2><h3 id="pywin32"><a href="#pywin32" class="headerlink" title="pywin32"></a>pywin32</h3><p>一般系统自带，如果没有，安装可能是<code>pip install pywin32</code></p>
+<hr>
+<p>使用 <code>win32gui</code> <code>win32api</code> <code>win32con</code> 等模块进行窗体控制。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> win32gui, win32api, win32con</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="keyword">global</span> game_hwnd, window_size</span><br><span class="line">    game_hwnd = win32gui.FindWindow(game_class, game_title)  <span class="comment">#获得句柄 &lt;hwnd: int&gt;</span></span><br><span class="line">    print(<span class="string">&quot;窗口句柄：&quot;</span>,game_hwnd)</span><br><span class="line">    win32gui.SetForegroundWindow(game_hwnd)              <span class="comment">#窗口浮现</span></span><br><span class="line">    window_size = win32gui.GetWindowRect(game_hwnd)      <span class="comment">#pos: (x1, y1, x2, y2) &lt;pos: tuple&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="1、获取窗口句柄"><a href="#1、获取窗口句柄" class="headerlink" title="1、获取窗口句柄"></a>1、获取窗口句柄</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">win32gui.FindWindow(game_class, game_title)  <span class="comment">#获得句柄 &lt;hwnd: int&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>关键在于 <strong>窗口类名</strong> 和 <strong>窗口标题 ** 的获取， 可以使用</strong>spy**++ 软件 来抓取窗口信息。</p>
+<h4 id="2、窗口移到最前"><a href="#2、窗口移到最前" class="headerlink" title="2、窗口移到最前"></a>2、窗口移到最前</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">win32gui.SetForegroundWindow(game_hwnd)     <span class="comment">#窗口浮现</span></span><br></pre></td></tr></table></figure>
+
+<p>把窗口移到前方，但窗口最小化后会有错误，待解决。</p>
+<h4 id="3、获取窗口坐标位置"><a href="#3、获取窗口坐标位置" class="headerlink" title="3、获取窗口坐标位置"></a>3、获取窗口坐标位置</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">window_size = win32gui.GetWindowRect(game_hwnd)      <span class="comment">#pos: (x1, y1, x2, y2) &lt;pos: tuple&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>获取窗口的位置，可以通过点坐标计算窗口大小，获取的位置数据类型为 元组 (X1, Y1, X2, Y2) 对应窗体左上角和右下角的坐标。</p>
+<h4 id="4、更好的获取句柄的方式"><a href="#4、更好的获取句柄的方式" class="headerlink" title="4、更好的获取句柄的方式"></a>4、更好的获取句柄的方式</h4><p>因为有时候应用程序会更新，标题可能会更改，所以可以通过 窗口的标题进行关键字匹配，从而找到窗体句柄。</p>
+<h2 id="四、图像识别"><a href="#四、图像识别" class="headerlink" title="四、图像识别"></a>四、图像识别</h2><h3 id="CV2-opencv-python"><a href="#CV2-opencv-python" class="headerlink" title="CV2 [ opencv-python ]"></a>CV2 [ opencv-python ]</h3><h4 id="安装："><a href="#安装：" class="headerlink" title="安装："></a><strong>安装：</strong></h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install opencv-python</span><br></pre></td></tr></table></figure>
+
+<p>会自动安装依赖的 numpy 模块。</p>
+<p><strong>可能的import 错误：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt;import cv2 </span><br><span class="line">ImportError: numpy.core.multiarray failed to import</span><br></pre></td></tr></table></figure>
+
+<p>原因是因为 numpy 模块的版本太新，将版本降低即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install -U numpy==<span class="number">1.14</span><span class="number">.5</span></span><br></pre></td></tr></table></figure>
+
+<p>具体版本和 opencv 的 版本有关。可以直接降低到 1.12.0。 如果版本太低，会有提示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opencv-python 4.4.0.46 has requirement numpy&gt;&#x3D;1.14.5, but you&#39;ll have numpy 1.12.0 which is incompatible.</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="基本库函数"><a href="#基本库函数" class="headerlink" title="基本库函数"></a>基本库函数</h4><h5 id="1、读入一张图像"><a href="#1、读入一张图像" class="headerlink" title="1、读入一张图像"></a>1、读入一张图像</h5><p><strong>cv2.imread(filepath, flags)</strong>   #读入一张图像</p>
+<ul>
+<li>filepath：要读入图片的完整路径</li>
+<li>flags：读入图片的模式   <ul>
+<li>cv2.IMREAD_COLOR：默认参数，读入一副彩色图片，忽略alpha通道</li>
+<li>cv2.IMREAD_GRAYSCALE：读入灰度图片</li>
+<li>cv2.IMREAD_UNCHANGED：顾名思义，读入完整图片，包括alpha通道</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、显示图像"><a href="#2、显示图像" class="headerlink" title="2、显示图像"></a>2、显示图像</h5><p><strong>cv2.imshow(wname,img)</strong>   #显示图像</p>
+<ul>
+<li>第一个参数是显示图像的窗口的名字</li>
+<li>第二个参数是要显示的图像（imread读入的图像），窗口大小自动调整为图片大小</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cv2.imshow(<span class="string">&#x27;image&#x27;</span>,img)</span><br><span class="line">cv2.waitKey(<span class="number">0</span>)   <span class="comment">#等待键盘输入，单位为毫秒，即等待指定的毫秒数看是否有键盘输入，若在等待时间内按下任意键则返回按键的ASCII码，程序继续运行。</span></span><br><span class="line"><span class="comment">#若没有按下任何键，超时后返回-1。参数为0表示无限等待。不调用waitKey的话，窗口会一闪而逝，看不到显示的图片。</span></span><br><span class="line">cv2.destroyAllWindow()     <span class="comment">#销毁所有窗口</span></span><br><span class="line">cv2.destroyWindow(wname)   <span class="comment">#销毁指定窗口</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="3、保存图像"><a href="#3、保存图像" class="headerlink" title="3、保存图像"></a>3、保存图像</h5><p><strong>cv2.imwrite(file，img，num)</strong>  #保存一张图像</p>
+<ul>
+<li>第一个参数是要保存的文件名</li>
+<li>第二个参数是要保存的图像。可选的第三个参数，它针对特定的格式：对于JPEG，其表示的是图像的质量，用0 - 100的整数表示，默认95。</li>
+<li>第三个参数表示的是压缩级别。默认为3.</li>
+</ul>
+<h5 id="4、其他部分函数"><a href="#4、其他部分函数" class="headerlink" title="4、其他部分函数"></a>4、其他部分函数</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">img.copy()  <span class="comment">#图像复制</span></span><br><span class="line"></span><br><span class="line">cv2.resize(image, image2,dsize)   <span class="comment">#图像缩放：(输入原始图像，输出新图像，图像的大小)</span></span><br><span class="line"></span><br><span class="line">cv2.flip(img,flipcode)            <span class="comment">#图像翻转，flipcode控制翻转效果。</span></span><br><span class="line"><span class="comment">#flipcode = 0：沿x轴翻转；flipcode &gt; 0：沿y轴翻转；flipcode &lt; 0：x,y轴同时翻转</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="实现屏幕上找到特定图像"><a href="#实现屏幕上找到特定图像" class="headerlink" title="实现屏幕上找到特定图像"></a>实现屏幕上找到特定图像</h4><p><strong>cv2.matchTemplate(image, templ, method, result=None, mask=None)</strong></p>
+<p> image：待搜索图像<br> templ：模板图像<br> result：匹配结果<br> method：匹配模式参数 </p>
+<p><strong>method：</strong></p>
+<ul>
+<li>CV_TM_SQDIFF 平方差匹配法：该方法采用平方差来进行匹配；最好的匹配值为0；匹配越差，匹配值越大。</li>
+<li>CV_TM_CCORR 相关匹配法：该方法采用乘法操作；数值越大表明匹配程度越好。</li>
+<li>CV_TM_CCOEFF 相关系数匹配法：1表示完美的匹配；-1表示最差的匹配。</li>
+<li>CV_TM_SQDIFF_NORMED 归一化平方差匹配法</li>
+<li>CV_TM_CCORR_NORMED 归一化相关匹配法</li>
+<li>CV_TM_CCOEFF_NORMED 归一化相关系数匹配法</li>
+</ul>
+<blockquote>
+<p>模板匹配具有自身的局限性，主要表现在它只能进行平行移动，若原图像中的匹配目标发生旋转或大小变化，该算法无效。</p>
+<p>一般，寻找的目标和容器，尺寸必须相同</p>
+</blockquote>
+<p> <strong>实例代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">* @brief 在容器图片里寻找样例. 使用OPONCV TM_CCOEFF_NORMED 模式识别</span></span><br><span class="line"><span class="string">* @param template the target will find in container ex. &quot;D:\\a.jpg&quot;</span></span><br><span class="line"><span class="string">* @param container the pic where to find ex. &quot;D:\\b.jpg&quot;</span></span><br><span class="line"><span class="string">* @param thres the threshold of finding simlike, default 0.8, range(0, 1)</span></span><br><span class="line"><span class="string">* @retval 0 means not found, &gt; 0 means level of similarity range(0 ,1)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">match_sim_img</span>(<span class="params">template, container, thres = <span class="number">0.80</span></span>):</span></span><br><span class="line">    template = cv2.imread(template,<span class="number">0</span>)</span><br><span class="line">    container = cv2.imread(container,<span class="number">0</span>)</span><br><span class="line">    res = cv2.matchTemplate(container, template, cv2.TM_CCOEFF_NORMED)</span><br><span class="line">    <span class="keyword">if</span> res.max() &gt;= thres:</span><br><span class="line">        <span class="keyword">return</span> res.max()</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p>返回值 res 为列表变量，所以取res.max() 判断是否大于阈值，大于就说明可能找到了该图。</p>
+<hr>
+<p>但我们的目的大部分的在屏幕上查找坐标，然后进行鼠标点击操作。那么如何获得图片相对于屏幕的坐标呢？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">* @brief 在容器图片里寻找样例并返回坐标值. 使用OPONCV TM_CCOEFF_NORMED 模式识别</span></span><br><span class="line"><span class="string">* @param template_path the target will find in container ex. &quot;D:\\a.jpg&quot;</span></span><br><span class="line"><span class="string">* @param container_path the pic where to find ex. &quot;D:\\b.jpg&quot;</span></span><br><span class="line"><span class="string">* @param thres the threshold of finding simlike, default 0.8, range(0, 1)</span></span><br><span class="line"><span class="string">* @retval tuple[X, Y], if return (0, 0) means not found.</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_img_pos</span>(<span class="params">template_path, container_path, thres = <span class="number">0.80</span></span>):</span></span><br><span class="line">    template = cv2.imread(template_path,<span class="number">0</span>)</span><br><span class="line">    container = cv2.imread(container_path,<span class="number">0</span>)</span><br><span class="line">    res = cv2.matchTemplate(container, template, cv2.TM_CCOEFF_NORMED)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> res.max() &lt; thres:</span><br><span class="line">        <span class="keyword">return</span> (<span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    container_size = Image.open(template_path).size</span><br><span class="line">    </span><br><span class="line">    loc = numpy.where(res==res.max())</span><br><span class="line">    X = int(loc[<span class="number">1</span>]+container_size[<span class="number">0</span>]/<span class="number">2</span>)</span><br><span class="line">    Y = int(loc[<span class="number">0</span>]+container_size[<span class="number">1</span>]/<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">return</span> (X,Y)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="五、配置文件"><a href="#五、配置文件" class="headerlink" title="五、配置文件"></a>五、配置文件</h2><h3 id="configparser"><a href="#configparser" class="headerlink" title="configparser"></a>configparser</h3><p>python使用自带的<strong>configparser</strong>模块用来读取配置文件，配置文件的形式类似windows中的ini文件，在使用前需要先安装该模块，使用pip安装即可</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install configparser</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>实例：</strong></p>
+<p>可以新建一个.ini文件 输入以下内容进行测试：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[user-info]</span></span><br><span class="line"><span class="attr">name</span> = ZhangSan</span><br><span class="line"><span class="attr">passwd</span> = <span class="number">123456</span></span><br><span class="line"><span class="attr">level</span> = <span class="number">12</span></span><br><span class="line"></span><br><span class="line"><span class="section">[email]</span></span><br><span class="line"><span class="attr">address</span> = <span class="number">123455678</span>@qq.com</span><br><span class="line"><span class="attr">passwd</span> = <span class="number">123123</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>python code：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> configparser </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    cf = configparser.ConfigParser()</span><br><span class="line">    cf.read(<span class="string">&quot;C://temp/config.ini&quot;</span>)  <span class="comment"># 读取配置文件，如果写文件的绝对路径，就可以不用os模块</span></span><br><span class="line"></span><br><span class="line">    secs = cf.sections()    <span class="comment"># 获取文件中所有的section, 一个配置文件中可以有多个配置  </span></span><br><span class="line">    print(secs)</span><br><span class="line"></span><br><span class="line">    sec_userinfo = cf.options(<span class="string">&quot;user-info&quot;</span>)  <span class="comment"># 获取sec名为user-info 所有的键</span></span><br><span class="line">    print(sec_userinfo)</span><br><span class="line"></span><br><span class="line">    items_userinfo = cf.items(<span class="string">&quot;user-info&quot;</span>)  <span class="comment"># 获取sec名为user-info 所有的键值对</span></span><br><span class="line">    print(items_userinfo)</span><br><span class="line"></span><br><span class="line">    username = cf.get(<span class="string">&quot;user-info&quot;</span>, <span class="string">&quot;name&quot;</span>)  <span class="comment"># 获取[user-info]name 对应的值</span></span><br><span class="line">    print(username)</span><br><span class="line">    </span><br><span class="line">    level = cf.getint(<span class="string">&quot;user-info&quot;</span>, <span class="string">&quot;level&quot;</span>)</span><br><span class="line">    print(level + <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>执行结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt;</span><br><span class="line">[&#39;user-info&#39;, &#39;email&#39;]</span><br><span class="line">[&#39;name&#39;, &#39;passwd&#39;]</span><br><span class="line">[(&#39;name&#39;, &#39;ZhangSan&#39;), (&#39;passwd&#39;, &#39;123456&#39;)]</span><br><span class="line">ZhangSan</span><br><span class="line">14</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>实例2</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> configparser</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">config.ini 内容：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[game-info]</span></span><br><span class="line"><span class="string">title = NBA2KOL2 0.3.230.675</span></span><br><span class="line"><span class="string">classname = &quot;NBAWindowClass&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[debug-config]</span></span><br><span class="line"><span class="string">debug_enable = False</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    cf = configparser.ConfigParser()</span><br><span class="line">      cf.read(<span class="string">&quot;F:\MarsCloud\MyFortune\Program\mycode\python\code\gameAssistant_2kol2\config.ini&quot;</span>)  </span><br><span class="line">    </span><br><span class="line">    title = cf.get(<span class="string">&quot;game-info&quot;</span>, <span class="string">&quot;title&quot;</span>)</span><br><span class="line">    print(title)</span><br><span class="line"></span><br><span class="line">    classname = cf.get(<span class="string">&quot;game-info&quot;</span>, <span class="string">&quot;classname&quot;</span>)</span><br><span class="line">    print(name)</span><br><span class="line"></span><br><span class="line">    val_bool = cf.getboolean(<span class="string">&quot;debug-config&quot;</span>, <span class="string">&quot;debug_enable&quot;</span>)</span><br><span class="line">    print(val_bool)</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt;</span><br><span class="line">NBA2KOL2 0.3.230.675</span><br><span class="line">&quot;NBAWindowClass&quot;</span><br><span class="line">False</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="六、其他知识"><a href="#六、其他知识" class="headerlink" title="六、其他知识"></a>六、其他知识</h2><h3 id="1、判断是否以管理员模式运行"><a href="#1、判断是否以管理员模式运行" class="headerlink" title="1、判断是否以管理员模式运行"></a>1、判断是否以管理员模式运行</h3><p><strong>使用 pywin32 模块</strong></p>
+<p><strong>代码如下：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> win32com.shell <span class="keyword">import</span> shell</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="keyword">if</span> shell.IsUserAnAdmin():</span><br><span class="line">        print(<span class="string">&quot;now is admin mode.&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">&quot;just a poor man.&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h3 id="2、获取程序当前绝对路径"><a href="#2、获取程序当前绝对路径" class="headerlink" title="2、获取程序当前绝对路径"></a>2、获取程序当前绝对路径</h3><p><strong>使用 os 模块</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">print(os.getcwd())</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="七、NBA2kOL2-挂机实例"><a href="#七、NBA2kOL2-挂机实例" class="headerlink" title="七、NBA2kOL2 挂机实例"></a>七、NBA2kOL2 挂机实例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string"> @brief This is for NBA2KOL2 game.</span></span><br><span class="line"><span class="string"> @author firestaradmin 2020年12月16日</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> numpy </span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image,ImageGrab</span><br><span class="line"><span class="keyword">from</span> cv2 <span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> autopy</span><br><span class="line"><span class="keyword">import</span> win32gui</span><br><span class="line"><span class="keyword">from</span> win32com.shell <span class="keyword">import</span> shell</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> configparser</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Configuartion</span></span><br><span class="line">debug_enable = <span class="literal">True</span> <span class="comment"># config if print debug</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># &#x27;GLOBAL VARIABLE&#x27;</span></span><br><span class="line">game_title = <span class="string">&quot;NBA2KOL2 0.3.230.675&quot;</span></span><br><span class="line">game_class = <span class="string">&quot;NBAWindowClass&quot;</span></span><br><span class="line">game_hwnd = <span class="number">0</span></span><br><span class="line">window_size = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">game_completed_cnt = <span class="number">0</span></span><br><span class="line">game_win_cnt = <span class="number">0</span></span><br><span class="line">game_fail_cnt = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">game_one_game_timeS = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">cwd_path = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">* @brief 在容器图片里寻找样例并返回坐标值. 使用OPONCV TM_CCOEFF_NORMED 模式识别</span></span><br><span class="line"><span class="string">* @param template   the path of target will find in container. ex- &quot;D:\\a.jpg&quot;</span></span><br><span class="line"><span class="string">* @param container  the path of pic where to find. ex- &quot;D:\\b.jpg&quot;</span></span><br><span class="line"><span class="string">* @param img_mode   the img open mode. </span></span><br><span class="line"><span class="string">    - cv2.IMREAD_COLOR：    默认参数，读入一副彩色图片，忽略alpha通道</span></span><br><span class="line"><span class="string">    - cv2.IMREAD_GRAYSCALE：读入灰度图片</span></span><br><span class="line"><span class="string">    - cv2.IMREAD_UNCHANGED：顾名思义，读入完整图片，包括alpha通道</span></span><br><span class="line"><span class="string">* @param thres      the threshold of finding simlike level. default 0.7, range(0, 1)</span></span><br><span class="line"><span class="string">* @retval (X, Y), find_falg, matching_value</span></span><br><span class="line"><span class="string">    (X, Y): The relative center coordinate of matched template.</span></span><br><span class="line"><span class="string">    find_flag: if have found return True </span></span><br><span class="line"><span class="string">    matching_value: return finding max value</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_img_pos</span>(<span class="params">template_path, container_path, img_mode = cv2.IMREAD_GRAYSCALE, thres = <span class="number">0.7</span></span>):</span></span><br><span class="line">    template = cv2.imread(template_path, img_mode)</span><br><span class="line">    container = cv2.imread(container_path, img_mode)</span><br><span class="line"></span><br><span class="line">    res = cv2.matchTemplate(container, template, cv2.TM_CCOEFF_NORMED)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> res.max() &lt; thres:</span><br><span class="line">        <span class="keyword">return</span> (<span class="number">0</span>, <span class="number">0</span>), <span class="literal">False</span>, res.max()</span><br><span class="line"></span><br><span class="line">    container_size = Image.open(template_path).size</span><br><span class="line">    </span><br><span class="line">    loc = numpy.where(res==res.max())</span><br><span class="line">    X = int(loc[<span class="number">1</span>]+container_size[<span class="number">0</span>]/<span class="number">2</span>)</span><br><span class="line">    Y = int(loc[<span class="number">0</span>]+container_size[<span class="number">1</span>]/<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">return</span> (X,Y), <span class="literal">True</span>, res.max()</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># @brief capture window and save it.</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">grab_window</span>():</span></span><br><span class="line">    <span class="keyword">global</span> game_hwnd, window_size, cwd_path</span><br><span class="line">    win32gui.SetForegroundWindow(game_hwnd) <span class="comment">#窗口浮现</span></span><br><span class="line">    mydelay(<span class="number">0.3</span>)</span><br><span class="line">    im = ImageGrab.grab(window_size)         <span class="comment">#截取屏幕指定区域的图像 </span></span><br><span class="line">    im.save(cwd_path + <span class="string">&quot;/resource/window.jpg&quot;</span>);            <span class="comment">#储存为.jpg</span></span><br><span class="line">    mydelay(<span class="number">0.2</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># @brief find a template and click it.</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">finding_in_window_and_click_it</span>(<span class="params">template_path, click_delay = <span class="number">0.5</span>, img_mode = cv2.IMREAD_GRAYSCALE, thres = <span class="number">0.7</span></span>):</span></span><br><span class="line">    <span class="keyword">global</span> cwd_path</span><br><span class="line">    grab_window()   <span class="comment">#截取窗口</span></span><br><span class="line"></span><br><span class="line">    err_code = <span class="number">0</span></span><br><span class="line">    relative_pos, flag, value = get_img_pos(template_path, cwd_path + <span class="string">&quot;/resource/window.jpg&quot;</span>, img_mode, thres)</span><br><span class="line">    mydebug(<span class="string">&quot;匹配度:&quot;</span>+ str(value)+ <span class="string">&quot;of&quot;</span>+ template_path)</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">not</span> flag):</span><br><span class="line">        err_code = <span class="number">1</span>    <span class="comment">#have not found template.</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    abs_pos = (relative_pos[<span class="number">0</span>] + window_size[<span class="number">0</span>], relative_pos[<span class="number">1</span>] + window_size[<span class="number">1</span>])</span><br><span class="line">    autopy.mouse.move(abs_pos[<span class="number">0</span>], abs_pos[<span class="number">1</span>])</span><br><span class="line">    mydelay(<span class="number">0.5</span>)</span><br><span class="line">    autopy.mouse.click(autopy.mouse.Button.LEFT, click_delay)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> err_code</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># @brief detect a page, until timeOut.</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">detect_page_apper</span>(<span class="params">detect_img_path, timeOut_S, detect_period_S = <span class="number">5</span>, img_mode = cv2.IMREAD_GRAYSCALE, thres = <span class="number">0.7</span></span>):</span></span><br><span class="line">    print(<span class="string">&quot;开始侦测 &quot;</span>, detect_img_path, <span class="string">&quot;=============================&quot;</span>)</span><br><span class="line">    <span class="keyword">global</span> cwd_path</span><br><span class="line">    timeOut = timeOut_S</span><br><span class="line">    <span class="keyword">while</span>(timeOut &gt; <span class="number">0</span>):</span><br><span class="line">        grab_window()   <span class="comment">#截取窗口</span></span><br><span class="line">        pos, flag, value = get_img_pos(detect_img_path, cwd_path + <span class="string">&quot;/resource/window.jpg&quot;</span>, img_mode, thres)</span><br><span class="line">        </span><br><span class="line">        mydebug(detect_img_path + <span class="string">&quot; 匹配度= &quot;</span>+ str(value))  <span class="comment">#for debug</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(flag):</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        mydelay(detect_period_S - <span class="number">0.5</span>)   <span class="comment">#why need sub 0.5s, because grab_window() will delay 0.5s.</span></span><br><span class="line">        timeOut -= detect_period_S</span><br><span class="line">        mydebug(<span class="string">&quot;Time_elapsed: &quot;</span>+ str(timeOut_S - timeOut)+ <span class="string">&quot;S&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span>       </span><br><span class="line">    </span><br><span class="line"><span class="comment"># only used in detect game over.</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">detect_game_over</span>(<span class="params">timeOut_S, detect_period_S = <span class="number">5</span>, img_mode = cv2.IMREAD_GRAYSCALE, thres = <span class="number">0.7</span></span>):</span></span><br><span class="line">    <span class="keyword">global</span> game_win_cnt, game_fail_cnt, cwd_path</span><br><span class="line">    print(<span class="string">&quot;开始侦测, 等待比赛结束 =============================&quot;</span>)</span><br><span class="line">    timeOut = timeOut_S</span><br><span class="line">    <span class="keyword">while</span>(timeOut &gt; <span class="number">0</span>):</span><br><span class="line">        grab_window()   <span class="comment">#截取窗口</span></span><br><span class="line"></span><br><span class="line">        pos, flag, value = get_img_pos(cwd_path + <span class="string">&quot;/resource/fail_label.jpg&quot;</span>, cwd_path + <span class="string">&quot;/resource/window.jpg&quot;</span>, img_mode, thres)</span><br><span class="line">        mydebug(<span class="string">&quot;失败标志匹配度= &quot;</span>+ str(value))  <span class="comment">#for debug</span></span><br><span class="line">        <span class="keyword">if</span>(flag):</span><br><span class="line">            game_fail_cnt += <span class="number">1</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">        pos, flag, value = get_img_pos(cwd_path + <span class="string">&quot;/resource/win_label.jpg&quot;</span>, cwd_path + <span class="string">&quot;/resource/window.jpg&quot;</span>, img_mode, thres)</span><br><span class="line">        mydebug(<span class="string">&quot;胜利标志匹配度= &quot;</span>+ str(value))  <span class="comment">#for debug</span></span><br><span class="line">        <span class="keyword">if</span>(flag):</span><br><span class="line">            game_win_cnt += <span class="number">1</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">        mydelay(detect_period_S - <span class="number">0.5</span>)   <span class="comment">#why need sub 0.5s, because grab_window() will delay 0.5s.</span></span><br><span class="line">        timeOut -= detect_period_S</span><br><span class="line">        mydebug(<span class="string">&quot;Time_elapsed: &quot;</span> + str(timeOut_S - timeOut) + <span class="string">&quot;S&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span>     </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mydebug</span>(<span class="params">str</span>):</span></span><br><span class="line">    <span class="keyword">global</span> debug_enable</span><br><span class="line">    <span class="keyword">if</span>(debug_enable):</span><br><span class="line">        print(<span class="string">&quot;[debug] &quot;</span>, str)</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mydelay</span>(<span class="params">timeS</span>):</span></span><br><span class="line">    <span class="keyword">global</span> game_one_game_timeS</span><br><span class="line">    time.sleep(timeS)</span><br><span class="line">    game_one_game_timeS += timeS</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">if_admin_runing</span>():</span></span><br><span class="line">    <span class="keyword">if</span> shell.IsUserAnAdmin():</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">myinit</span>():</span></span><br><span class="line">    print(<span class="string">&quot;======== 使用前注意把游戏调至窗口模式 分辨率 1440x900 !! =====I,me,justice AG====&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;======== 使用前注意把游戏调至窗口模式 分辨率 1440x900 !! =====  is the most  ====&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;======== 注意游戏版本号，因为标题会随着版本号改变        ===most cool perfect====&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;======== 标题改变要修改 根目录下的 config.ini 文件 配置 =====cool superman!======&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot; &quot;</span>)</span><br><span class="line">    print(<span class="string">&quot; &quot;</span>)</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    print(<span class="string">&quot;初始化中......&quot;</span>)</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    <span class="comment"># 初始化变量</span></span><br><span class="line">    <span class="keyword">global</span> game_hwnd, window_size, debug_enable, cwd_path</span><br><span class="line">    cwd_path = os.getcwd().replace(<span class="string">&#x27;\\&#x27;</span>, <span class="string">&#x27;/&#x27;</span>)</span><br><span class="line">    cwd_temp = cwd_path+<span class="string">&quot;/config.ini&quot;</span></span><br><span class="line">    <span class="comment"># 读取Config文件</span></span><br><span class="line">    cf = configparser.ConfigParser()</span><br><span class="line">    cf.read(cwd_temp)</span><br><span class="line"></span><br><span class="line">    game_title = cf.get(<span class="string">&quot;game-info&quot;</span>, <span class="string">&quot;title&quot;</span>)</span><br><span class="line">    game_class = cf.get(<span class="string">&quot;game-info&quot;</span>, <span class="string">&quot;classname&quot;</span>)</span><br><span class="line">    debug_enable = cf.getboolean(<span class="string">&quot;debug-config&quot;</span>, <span class="string">&quot;debug_print_enable&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取窗口句柄</span></span><br><span class="line">    game_hwnd = win32gui.FindWindow(game_class, game_title)  <span class="comment">#获得句柄</span></span><br><span class="line">    <span class="keyword">if</span>(game_hwnd == <span class="number">0</span>):</span><br><span class="line">        print(<span class="string">&quot;未检测到游戏窗口，有以下几种原因可能：&quot;</span>)</span><br><span class="line">        print(<span class="string">&quot;1.游戏未运行。。真的呆哦&quot;</span>)</span><br><span class="line">        print(<span class="string">&quot;2.游戏更新了，版本号有变动，请到脚本根目录下的config.ini文件进行修改标题名称&quot;</span>)</span><br><span class="line">        print(<span class="string">&quot;3.可能你不配吧，嘻嘻&quot;</span>)</span><br><span class="line">        print(<span class="string">&quot;请打开游戏正确配置后再运行脚本，谢谢合作。&quot;</span>)</span><br><span class="line">        os.system(<span class="string">&#x27;pause&#x27;</span>)</span><br><span class="line">        exit()</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    print(<span class="string">&quot;游戏窗口句柄为：&quot;</span>,game_hwnd)</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    win32gui.SetForegroundWindow(game_hwnd)              <span class="comment">#窗口浮现</span></span><br><span class="line">    window_size = win32gui.GetWindowRect(game_hwnd)      <span class="comment">#pos: x1, y1, x2, y2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">myexit</span>():</span></span><br><span class="line">    print(<span class="string">&quot;== 异常错误！请重新运行脚本 ==&quot;</span>)</span><br><span class="line">    <span class="keyword">global</span> game_completed_cnt, game_win_cnt, game_fail_cnt</span><br><span class="line">    print(<span class="string">&quot;已完成&quot;</span>, game_completed_cnt, <span class="string">&quot; 场比赛。&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;胜利&quot;</span>, game_win_cnt, <span class="string">&quot; 场比赛。&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;失败&quot;</span>, game_fail_cnt, <span class="string">&quot; 场比赛。&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;===============================&quot;</span>)</span><br><span class="line">    os.system(<span class="string">&quot;pause&quot;</span>)</span><br><span class="line">    exit()</span><br><span class="line"></span><br><span class="line"><span class="comment"># =================================== main ======================================</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 检查是否以管理员模式运行</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">not</span> if_admin_runing()):</span><br><span class="line">        print(<span class="string">&quot;请以管理员模式 重新运行本脚本！&quot;</span>)</span><br><span class="line">        os.system(<span class="string">&#x27;pause&#x27;</span>)</span><br><span class="line">        exit()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 初始化</span></span><br><span class="line">    <span class="keyword">global</span> game_completed_cnt, game_win_cnt, game_fail_cnt, game_one_game_timeS</span><br><span class="line">    myinit()</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"><span class="comment">#开始循环进行比赛</span></span><br><span class="line">    print(<span class="string">&quot;开始比赛循环&quot;</span>)</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">True</span>):</span><br><span class="line">        print(<span class="string">&quot;开始新一局比赛============&quot;</span>)</span><br><span class="line"></span><br><span class="line">        mydelay(<span class="number">1</span>)</span><br><span class="line">        err = finding_in_window_and_click_it(cwd_path + <span class="string">&quot;/resource/main_page_start.jpg&quot;</span>, <span class="number">1</span>, cv2.IMREAD_GRAYSCALE, <span class="number">0.58</span>)</span><br><span class="line">        <span class="keyword">if</span>(err == <span class="number">0</span>):</span><br><span class="line">            print(<span class="string">&quot;[开始比赛] 点击成功&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:   </span><br><span class="line">            print(<span class="string">&quot;[开始比赛] 点击失败&quot;</span>)</span><br><span class="line">            myexit()</span><br><span class="line"></span><br><span class="line">        mydelay(<span class="number">1</span>)</span><br><span class="line">        err = finding_in_window_and_click_it(cwd_path + <span class="string">&quot;/resource/start_page_paiwei.jpg&quot;</span>, <span class="number">1</span>, cv2.IMREAD_GRAYSCALE, <span class="number">0.6</span>)</span><br><span class="line">        <span class="keyword">if</span>(err == <span class="number">0</span>):</span><br><span class="line">            print(<span class="string">&quot;[排位] 点击成功&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:   </span><br><span class="line">            print(<span class="string">&quot;[排位] 点击失败&quot;</span>)</span><br><span class="line">            myexit()</span><br><span class="line"></span><br><span class="line">        mydelay(<span class="number">1</span>)</span><br><span class="line">        err = finding_in_window_and_click_it(cwd_path + <span class="string">&quot;/resource/start_paiwei_page_jingli.jpg&quot;</span>, <span class="number">1</span>, cv2.IMREAD_GRAYSCALE, <span class="number">0.6</span>)</span><br><span class="line">        <span class="keyword">if</span>(err == <span class="number">0</span>):</span><br><span class="line">            print(<span class="string">&quot;[经理模式] 点击成功&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:   </span><br><span class="line">            print(<span class="string">&quot;[经理模式] 点击失败&quot;</span>)</span><br><span class="line">            myexit()</span><br><span class="line"></span><br><span class="line">        mydelay(<span class="number">1</span>)</span><br><span class="line">        err = finding_in_window_and_click_it(cwd_path + <span class="string">&quot;/resource/start_paiwei_jingli_page_enter.jpg&quot;</span>, <span class="number">1</span>, cv2.IMREAD_GRAYSCALE, <span class="number">0.6</span>)</span><br><span class="line">        <span class="keyword">if</span>(err == <span class="number">0</span>):</span><br><span class="line">            print(<span class="string">&quot;[进入] 点击成功&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:   </span><br><span class="line">            print(<span class="string">&quot;[进入] 点击失败&quot;</span>)</span><br><span class="line">            myexit()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">#********等待匹配， 准备*********</span></span><br><span class="line">        ret = detect_page_apper(cwd_path + <span class="string">&quot;/resource/zhunbei_page_judge.jpg&quot;</span>, <span class="number">60</span>*<span class="number">10</span>, <span class="number">3</span>, cv2.IMREAD_GRAYSCALE, <span class="number">0.7</span>)</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">not</span> ret):</span><br><span class="line">            print(<span class="string">&quot;准备阶段错误！&quot;</span>)</span><br><span class="line">            myexit()</span><br><span class="line">        mydelay(<span class="number">2</span>)</span><br><span class="line">        err = finding_in_window_and_click_it(cwd_path + <span class="string">&quot;/resource/zhunbei_page_ready.jpg&quot;</span>, <span class="number">1</span>, cv2.IMREAD_GRAYSCALE, <span class="number">0.6</span>)</span><br><span class="line">        <span class="keyword">if</span>(err == <span class="number">0</span>):</span><br><span class="line">            print(<span class="string">&quot;[准备] 点击成功&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:   </span><br><span class="line">            print(<span class="string">&quot;[准备] 点击失败&quot;</span>)</span><br><span class="line">            myexit()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">#********等待比赛完毕， 结算*********</span></span><br><span class="line">        <span class="comment"># ret = detect_page_apper(cwd_path + &quot;/resource/end_page_judge.jpg&quot;, 60*40, 5, cv2.IMREAD_GRAYSCALE, 0.58)</span></span><br><span class="line">        ret = detect_game_over(<span class="number">60</span>*<span class="number">40</span>, <span class="number">5</span>, cv2.IMREAD_GRAYSCALE, <span class="number">0.7</span>)</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">not</span> ret):</span><br><span class="line">            print(<span class="string">&quot;err:未匹配到比赛完毕界面！&quot;</span>)</span><br><span class="line">            myexit()</span><br><span class="line">        mydelay(<span class="number">3</span>)</span><br><span class="line">        err = finding_in_window_and_click_it(cwd_path + <span class="string">&quot;/resource/end_page_confirm.jpg&quot;</span>, <span class="number">1</span>, cv2.IMREAD_GRAYSCALE, <span class="number">0.7</span>)</span><br><span class="line">        <span class="keyword">if</span>(err == <span class="number">0</span>):</span><br><span class="line">            print(<span class="string">&quot;[确定比赛结果] 点击成功&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:   </span><br><span class="line">            print(<span class="string">&quot;[确定比赛结果] 点击失败&quot;</span>)</span><br><span class="line">            myexit()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        mydelay(<span class="number">3</span>)</span><br><span class="line">        err = finding_in_window_and_click_it(cwd_path + <span class="string">&quot;/resource/end_jiesuan_page_next.jpg&quot;</span>, <span class="number">1</span>, cv2.IMREAD_GRAYSCALE, <span class="number">0.7</span>)</span><br><span class="line">        <span class="keyword">if</span>(err == <span class="number">0</span>):</span><br><span class="line">            print(<span class="string">&quot;[下一页] 点击成功&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:   </span><br><span class="line">            print(<span class="string">&quot;[下一页] 点击失败&quot;</span>)</span><br><span class="line">            myexit()</span><br><span class="line"></span><br><span class="line">        mydelay(<span class="number">1</span>)</span><br><span class="line">        err = finding_in_window_and_click_it(cwd_path + <span class="string">&quot;/resource/end_jiesuan2_page_next.jpg&quot;</span>, <span class="number">1</span>, cv2.IMREAD_GRAYSCALE, <span class="number">0.7</span>)</span><br><span class="line">        <span class="keyword">if</span>(err == <span class="number">0</span>):</span><br><span class="line">            print(<span class="string">&quot;[下一页] 点击成功&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:   </span><br><span class="line">            print(<span class="string">&quot;[下一页] 点击失败&quot;</span>)</span><br><span class="line">            myexit()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">#********结算完毕， 开始下一局*********</span></span><br><span class="line">        print(<span class="string">&quot;成功完成一局比赛！ 花费&quot;</span>, game_one_game_timeS, <span class="string">&quot;秒&quot;</span>)</span><br><span class="line">        game_one_game_timeS = <span class="number">0</span></span><br><span class="line">        game_completed_cnt += <span class="number">1</span></span><br><span class="line">        print(<span class="string">&quot;已完成&quot;</span>, game_completed_cnt, <span class="string">&quot; 场比赛。&quot;</span>)</span><br><span class="line">        print(<span class="string">&quot;胜利&quot;</span>, game_win_cnt, <span class="string">&quot; 场比赛。&quot;</span>)</span><br><span class="line">        print(<span class="string">&quot;失败&quot;</span>, game_fail_cnt, <span class="string">&quot; 场比赛。&quot;</span>)</span><br><span class="line">        print(<span class="string">&quot;10秒后开始下一局比赛=============&quot;</span>)</span><br><span class="line">        print(<span class="string">&quot;===============================&quot;</span>)</span><br><span class="line">        mydelay(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">firestaradmin</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://firestaradmin.gitee.io/2020/12/15/NOTE/Python/%E9%80%9A%E7%94%A8%E8%84%9A%E6%9C%AC%E6%A8%A1%E5%9D%97API/">https://firestaradmin.gitee.io/2020/12/15/NOTE/Python/%E9%80%9A%E7%94%A8%E8%84%9A%E6%9C%AC%E6%A8%A1%E5%9D%97API/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://firestaradmin.gitee.io" target="_blank">firestaradmin's Fortune</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Windows/">Windows</a><a class="post-meta__tags" href="/tags/Python/">Python</a></div><div class="post_share"><div class="social-share" data-image="/img/banner3.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/12/18/NOTE/Note/CMAKE%E7%AE%80%E6%98%8E%E6%95%99%E7%A8%8B/"><img class="prev-cover" src="/img/covers/WorldEdit_V1.png" onerror="onerror=null;src='/img/404.png'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CMAKE简明教程</div></div></a></div><div class="next-post pull-right"><a href="/2020/12/11/NOTE/WIN10/WIN10%E5%8F%B3%E9%94%AE%E6%96%B0%E5%BB%BA%E8%8F%9C%E5%8D%95%E8%87%AA%E5%AE%9A%E4%B9%89/"><img class="next-cover" src="/img/banner3.jpg" onerror="onerror=null;src='/img/404.png'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">WIN10右键新建菜单自定义</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/12/11/NOTE/WIN10/WIN10右键新建菜单自定义/" title="WIN10右键新建菜单自定义"><img class="cover" src="/img/banner3.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-11</div><div class="title">WIN10右键新建菜单自定义</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div class="comment-switch"><span class="first-comment">g</span><label><input id="switch-comments-btn" type="checkbox"/><span class="slider"></span></label><span class="second-comment">i</span></div></div><div class="comment-wrap"><div></div><div></div><div></div><div></div><div></div><div></div></div></div></article></main><footer id="footer" style="background-image: url(/img/banner3.jpg)" data-type="photo"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By firestaradmin</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">一起为了祖国崛起而奋斗吧！</div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="/js/third-party/canvas-nest.js"></script><script src="/js/third-party/ClickShowText.js" async="async"></script></div></body></html>

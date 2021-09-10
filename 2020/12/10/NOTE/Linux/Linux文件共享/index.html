@@ -1,0 +1,264 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Linux文件共享 | firestaradmin's Fortune</title><meta name="description" content="Linux文件共享@firestaradmin 2020年12月10日 NFSNFS 服务端1sudo apt-get install nfs-kernel-server rpcbind  安装完成后创建一个nfs文件夹，以后需要通过网络用的文件都放这里.xxxx&#x2F;nfs 之后配置文件&#x2F;etc&#x2F;exports： 1sudo vi &#x2F;etc&#x2F;exports  在文件末尾添加如下所示内容： 1xxxx"><meta name="keywords" content="Linux,Share"><meta name="author" content="firestaradmin"><meta name="copyright" content="firestaradmin"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://firestaradmin.gitee.io/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta property="og:type" content="article"><meta property="og:title" content="Linux文件共享"><meta property="og:url" content="https://firestaradmin.gitee.io/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/"><meta property="og:site_name" content="firestaradmin's Fortune"><meta property="og:description" content="Linux文件共享@firestaradmin 2020年12月10日 NFSNFS 服务端1sudo apt-get install nfs-kernel-server rpcbind  安装完成后创建一个nfs文件夹，以后需要通过网络用的文件都放这里.xxxx&#x2F;nfs 之后配置文件&#x2F;etc&#x2F;exports： 1sudo vi &#x2F;etc&#x2F;exports  在文件末尾添加如下所示内容： 1xxxx"><meta property="og:image" content="https://firestaradmin.gitee.io/img/banner3.jpg"><meta property="article:published_time" content="2020-12-09T16:00:00.000Z"><meta property="article:modified_time" content="2020-12-09T16:00:00.000Z"><meta name="twitter:card" content="summary"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.0.2',
+  algolia: undefined,
+  localSearch: {"path":"./public/search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime: '',
+  date_suffix: {"one_hour":"刚刚","hours":"小时前","day":"天前"},
+  copyright: undefined,
+  ClickShowText: {"text":"I,LOVE,YOU,努力,奋斗,zsh万岁,庚庚好帅","fontSize":"15px"},
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isanchor: true
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+    },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2020-12-10 00:00:00'
+}</script><noscript><style type="text/css">
+#nav {
+  opacity: 1
+}
+.justified-gallery img {
+  opacity: 1
+}
+</style></noscript><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+  }
+}
+
+var autoChangeMode = 'false'
+var t = saveToLocal.get('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (saveToLocal.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><meta name="generator" content="Hexo 5.0.2"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/head2.JPG" onerror="onerror=null;src='/img/404.png'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">62</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">28</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">17</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB"><span class="toc-text">Linux文件共享</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#NFS"><span class="toc-text">NFS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NFS-%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="toc-text">NFS 服务端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NFS%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="toc-text">NFS客户端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%A4%B1%E8%B4%A5%E6%83%85%E5%86%B5%E8%A7%A3%E5%86%B3%EF%BC%9A"><span class="toc-text">连接失败情况解决：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Samba"><span class="toc-text">Samba</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%9C%A8Ubuntu%E4%B8%8A%E5%AE%89%E8%A3%85Samba"><span class="toc-text">1、在Ubuntu上安装Samba</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%88%9B%E5%BB%BA%E5%85%B1%E4%BA%AB%E7%9A%84%E6%96%87%E4%BB%B6%E4%BD%8D%E7%BD%AE%E5%92%8C%E5%88%9B%E5%BB%BA%E7%94%A8%E6%88%B7"><span class="toc-text">2、创建共享的文件位置和创建用户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E9%85%8D%E7%BD%AESamba"><span class="toc-text">3、配置Samba</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81WIN10%E8%BF%9E%E6%8E%A5Samba"><span class="toc-text">4、WIN10连接Samba</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E6%B3%95%E4%B8%80%EF%BC%9A"><span class="toc-text">1、法一：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E6%B3%95%E4%BA%8C%EF%BC%9A"><span class="toc-text">2、法二：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81%E5%8F%AF%E8%83%BD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text">5、可能遇到的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99%E9%97%AE%E9%A2%98"><span class="toc-text">防火墙问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#windows10%E4%B8%8A%E9%9D%A2%E7%9A%84%E9%85%8D%E7%BD%AE%E9%97%AE%E9%A2%98"><span class="toc-text">windows10上面的配置问题</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(/img/banner3.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">firestaradmin's Fortune</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">Linux文件共享</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-12-09T16:00:00.000Z" title="发表于 2020-12-10 00:00:00">2020-12-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-12-09T16:00:00.000Z" title="更新于 2020-12-10 00:00:00">2020-12-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NOTE/">NOTE</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NOTE/Linux/">Linux</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h1 id="Linux文件共享"><a href="#Linux文件共享" class="headerlink" title="Linux文件共享"></a>Linux文件共享</h1><p>@firestaradmin 2020年12月10日</p>
+<h2 id="NFS"><a href="#NFS" class="headerlink" title="NFS"></a>NFS</h2><h3 id="NFS-服务端"><a href="#NFS-服务端" class="headerlink" title="NFS 服务端"></a>NFS 服务端</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install nfs-kernel-server rpcbind</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后创建一个nfs文件夹，以后需要通过网络用的文件都放这里.<code>xxxx/nfs</code></p>
+<p>之后配置文件/etc/exports：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/exports</span><br></pre></td></tr></table></figure>
+
+<p>在文件末尾添加如下所示内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxxx&#x2F;nfs *(rw,sync,no_root_squash)</span><br></pre></td></tr></table></figure>
+
+<p>重启 NFS 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/nfs-kernel-server restart</span><br></pre></td></tr></table></figure>
+
+<h3 id="NFS客户端"><a href="#NFS客户端" class="headerlink" title="NFS客户端"></a>NFS客户端</h3><p>安装客户端应用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install -y nfs-common</span><br></pre></td></tr></table></figure>
+
+<p>用mkdir命令创建一个文件夹xxx/nfs-mount。</p>
+<p>将NFS服务器的xxx/nfs 目录挂载到NFS客户端的xxx/nfs-mount 目录，执行以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount 192.168.119.128:xxx/nfs  xxx/nfs-mount</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="连接失败情况解决："><a href="#连接失败情况解决：" class="headerlink" title="连接失败情况解决："></a>连接失败情况解决：</h3><p>如果出现以下情况</p>
+<img src="/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/image-20200820013608568.png" class="" title="image-20200820013608568">
+
+<p>ARM-Linux NFS挂载不上，是由于高版本的NFS服务，默认不支持nfs v2的连接，而uboot中nfs服务是 V2版本的，所以需要修改<code>/etc/default/nfs-kernel-server </code>文件以支持v2 nfs。</p>
+<p>修改完内容如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Number of servers to start up</span></span><br><span class="line"><span class="comment">#RPCNFSDCOUNT=8</span></span><br><span class="line">RPCNFSDCOUNT=<span class="string">&#x27;-V 2 8&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Runtime priority of server (see nice(1))</span></span><br><span class="line">RPCNFSDPRIORITY=0</span><br><span class="line"></span><br><span class="line"><span class="comment"># Options for rpc.mountd.</span></span><br><span class="line"><span class="comment"># If you have a port-based firewall, you might want to set up</span></span><br><span class="line"><span class="comment"># a fixed port here using the --port option. For more information, </span></span><br><span class="line"><span class="comment"># see rpc.mountd(8) or http://wiki.debian.org/SecuringNFS</span></span><br><span class="line"><span class="comment"># To disable NFSv4 on the server, specify &#x27;--no-nfs-version 4&#x27; here</span></span><br><span class="line"><span class="comment">#RPCMOUNTDOPTS=&quot;--manage-gids&quot;</span></span><br><span class="line">RPCMOUNTDOPTS=<span class="string">&quot;-V 2 --manage-gids&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Do you want to start the svcgssd daemon? It is only required for Kerberos</span></span><br><span class="line"><span class="comment"># exports. Valid alternatives are &quot;yes&quot; and &quot;no&quot;; the default is &quot;no&quot;.</span></span><br><span class="line">NEED_SVCGSSD=<span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Options for rpc.svcgssd.</span></span><br><span class="line">RPCSVCGSSDOPTS=<span class="string">&quot;--nfs-version 2,3,4 --debug --syslog&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="Samba"><a href="#Samba" class="headerlink" title="Samba"></a>Samba</h2><h3 id="1、在Ubuntu上安装Samba"><a href="#1、在Ubuntu上安装Samba" class="headerlink" title="1、在Ubuntu上安装Samba"></a>1、在Ubuntu上安装Samba</h3><p><strong>更新apt包索引：</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
+
+<p><strong>安装Samba软件包：</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install samba</span><br></pre></td></tr></table></figure>
+
+<p><strong>安装完成后，Samba服务将自动启动。 要检查Samba服务器是否正在运行，请键入：</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl status nmbd</span><br><span class="line">//或</span><br><span class="line">service smbd status</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出应如下所示，表示Samba服务处于活动状态并正在运行：</strong></p>
+<img src="/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/image-20201210172357197.png" class="" title="image-20201210172357197">
+
+<h3 id="2、创建共享的文件位置和创建用户"><a href="#2、创建共享的文件位置和创建用户" class="headerlink" title="2、创建共享的文件位置和创建用户"></a>2、创建共享的文件位置和创建用户</h3><p><strong>1、创建要共享的文件位置：</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir xxx/samba_share</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、设置共享文件的权限</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chomd -R 777 xxx/samba_share</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、创建Samba用户</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo smbpasswd -a Samba用户名</span><br></pre></td></tr></table></figure>
+
+<p><strong>然后输入密码</strong></p>
+<h3 id="3、配置Samba"><a href="#3、配置Samba" class="headerlink" title="3、配置Samba"></a>3、配置Samba</h3><p><strong>1、在更改Samba配置文件之前，请创建备份以供将来参考或还原：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo cp &#x2F;etc&#x2F;samba&#x2F;smb.conf &#x2F;etc&#x2F;samba&#x2F;smb.conf.bak</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、修改配置文件</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim &#x2F;etc&#x2F;samba&#x2F;smb.conf</span><br></pre></td></tr></table></figure>
+
+<p><strong>在最后增加以下内容：</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[share]                        <span class="comment"># 连接的时候的名字</span></span><br><span class="line">   comment = share folder    <span class="comment"># 描述，说明共享信息</span></span><br><span class="line">   path = xxx/samba_share    <span class="comment"># 要共享的文件位置</span></span><br><span class="line">   create mask = 0777        <span class="comment"># 创建文件的权限</span></span><br><span class="line">   directory mask = 0777    <span class="comment"># 创建目录的权限</span></span><br><span class="line">   valid users = wzh        <span class="comment"># 允许使用服务的用户列表</span></span><br><span class="line">   force user = nobody        <span class="comment"># 前置把共享的文件属主</span></span><br><span class="line">   force group = nogroup    <span class="comment"># 可以访问的用户组</span></span><br><span class="line">   public = yes                <span class="comment"># 允许guest用户访问，与guest ok=yes完全相同</span></span><br><span class="line">   available = yes            <span class="comment"># 该指定共享资源可使用</span></span><br><span class="line">   writable = yes               <span class="comment"># 是否可写</span></span><br><span class="line">   browseable = yes            <span class="comment"># 是否可见，no为隐藏共享</span></span><br><span class="line">   <span class="built_in">read</span> only = no             <span class="comment"># 是否为只读</span></span><br></pre></td></tr></table></figure>
+
+<p>其他设置：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">samba安全级别</span><br><span class="line">       share   <span class="comment">##匿名共享，不需要用户名密码</span></span><br><span class="line">       user    <span class="comment">#需要用户名密码，默认由samba服务器检查  </span></span><br><span class="line">       server    <span class="comment">#由指定的服务器认证</span></span><br><span class="line">       domain     <span class="comment">#由域控制器验证</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>3、重启Samba</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart nmbd</span><br><span class="line">// 或者</span><br><span class="line">service smbd restart</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、验证配置的正确性</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">smbclient -L //localhost/share</span><br></pre></td></tr></table></figure>
+
+<p><strong>输入账号和密码，正确则会出现以下内容：</strong></p>
+<img src="/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/image-20201210172732864.png" class="" title="image-20201210172732864">
+
+<hr>
+<h3 id="4、WIN10连接Samba"><a href="#4、WIN10连接Samba" class="headerlink" title="4、WIN10连接Samba"></a>4、WIN10连接Samba</h3><p><strong>0、确保windows配置正确</strong></p>
+<ul>
+<li>确保windows能访问到Ubuntu的地址</li>
+<li>确保windows共享服务已开启</li>
+</ul>
+<h4 id="1、法一："><a href="#1、法一：" class="headerlink" title="1、法一："></a><strong>1、法一：</strong></h4><p>win键 + R 打开运行,，并输入：<code>\\192.168.12.200\share</code></p>
+<p><strong>注意！！</strong>此处的<code>\\192.168.12.200\share</code> 里的 <code>share</code> 和之前我们添加配置的 中括号中的内容一致，而不是你的共享目录的路径。</p>
+<h4 id="2、法二："><a href="#2、法二：" class="headerlink" title="2、法二："></a><strong>2、法二：</strong></h4><p>此电脑==》映射网络驱动器==》映射网络驱动器</p>
+<img src="/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/image-20201210173039083.png" class="" title="image-20201210173039083">
+
+
+
+<img src="/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/image-20201210173043771.png" class="" title="image-20201210173043771">
+
+<img src="/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/image-20201210173056813.png" class="" title="image-20201210173056813">
+
+<h3 id="5、可能遇到的问题"><a href="#5、可能遇到的问题" class="headerlink" title="5、可能遇到的问题"></a>5、可能遇到的问题</h3><h4 id="防火墙问题"><a href="#防火墙问题" class="headerlink" title="防火墙问题"></a><strong>防火墙问题</strong></h4><p>有时候会因为防火墙的原因导致window访问Ubuntu中的共享文件失败。</p>
+<p><strong>（1）法一：</strong></p>
+<p>关闭防火墙：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ufw <span class="built_in">disable</span></span><br></pre></td></tr></table></figure>
+
+<p>注：开启防火墙：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ufw <span class="built_in">enable</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>（2）允许Samba使用端口</strong></p>
+<p>查看Samba服务所使用的端口：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -anop | grep smbd（Samba）</span><br></pre></td></tr></table></figure>
+
+<img src="/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/20201204162510322.png" class="" title="img">
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -anop | grep nmbd</span><br></pre></td></tr></table></figure>
+
+<img src="/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/20201204162510288.png" class="" title="img">
+
+<p>nmbd是属于smb服务的一个进程。</p>
+<p>我们看到使用了tcp的139和445端口，udp的137和138端口。在防火墙中允许通行，如允许139端口被访问：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo ufw alow 139</span><br><span class="line">\\ 或者</span><br><span class="line">sudo allow Sambd</span><br></pre></td></tr></table></figure>
+
+<p><strong>（3）查看ufw状态</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ufw status</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="windows10上面的配置问题"><a href="#windows10上面的配置问题" class="headerlink" title="windows10上面的配置问题"></a>windows10上面的配置问题</h4><p><strong>（1）开启共享服务</strong></p>
+<p>​    控制面板==》卸载程序==》启动或关闭windows功能==》勾选SMB1.0/CIFS文件共享支持==》重启电脑</p>
+<img src="/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/20201204162510253.png" class="" title="img">
+
+<p><strong>（2）本地组策略编辑</strong></p>
+<p>注意win10家庭版一开始是打不开本地组策略的</p>
+<p><strong>（a）新建文档，内容入下：</strong></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line"><span class="built_in">pushd</span> &quot;%~dp0&quot;</span><br><span class="line"><span class="built_in">dir</span> /b C:\Windows\servicing\Packages\Microsoft-Windows-GroupPolicy-ClientExtensions-Package~<span class="number">3</span>*.mum &gt;List.txt</span><br><span class="line"><span class="built_in">dir</span> /b C:\Windows\servicing\Packages\Microsoft-Windows-GroupPolicy-ClientTools-Package~<span class="number">3</span>*.mum &gt;&gt;List.txt</span><br><span class="line"><span class="keyword">for</span> /f <span class="variable">%%i</span> <span class="keyword">in</span> (&#x27;<span class="built_in">findstr</span> /i . List.txt <span class="number">2</span>^&gt;<span class="built_in">nul</span>&#x27;) <span class="keyword">do</span> dism /online /norestart /add-package:&quot;C:\Windows\servicing\Packages\<span class="variable">%%i</span>&quot;</span><br><span class="line"><span class="built_in">pause</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>（b）修改扩展名并运行</strong></p>
+<p>​    将文本文档的扩展名由txt修改成cmd，出现扩展名修改提示按确定按钮</p>
+<p>​    鼠标右键单击新建文本文档.cmd这个文件，选择以管理员身份运行</p>
+<p><strong>（c）重启电脑，在运行中输入gpedit.msc启动组策略</strong></p>
+<p><strong>（d）修改本地组策略</strong></p>
+<p>​    计算机配置==》管理模板==》网络==》Lanman工作站</p>
+<img src="/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/20201204162510311.png" class="" title="img">
+
+<p>​    启用不安全的来宾登录：</p>
+<img src="/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/20201204162510297.png" class="" title="img">
+
+
+
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">firestaradmin</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://firestaradmin.gitee.io/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/">https://firestaradmin.gitee.io/2020/12/10/NOTE/Linux/Linux%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://firestaradmin.gitee.io" target="_blank">firestaradmin's Fortune</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux</a><a class="post-meta__tags" href="/tags/Share/">Share</a></div><div class="post_share"><div class="social-share" data-image="/img/banner3.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/12/11/NOTE/WIN10/WIN10%E5%8F%B3%E9%94%AE%E6%96%B0%E5%BB%BA%E8%8F%9C%E5%8D%95%E8%87%AA%E5%AE%9A%E4%B9%89/"><img class="prev-cover" src="/img/banner3.jpg" onerror="onerror=null;src='/img/404.png'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">WIN10右键新建菜单自定义</div></div></a></div><div class="next-post pull-right"><a href="/2020/12/08/NOTE/STM32/Keil_Cpp%E7%8E%AF%E5%A2%83%E7%A7%BB%E6%A4%8D%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93%E5%87%BA%E7%8E%B0%E7%B1%BB%E5%9E%8B%E9%94%99%E8%AF%AF/"><img class="next-cover" src="/img/banner3.jpg" onerror="onerror=null;src='/img/404.png'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Keil_C++环境移植第三方库出现类型错误问题解决</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/08/13/NOTE/Linux/Linux下后台运行软件/" title="Linux下后台运行软件"><img class="cover" src="/img/banner3.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-13</div><div class="title">Linux下后台运行软件</div></div></a></div><div><a href="/2020/08/13/NOTE/Linux/Linux网络连接wifi问题/" title="Linux网络连接wifi问题"><img class="cover" src="/img/banner3.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-13</div><div class="title">Linux网络连接wifi问题</div></div></a></div><div><a href="/2020/08/12/NOTE/Linux/zsh终端以及ohmyzsh安装配置/" title="zsh终端以及ohmyzsh安装配置"><img class="cover" src="/img/banner3.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-12</div><div class="title">zsh终端以及ohmyzsh安装配置</div></div></a></div><div><a href="/2020/09/09/NOTE/ARM-Linux/环境搭建系统移植篇/10.linux下烧录至SD卡启动/" title="10| linux下烧录至SD卡启动"><img class="cover" src="/img/banner3.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-09</div><div class="title">10| linux下烧录至SD卡启动</div></div></a></div><div><a href="/2020/09/02/NOTE/ARM-Linux/环境搭建系统移植篇/2.ARM交叉编译器的使用/" title="2| ARM交叉编译器的使用"><img class="cover" src="/img/banner3.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-02</div><div class="title">2| ARM交叉编译器的使用</div></div></a></div><div><a href="/2020/09/04/NOTE/ARM-Linux/环境搭建系统移植篇/4.链接脚本lds的编写/" title="4| 链接脚本lds的编写"><img class="cover" src="/img/banner3.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-04</div><div class="title">4| 链接脚本lds的编写</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div class="comment-switch"><span class="first-comment">g</span><label><input id="switch-comments-btn" type="checkbox"/><span class="slider"></span></label><span class="second-comment">i</span></div></div><div class="comment-wrap"><div></div><div></div><div></div><div></div><div></div><div></div></div></div></article></main><footer id="footer" style="background-image: url(/img/banner3.jpg)" data-type="photo"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By firestaradmin</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">一起为了祖国崛起而奋斗吧！</div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="/js/third-party/canvas-nest.js"></script><script src="/js/third-party/ClickShowText.js" async="async"></script></div></body></html>

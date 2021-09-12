@@ -1630,37 +1630,6 @@
     
     
     <entry>
-      <title>6| 裸机程序编译运行</title>
-      <link href="/2020/09/05/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/6.IMX6U%E8%A3%B8%E6%9C%BA%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E8%BF%90%E8%A1%8C/"/>
-      <url>/2020/09/05/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/6.IMX6U%E8%A3%B8%E6%9C%BA%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E8%BF%90%E8%A1%8C/</url>
-      
-        <content type="html"><![CDATA[<h1 id="裸机程序编译运行"><a href="#裸机程序编译运行" class="headerlink" title="裸机程序编译运行"></a>裸机程序编译运行</h1><h2 id="1-编译程序"><a href="#1-编译程序" class="headerlink" title="1.编译程序"></a>1.编译程序</h2><h2 id="2-烧录程序"><a href="#2-烧录程序" class="headerlink" title="2.烧录程序"></a>2.烧录程序</h2><h2 id="3-运行程序"><a href="#3-运行程序" class="headerlink" title="3.运行程序"></a>3.运行程序</h2><hr><p>其实没什么好说的，就写完程序后，写Makefile、lds、然后编译烧录就完事了。</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> NOTE </category>
-          
-          <category> ARM-Linux </category>
-          
-          <category> 环境搭建系统移植篇 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Embedded </tag>
-            
-            <tag> Linux </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>5| Makefile的简单编写</title>
       <link href="/2020/09/05/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/5.Makefile%E7%9A%84%E7%AE%80%E5%8D%95%E7%BC%96%E5%86%99/"/>
       <url>/2020/09/05/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/5.Makefile%E7%9A%84%E7%AE%80%E5%8D%95%E7%BC%96%E5%86%99/</url>
@@ -1686,6 +1655,37 @@
             <tag> Linux </tag>
             
             <tag> Makefile </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>6| 裸机程序编译运行</title>
+      <link href="/2020/09/05/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/6.IMX6U%E8%A3%B8%E6%9C%BA%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E8%BF%90%E8%A1%8C/"/>
+      <url>/2020/09/05/NOTE/ARM-Linux/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E7%AF%87/6.IMX6U%E8%A3%B8%E6%9C%BA%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E8%BF%90%E8%A1%8C/</url>
+      
+        <content type="html"><![CDATA[<h1 id="裸机程序编译运行"><a href="#裸机程序编译运行" class="headerlink" title="裸机程序编译运行"></a>裸机程序编译运行</h1><h2 id="1-编译程序"><a href="#1-编译程序" class="headerlink" title="1.编译程序"></a>1.编译程序</h2><h2 id="2-烧录程序"><a href="#2-烧录程序" class="headerlink" title="2.烧录程序"></a>2.烧录程序</h2><h2 id="3-运行程序"><a href="#3-运行程序" class="headerlink" title="3.运行程序"></a>3.运行程序</h2><hr><p>其实没什么好说的，就写完程序后，写Makefile、lds、然后编译烧录就完事了。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> NOTE </category>
+          
+          <category> ARM-Linux </category>
+          
+          <category> 环境搭建系统移植篇 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Embedded </tag>
+            
+            <tag> Linux </tag>
             
         </tags>
       
